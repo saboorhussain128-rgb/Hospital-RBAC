@@ -1,58 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+<form action="/platform/login" method="POST">
 
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Platform Admin Login</title>
-
-    <link rel="stylesheet" href="/css/style.css">
-
-</head>
-
-<body>
-
-    <div class="login-container">
-
-        <h2>Platform Admin Login</h2>
-
-        <form>
-
-            <div class="form-group">
-
-                <label>Email</label>
-
-                <input
-                    type="email"
-                    placeholder="Enter Email"
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Password</label>
-
-                <input
-                    type="password"
-                    placeholder="Enter Password"
-                >
-
-            </div>
-
-            <button type="submit">
-
-                Login
-
-            </button>
-
-        </form>
-
+    <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" required>
     </div>
 
-</body>
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required>
+    </div>
 
-</html>
+    <button type="submit">Login</button>
+
+</form>

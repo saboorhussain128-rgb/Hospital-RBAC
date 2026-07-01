@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<%- include("../partials/header") %>
+
+<body>
+
+<%- include("../partials/sidebar") %>
+
+<div style="margin-left:240px; padding:30px;">
+
+    <h2>Hospitals List</h2>
+
+    <table border="1" cellpadding="10" cellspacing="0">
+
+        <tr>
+            <th>S.No</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Status</th>
+        </tr>
+
+        <% hospitals.forEach((h, index) => { %>
+            <tr>
+                <td><%= index + 1 %></td>
+                <td><%= h.name %></td>
+                <td><%= h.address %></td>
+                <td><%= h.status %></td>
+            </tr>
+        <% }) %>
+
+    </table>
+
+</div>
+
+</body>
+</html>

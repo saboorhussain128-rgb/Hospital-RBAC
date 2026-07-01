@@ -68,3 +68,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+const hospitalRoutes = require("./routes/hospitalRoutes");
+
+app.use("/platform", hospitalRoutes);
