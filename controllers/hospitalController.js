@@ -18,23 +18,32 @@ exports.createHospital = async (req, res) => {
 
     try {
 
+        console.log("========== REQUEST BODY ==========");
+        console.log(req.body);
+
         const { name, address, status } = req.body;
 
-        await Hospital.create({
-
+        const hospital = new Hospital({
             name,
             address,
             status
-
         });
 
-        res.redirect("/platform/view-hospital");
+        console.log("Hospital Object:", hospital);
+
+        await hospital.save();
+
+        console.log("Hospital saved successfully.");
+
+        return res.redirect("/platform/view-hospital");
 
     } catch (error) {
 
-        console.log(error);
+        console.log("========== CREATE HOSPITAL ERROR ==========");
+        console.error(error);
+        console.log("===========================================");
 
-        res.send("Error creating hospital");
+        return res.status(500).send(error.stack);
 
     }
 

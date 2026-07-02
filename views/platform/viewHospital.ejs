@@ -3,66 +3,84 @@
 
 <%- include("../partials/header") %>
 
-<body style="margin:0; font-family:Arial; background:#f4f6f9;">
+<body style="margin:0;font-family:Arial;background:#f4f6f9;">
 
 <%- include("../partials/sidebar") %>
 
-<div style="margin-left:240px; padding:30px;">
+<div style="margin-left:240px;padding:30px;">
 
     <!-- TOP BAR -->
-    <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:20px;">
 
-        <a href="/platform/dashboard" style="
-            background:#34495e;
-            color:white;
-            padding:8px 14px;
-            border-radius:6px;
-            text-decoration:none;">
+        <a href="/platform/dashboard"
+           style="background:#34495e;color:white;padding:10px 16px;
+                  text-decoration:none;border-radius:6px;">
             ← Back to Dashboard
         </a>
 
-        <a href="/platform/create-hospital-admin" style="
-            background:#9b59b6;
-            color:white;
-            padding:8px 14px;
-            border-radius:6px;
-            text-decoration:none;">
-            + Create Hospital Admin
+        <a href="/platform/create-hospital"
+           style="background:#27ae60;color:white;padding:10px 16px;
+                  text-decoration:none;border-radius:6px;">
+            + Create Hospital
         </a>
 
     </div>
 
-    <div style="background:white; padding:20px; border-radius:10px;">
+    <div style="background:white;padding:25px;border-radius:10px;">
 
-        <h2 style="margin-bottom:15px;">Hospital Admin List</h2>
+        <h2>Hospital List</h2>
 
-        <table style="width:100%; border-collapse:collapse;">
+        <table style="width:100%;border-collapse:collapse;margin-top:20px;">
 
-            <tr style="background:#f2f2f2;">
-                <th style="padding:10px;">S.No</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Hospital</th>
-                <th>Actions</th>
-            </tr>
+            <thead>
 
-            <% if (admins && admins.length > 0) { %>
+                <tr style="background:#ecf0f1;">
 
-                <% admins.forEach((a, index) => { %>
+                    <th style="padding:12px;">S.No</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            <% if (hospitals.length > 0) { %>
+
+                <% hospitals.forEach((hospital,index)=>{ %>
 
                     <tr style="border-bottom:1px solid #ddd;">
 
-                        <td style="padding:10px;"><%= index + 1 %></td>
-                        <td><%= a.name %></td>
-                        <td><%= a.email %></td>
-                        <td><%= a.hospital?.name %></td>
+                        <td style="padding:12px;">
+                            <%= index + 1 %>
+                        </td>
 
                         <td>
-                            <a href="/platform/delete-hospital-admin/<%= a._id %>"
-                               onclick="return confirm('Delete this admin?')"
-                               style="color:red;">
-                                Delete
-                            </a>
+                            <%= hospital.name %>
+                        </td>
+
+                        <td>
+                            <%= hospital.address %>
+                        </td>
+
+                        <td>
+
+                            <% if(hospital.status==="active"){ %>
+
+                                <span style="color:green;font-weight:bold;">
+                                    Active
+                                </span>
+
+                            <% } else { %>
+
+                                <span style="color:red;font-weight:bold;">
+                                    Inactive
+                                </span>
+
+                            <% } %>
+
                         </td>
 
                     </tr>
@@ -72,12 +90,19 @@
             <% } else { %>
 
                 <tr>
-                    <td colspan="5" style="text-align:center;padding:20px;">
-                        No hospital admins found
+
+                    <td colspan="4"
+                        style="padding:20px;text-align:center;">
+
+                        No hospitals found.
+
                     </td>
+
                 </tr>
 
             <% } %>
+
+            </tbody>
 
         </table>
 
