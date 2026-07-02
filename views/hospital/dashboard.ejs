@@ -3,56 +3,159 @@
 
 <%- include("../partials/header") %>
 
-<body style="margin:0;background:#f5f6fa;">
+<body style="margin:0;font-family:Arial;background:#eef1f7;">
 
-<%- include("../partials/hospitalSidebar") %>
+<div style="display:flex;min-height:100vh;">
 
-<div style="margin-left:230px;padding:30px;">
+    <!-- ================= SIDEBAR ================= -->
 
-    <h1>Hospital Admin Dashboard</h1>
+    <div style="
+        width:240px;
+        background:#1f2d3d;
+        color:white;
+        display:flex;
+        flex-direction:column;
+    ">
 
-    <hr>
+        <div style="
+            padding:30px;
+            font-size:34px;
+            font-weight:bold;
+            border-bottom:1px solid rgba(255,255,255,.15);
+        ">
+            Hospital Admin
+        </div>
 
-    <h3>Welcome</h3>
+        <div style="padding:20px;">
 
-    <p>
+            <div style="
+                background:#34495e;
+                padding:15px;
+                border-radius:8px;
+                margin-bottom:15px;
+                font-size:18px;
+            ">
+                Dashboard
+            </div>
 
-        <strong>Name :</strong>
+            <a href="/hospital/logout"
+               style="
+                display:block;
+                text-align:center;
+                background:#e74c3c;
+                color:white;
+                text-decoration:none;
+                padding:14px;
+                border-radius:8px;
+                font-size:18px;
+               ">
+                Logout
+            </a>
 
-        <%= admin.name %>
+        </div>
 
-    </p>
+    </div>
 
-    <p>
+    <!-- ================= CONTENT ================= -->
 
-        <strong>Hospital :</strong>
+    <div style="flex:1;padding:40px;">
 
-        <%= admin.hospital.name %>
+        <h1 style="margin-top:0;">
+            Hospital Admin Dashboard
+        </h1>
 
-    </p>
+        <hr>
 
-    <p>
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+            gap:25px;
+            margin-top:40px;
+        ">
 
-        <strong>Role :</strong>
+            <!-- CREATE DOCTOR -->
 
-        <%= admin.role %>
+            <a href="/hospital/create-doctor"
+               style="
+                text-decoration:none;
+                color:white;
+               ">
 
-    </p>
+                <div style="
+                    background:#3498db;
+                    padding:40px;
+                    border-radius:12px;
+                    text-align:center;
+                    font-size:24px;
+                    font-weight:bold;
+                    box-shadow:0 3px 10px rgba(0,0,0,.15);
+                ">
 
-    <h3>Assigned Permissions</h3>
+                    <br><br>
 
-    <ul>
+                    Create Doctor
 
-        <% admin.permissions.forEach(permission=>{ %>
+                </div>
 
-            <li><%= permission %></li>
+            </a>
 
-        <% }) %>
+            <!-- VIEW DOCTOR -->
 
-    </ul>
+            <a href="/hospital/view-doctor"
+               style="
+                text-decoration:none;
+                color:white;
+               ">
+
+                <div style="
+                    background:#27ae60;
+                    padding:40px;
+                    border-radius:12px;
+                    text-align:center;
+                    font-size:24px;
+                    font-weight:bold;
+                    box-shadow:0 3px 10px rgba(0,0,0,.15);
+                ">
+
+                    <br><br>
+
+                    View Doctors
+
+                </div>
+
+            </a>
+
+            <!-- DELETE DOCTOR -->
+
+            <a href="/hospital/view-doctor"
+               style="
+                text-decoration:none;
+                color:white;
+               ">
+
+                <div style="
+                    background:#e74c3c;
+                    padding:40px;
+                    border-radius:12px;
+                    text-align:center;
+                    font-size:24px;
+                    font-weight:bold;
+                    box-shadow:0 3px 10px rgba(0,0,0,.15);
+                ">
+
+                    <br><br>
+
+                    Delete Doctor
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
 
 </div>
 
 </body>
-
 </html>

@@ -1,13 +1,163 @@
-<h2>Create Doctor</h2>
+<!DOCTYPE html>
+<html>
 
-<form method="POST" action="/hospital/create-doctor">
+<%- include("../partials/header") %>
 
-    <input type="text" name="name" placeholder="Doctor Name" required>
-    <br><br>
+<body style="margin:0;font-family:Arial;background:#eef1f7;">
 
-    <input type="email" name="email" placeholder="Doctor Email" required>
-    <br><br>
+<div style="display:flex;min-height:100vh;">
 
-    <button type="submit">Create</button>
+    <!-- ================= SIDEBAR ================= -->
 
-</form>
+    <div style="
+        width:240px;
+        background:#1f2d3d;
+        color:white;
+    ">
+
+        <div style="
+            padding:30px;
+            font-size:34px;
+            font-weight:bold;
+            border-bottom:1px solid rgba(255,255,255,.15);
+        ">
+            Hospital Admin
+        </div>
+
+        <div style="padding:20px;">
+
+            <a href="/hospital/dashboard"
+               style="
+                display:block;
+                background:#34495e;
+                color:white;
+                text-decoration:none;
+                padding:15px;
+                border-radius:8px;
+                margin-bottom:15px;
+                text-align:center;
+            ">
+                Dashboard
+            </a>
+
+            <a href="/hospital/logout"
+               style="
+                display:block;
+                background:#e74c3c;
+                color:white;
+                text-decoration:none;
+                padding:15px;
+                border-radius:8px;
+                text-align:center;
+            ">
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+
+    <div style="flex:1;padding:40px;">
+
+        <!-- TOP BAR -->
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            margin-bottom:25px;
+        ">
+
+            <a href="/hospital/dashboard"
+               style="
+                background:#34495e;
+                color:white;
+                text-decoration:none;
+                padding:12px 18px;
+                border-radius:8px;
+            ">
+                ← Dashboard
+            </a>
+
+            <a href="/hospital/view-doctor"
+               style="
+                background:#27ae60;
+                color:white;
+                text-decoration:none;
+                padding:12px 18px;
+                border-radius:8px;
+            ">
+                View Doctors
+            </a>
+
+        </div>
+
+        <!-- FORM CARD -->
+
+        <div style="
+            background:white;
+            padding:35px;
+            border-radius:12px;
+            box-shadow:0 3px 10px rgba(0,0,0,.12);
+            max-width:700px;
+        ">
+
+            <h2>Create Doctor</h2>
+
+            <form method="POST" action="/hospital/create-doctor">
+
+                <label><b>Doctor Name</b></label>
+
+                <input
+                    type="text"
+                    name="name"
+                    required
+                    placeholder="Enter Doctor Name"
+                    style="
+                        width:100%;
+                        padding:12px;
+                        margin-top:8px;
+                        margin-bottom:20px;
+                    "
+                >
+
+                <label><b>Email</b></label>
+
+                <input
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="Enter Email"
+                    style="
+                        width:100%;
+                        padding:12px;
+                        margin-top:8px;
+                        margin-bottom:25px;
+                    "
+                >
+
+                <button
+                    style="
+                        background:#3498db;
+                        color:white;
+                        border:none;
+                        padding:14px 25px;
+                        border-radius:8px;
+                        font-size:16px;
+                        cursor:pointer;
+                    "
+                >
+                    Create Doctor
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

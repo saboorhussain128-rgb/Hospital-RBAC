@@ -1,23 +1,123 @@
-<h2>Doctors List</h2>
+<!DOCTYPE html>
+<html>
 
-<table border="1" cellpadding="10">
+<%- include("../partials/header") %>
 
-    <tr>
-        <th>S.No</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Action</th>
-    </tr>
+<body style="margin:0;font-family:Arial;background:#eef1f7;">
 
-    <% doctors.forEach((d, index) => { %>
-        <tr>
-            <td><%= index + 1 %></td>
-            <td><%= d.name %></td>
-            <td><%= d.email %></td>
-            <td>
-                <a href="/hospital/delete-doctor/<%= d._id %>">Delete</a>
-            </td>
-        </tr>
-    <% }) %>
+<div style="display:flex;min-height:100vh;">
 
-</table>
+    <!-- Sidebar -->
+
+    <div style="width:240px;background:#1f2d3d;color:white;">
+
+        <div style="padding:30px;font-size:34px;font-weight:bold;border-bottom:1px solid rgba(255,255,255,.15);">
+            Hospital Admin
+        </div>
+
+        <div style="padding:20px;">
+
+            <a href="/hospital/dashboard"
+               style="display:block;background:#34495e;color:white;text-decoration:none;padding:15px;border-radius:8px;margin-bottom:15px;text-align:center;">
+                Dashboard
+            </a>
+
+            <a href="/hospital/logout"
+               style="display:block;background:#e74c3c;color:white;text-decoration:none;padding:15px;border-radius:8px;text-align:center;">
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- Main Content -->
+
+    <div style="flex:1;padding:40px;">
+
+        <div style="display:flex;justify-content:space-between;margin-bottom:25px;">
+
+            <a href="/hospital/dashboard"
+               style="background:#34495e;color:white;padding:12px 18px;text-decoration:none;border-radius:8px;">
+                ← Dashboard
+            </a>
+
+            <a href="/hospital/create-doctor"
+               style="background:#27ae60;color:white;padding:12px 18px;text-decoration:none;border-radius:8px;">
+                + Create Doctor
+            </a>
+
+        </div>
+
+        <div style="background:white;padding:30px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.12);">
+
+            <h2>Doctor List</h2>
+
+            <table style="width:100%;border-collapse:collapse;margin-top:20px;">
+
+                <tr style="background:#ecf0f1;">
+
+                    <th style="padding:15px;">S.No</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Action</th>
+
+                </tr>
+
+                <% if(doctors.length > 0){ %>
+
+                    <% doctors.forEach((doctor,index)=>{ %>
+
+                        <tr style="border-bottom:1px solid #ddd;">
+
+                            <td style="padding:15px;"><%= index+1 %></td>
+
+                            <td><%= doctor.name %></td>
+
+                            <td><%= doctor.email %></td>
+
+                            <td>
+
+                                <a href="/hospital/edit-doctor/<%= doctor._id %>"
+                                   style="color:#3498db;text-decoration:none;font-weight:bold;">
+                                    Edit
+                                </a>
+
+                                |
+
+                                <a href="/hospital/delete-doctor/<%= doctor._id %>"
+                                   onclick="return confirm('Delete this doctor?')"
+                                   style="color:red;text-decoration:none;font-weight:bold;">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    <% }) %>
+
+                <% } else { %>
+
+                    <tr>
+
+                        <td colspan="4" style="text-align:center;padding:30px;">
+
+                            No Doctors Found
+
+                        </td>
+
+                    </tr>
+
+                <% } %>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
