@@ -18,22 +18,31 @@ exports.createDoctor = async (req, res) => {
 
     try {
 
-        const hospitalId = req.session.hospitalAdmin.hospital;
+        const hospitalAdmin = req.session.user;
+
+        if (!hospitalAdmin) {
+            return res.redirect("/hospital/login");
+        }
 
         const { name, email } = req.body;
 
         await Doctor.create({
 
-            hospital: hospitalId,
+            hospital: hospitalAdmin.hospital,
+
             name,
+
             email
 
         });
 
         res.redirect("/hospital/view-doctor");
 
-    } catch (error) {
+    }
 
+    catch (error) {
+
+        console.log("CREATE DOCTOR ERROR");
         console.log(error);
 
         res.send("Error creating doctor");
@@ -50,11 +59,19 @@ exports.viewDoctors = async (req, res) => {
 
     try {
 
-        const hospitalId = req.session.hospitalAdmin.hospital;
+        const hospitalAdmin = req.session.user;
+
+        if (!hospitalAdmin) {
+            return res.redirect("/hospital/login");
+        }
 
         const doctors = await Doctor.find({
 
-            hospital: hospitalId
+            hospital: hospitalAdmin.hospital
+
+        }).sort({
+
+            createdAt: -1
 
         });
 
@@ -64,8 +81,11 @@ exports.viewDoctors = async (req, res) => {
 
         });
 
-    } catch (error) {
+    }
 
+    catch (error) {
+
+        console.log("VIEW DOCTOR ERROR");
         console.log(error);
 
         res.send("Error fetching doctors");
@@ -75,7 +95,7 @@ exports.viewDoctors = async (req, res) => {
 };
 
 /* =====================================================
-   EDIT DOCTOR PAGE
+   EDIT PAGE
 ===================================================== */
 
 exports.editPage = async (req, res) => {
@@ -85,7 +105,9 @@ exports.editPage = async (req, res) => {
         const doctor = await Doctor.findById(req.params.id);
 
         if (!doctor) {
+
             return res.send("Doctor not found");
+
         }
 
         res.render("hospital/editDoctor", {
@@ -94,7 +116,9 @@ exports.editPage = async (req, res) => {
 
         });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.log(error);
 
@@ -121,6 +145,7 @@ exports.updateDoctor = async (req, res) => {
             {
 
                 name,
+
                 email
 
             }
@@ -129,7 +154,9 @@ exports.updateDoctor = async (req, res) => {
 
         res.redirect("/hospital/view-doctor");
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.log(error);
 
@@ -151,7 +178,9 @@ exports.deleteDoctor = async (req, res) => {
 
         res.redirect("/hospital/view-doctor");
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.log(error);
 

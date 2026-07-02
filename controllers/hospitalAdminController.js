@@ -2,18 +2,30 @@ const HospitalAdmin = require("../models/HospitalAdmin");
 const Hospital = require("../models/Hospital");
 const bcrypt = require("bcryptjs");
 
-/* -------------------------
+/* =====================================================
    CREATE PAGE
---------------------------*/
+===================================================== */
+
 exports.createPage = async (req, res) => {
     try {
-        const hospitals = await Hospital.find();
-        res.render("platform/createHospitalAdmin", { hospitals });
+
+        const hospitals = await Hospital.find().sort({ name: 1 });
+
+        res.render("platform/createHospitalAdmin", {
+            hospitals
+        });
+
     } catch (error) {
-        console.log("Create Page Error:", error);
-        res.send("Error loading create admin page");
+
+        console.log(error);
+        res.send("Error loading page.");
+
     }
 };
+
+/* =====================================================
+   CREATE HOSPITAL ADMIN
+===================================================== */
 
 exports.createAdmin = async (req, res) => {
 
@@ -28,12 +40,10 @@ exports.createAdmin = async (req, res) => {
 
         let permissions = req.body.permissions || [];
 
-        // Convert single checkbox selection to array
         if (!Array.isArray(permissions)) {
             permissions = [permissions];
         }
 
-        // At least one permission must be selected
         if (permissions.length === 0) {
             return res.send("Please select at least one permission.");
         }
@@ -47,11 +57,13 @@ exports.createAdmin = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         await HospitalAdmin.create({
+
             hospital,
             name,
             email,
             password: hashedPassword,
             permissions
+
         });
 
         res.redirect("/platform/view-hospital-admin");
@@ -65,28 +77,143 @@ exports.createAdmin = async (req, res) => {
 
 };
 
-/* -------------------------
+/* =====================================================
    VIEW ADMINS
---------------------------*/
+===================================================== */
+
 exports.viewAdmins = async (req, res) => {
+
     try {
-        const admins = await HospitalAdmin.find().populate("hospital");
-        res.render("platform/viewHospitalAdmin", { admins });
+
+        const admins = await HospitalAdmin.find()
+            .populate("hospital")
+            .sort({ createdAt: -1 });
+
+        res.render("platform/viewHospitalAdmin", {
+            admins
+        });
+
     } catch (error) {
-        console.log("View Admin Error:", error);
-        res.send("Error fetching admins");
+
+        console.log(error);
+        res.send("Error fetching admins.");
+
     }
+
 };
 
-/* -------------------------
-   DELETE ADMIN
---------------------------*/
-exports.deleteAdmin = async (req, res) => {
+/* =====================================================
+   EDIT PAGE
+===================================================== */
+
+exports.editPage = async (req, res) => {
+
     try {
-        await HospitalAdmin.findByIdAndDelete(req.params.id);
-        res.redirect("/platform/view-hospital-admin");
+
+        const admin = await HospitalAdmin.findById(req.params.id);
+
+        const hospitals = await Hospital.find().sort({ name: 1 });
+
+        if (!admin) {
+            return res.send("Hospital Admin not found.");
+        }
+
+        res.render("platform/editHospitalAdmin", {
+
+            admin,
+            hospitals
+
+        });
+
     } catch (error) {
-        console.log("Delete Admin Error:", error);
-        res.send("Error deleting admin");
+
+        console.log(error);
+        res.send("Error loading edit page.");
+
     }
+
+};
+
+/* =====================================================
+   UPDATE ADMIN
+===================================================== */
+
+exports.updateAdmin = async (req, res) => {
+
+    try {
+
+        const {
+
+            hospital,
+            name,
+            email,
+            password
+
+        } = req.body;
+
+        let permissions = req.body.permissions || [];
+
+        if (!Array.isArray(permissions)) {
+            permissions = [permissions];
+        }
+
+        if (permissions.length === 0) {
+            return res.send("Please select at least one permission.");
+        }
+
+        const updateData = {
+
+            hospital,
+            name,
+            email,
+            permissions
+
+        };
+
+        if (password && password.trim() !== "") {
+
+            updateData.password = await bcrypt.hash(password, 10);
+
+        }
+
+        await HospitalAdmin.findByIdAndUpdate(
+
+            req.params.id,
+
+            updateData,
+
+            { new: true }
+
+        );
+
+        res.redirect("/platform/view-hospital-admin");
+
+    } catch (error) {
+
+        console.log(error);
+        res.send("Error updating Hospital Admin.");
+
+    }
+
+};
+
+/* =====================================================
+   DELETE ADMIN
+===================================================== */
+
+exports.deleteAdmin = async (req, res) => {
+
+    try {
+
+        await HospitalAdmin.findByIdAndDelete(req.params.id);
+
+        res.redirect("/platform/view-hospital-admin");
+
+    } catch (error) {
+
+        console.log(error);
+        res.send("Error deleting Hospital Admin.");
+
+    }
+
 };

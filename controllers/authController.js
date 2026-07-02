@@ -1,21 +1,26 @@
 const HospitalAdmin = require("../models/HospitalAdmin");
 const bcrypt = require("bcryptjs");
 
-/* -------------------------
+/* =====================================================
    PLATFORM LOGIN PAGE
---------------------------*/
+===================================================== */
+
 exports.platformLoginPage = (req, res) => {
     res.render("platform/login");
 };
 
-/* -------------------------
+/* =====================================================
    PLATFORM LOGIN
---------------------------*/
+===================================================== */
+
 exports.platformLogin = (req, res) => {
 
     const { email, password } = req.body;
 
-    if (email === "admin@gmail.com" && password === "admin123") {
+    if (
+        email === "admin@gmail.com" &&
+        password === "admin123"
+    ) {
 
         req.session.user = {
             role: "platform_admin"
@@ -25,18 +30,21 @@ exports.platformLogin = (req, res) => {
     }
 
     res.send("Invalid Platform Admin Credentials");
+
 };
 
-/* -------------------------
+/* =====================================================
    HOSPITAL LOGIN PAGE
---------------------------*/
+===================================================== */
+
 exports.hospitalLoginPage = (req, res) => {
     res.render("hospital/login");
 };
 
-/* -------------------------
+/* =====================================================
    HOSPITAL LOGIN
---------------------------*/
+===================================================== */
+
 exports.hospitalLogin = async (req, res) => {
 
     try {
@@ -44,16 +52,18 @@ exports.hospitalLogin = async (req, res) => {
         const { email, password } = req.body;
 
         const admin = await HospitalAdmin
-            .findOne({ email })
-            .populate("hospital");
+            .findOne({ email });
 
         if (!admin) {
             return res.send("Invalid Email or Password");
         }
 
-        const isMatch = await bcrypt.compare(password, admin.password);
+        const match = await bcrypt.compare(
+            password,
+            admin.password
+        );
 
-        if (!isMatch) {
+        if (!match) {
             return res.send("Invalid Email or Password");
         }
 
@@ -61,30 +71,34 @@ exports.hospitalLogin = async (req, res) => {
 
             id: admin._id,
 
-            role: admin.role,
+            role: "hospital_admin",
 
             hospital: admin.hospital,
 
             name: admin.name,
 
-            permissions: admin.permissions
+            permissions: admin.permissions || []
 
         };
 
         res.redirect("/hospital/dashboard");
 
-    } catch (error) {
+    }
 
-        console.log(error);
+    catch (err) {
+
+        console.log(err);
+
         res.send("Login Error");
 
     }
 
 };
 
-/* -------------------------
+/* =====================================================
    LOGOUT
---------------------------*/
+===================================================== */
+
 exports.logout = (req, res) => {
 
     req.session.destroy((err) => {
