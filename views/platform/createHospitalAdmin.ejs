@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<%- include("../partials/header") %>
+
+<body style="margin:0; font-family:Arial; background:#f4f6f9;">
+
+<%- include("../partials/sidebar") %>
+
+<div style="margin-left:240px; padding:30px;">
+
+    <!-- TOP BAR -->
+    <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+
+        <a href="/platform/dashboard" style="
+            background:#34495e;
+            color:white;
+            padding:8px 14px;
+            border-radius:6px;
+            text-decoration:none;">
+            ← Back to Dashboard
+        </a>
+
+        <a href="/platform/view-hospital-admin" style="
+            background:#9b59b6;
+            color:white;
+            padding:8px 14px;
+            border-radius:6px;
+            text-decoration:none;">
+            View Admins
+        </a>
+
+    </div>
+
+    <div style="background:white; padding:25px; border-radius:10px;">
+
+        <h2>Create Hospital Admin</h2>
+
+        <form method="POST" action="/platform/create-hospital-admin">
+
+            <select name="hospital" style="width:100%;padding:10px;margin:10px 0;">
+                <% hospitals.forEach(h => { %>
+                    <option value="<%= h._id %>"><%= h.name %></option>
+                <% }) %>
+            </select>
+
+            <input type="text" name="name" placeholder="Admin Name"
+                   style="width:100%;padding:10px;margin:10px 0;">
+
+            <input type="email" name="email" placeholder="Email"
+                   style="width:100%;padding:10px;margin:10px 0;">
+
+            <input type="password" name="password" placeholder="Password"
+                   style="width:100%;padding:10px;margin:10px 0;">
+
+            <button style="
+                background:#9b59b6;
+                color:white;
+                padding:10px 20px;
+                border:none;
+                border-radius:6px;
+                cursor:pointer;">
+                Create Admin
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,16 +1,103 @@
 const express = require("express");
 const router = express.Router();
 
-const controller = require("../controllers/platformController");
+const platformController = require("../controllers/platformController");
+const hospitalController = require("../controllers/hospitalController");
+const hospitalAdminController = require("../controllers/hospitalAdminController");
 
-// login
-router.get("/login", controller.loginPage);
-router.post("/login", controller.login);
+const {
+    isAuthenticated,
+    isPlatformAdmin
+} = require("../middleware/authMiddleware");
 
-// dashboard
-router.get("/dashboard", controller.dashboard);
+/* =====================================================
+   PLATFORM AUTHENTICATION
+===================================================== */
 
-// logout
-router.get("/logout", controller.logout);
+// Login Page
+router.get("/login", platformController.loginPage);
+
+// Login
+router.post("/login", platformController.login);
+
+// Dashboard
+router.get(
+    "/dashboard",
+    isAuthenticated,
+    isPlatformAdmin,
+    platformController.dashboard
+);
+
+// Logout
+router.get(
+    "/logout",
+    isAuthenticated,
+    isPlatformAdmin,
+    platformController.logout
+);
+
+/* =====================================================
+   HOSPITAL MANAGEMENT
+===================================================== */
+
+// Create Hospital Page
+router.get(
+    "/create-hospital",
+    isAuthenticated,
+    isPlatformAdmin,
+    hospitalController.createPage
+);
+
+// Create Hospital
+router.post(
+    "/create-hospital",
+    isAuthenticated,
+    isPlatformAdmin,
+    hospitalController.createHospital
+);
+
+// View Hospitals
+router.get(
+    "/view-hospital",
+    isAuthenticated,
+    isPlatformAdmin,
+    hospitalController.viewHospitals
+);
+
+/* =====================================================
+   HOSPITAL ADMIN MANAGEMENT
+===================================================== */
+
+// Create Hospital Admin Page
+router.get(
+    "/create-hospital-admin",
+    isAuthenticated,
+    isPlatformAdmin,
+    hospitalAdminController.createPage
+);
+
+// Create Hospital Admin
+router.post(
+    "/create-hospital-admin",
+    isAuthenticated,
+    isPlatformAdmin,
+    hospitalAdminController.createAdmin
+);
+
+// View Hospital Admins
+router.get(
+    "/view-hospital-admin",
+    isAuthenticated,
+    isPlatformAdmin,
+    hospitalAdminController.viewAdmins
+);
+
+// Delete Hospital Admin
+router.get(
+    "/delete-hospital-admin/:id",
+    isAuthenticated,
+    isPlatformAdmin,
+    hospitalAdminController.deleteAdmin
+);
 
 module.exports = router;

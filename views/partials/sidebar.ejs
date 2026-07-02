@@ -1,11 +1,47 @@
-<div style="width:220px; height:100vh; background:#2c3e50; color:white; padding:20px; position:fixed;">
+<div style="
+    width:220px;
+    height:100vh;
+    background:#1f2a38;
+    color:white;
+    padding:20px;
+    position:fixed;
+    box-shadow:2px 0 10px rgba(0,0,0,.2);
+">
 
-    <h3>Platform Admin</h3>
+    <h2 style="margin-bottom:20px;">
+        Platform Admin
+    </h2>
 
-    <hr>
+    <hr style="border:0.5px solid rgba(255,255,255,.2);">
 
-    <p><a href="/platform/dashboard" style="color:white;">Dashboard</a></p>
+    <div style="
+        margin-top:25px;
+        display:flex;
+        flex-direction:column;
+        gap:15px;
+    ">
 
-    <p><a href="/platform/logout" style="color:white;">Logout</a></p>
+        <a href="/platform/dashboard"
+           style="
+           color:white;
+           text-decoration:none;
+           padding:10px;
+           border-radius:6px;
+           background:rgba(255,255,255,.08);">
+            Dashboard
+        </a>
+
+        <a href="/platform/logout"
+           style="
+           color:white;
+           text-decoration:none;
+           padding:10px;
+           border-radius:6px;
+           background:#e74c3c;
+           text-align:center;">
+            Logout
+        </a>
+
+    </div>
 
 </div>

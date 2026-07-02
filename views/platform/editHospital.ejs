@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<%- include("../partials/header") %>
+
+<body>
+
+<%- include("../partials/sidebar") %>
+
+<div style="margin-left:240px; padding:30px;">
+
+    <h2>Edit Hospital</h2>
+
+    <form action="/platform/update-hospital/<%= hospital._id %>" method="POST">
+
+        <input type="text" name="name" value="<%= hospital.name %>" required>
+        <br><br>
+
+        <input type="text" name="address" value="<%= hospital.address %>" required>
+        <br><br>
+
+        <select name="status">
+            <option value="active" <%= hospital.status === 'active' ? 'selected' : '' %>>Active</option>
+            <option value="inactive" <%= hospital.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+        </select>
+
+        <br><br>
+
+        <button type="submit">Update</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

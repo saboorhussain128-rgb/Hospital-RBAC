@@ -3,120 +3,120 @@
 
 <%- include("../partials/header") %>
 
-<style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f4f6f9;
-    }
-
-    .main {
-        margin-left: 240px;
-        padding: 30px;
-        min-height: 100vh;
-    }
-
-    .title {
-        font-size: 28px;
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-
-    .subtitle {
-        color: #666;
-        margin-bottom: 25px;
-    }
-
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
-
-    .card {
-        background: white;
-        padding: 22px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-        transition: 0.2s ease-in-out;
-        border-left: 4px solid #3498db;
-    }
-
-    .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-    }
-
-    .card h3 {
-        margin: 0 0 8px 0;
-        font-size: 18px;
-    }
-
-    .card p {
-        color: #666;
-        font-size: 14px;
-        margin-bottom: 15px;
-    }
-
-    .card a {
-        display: inline-block;
-        padding: 8px 12px;
-        background: #3498db;
-        color: white;
-        border-radius: 6px;
-        font-size: 14px;
-        transition: 0.2s;
-    }
-
-    .card a:hover {
-        background: #217dbb;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .grid {
-            grid-template-columns: 1fr;
-        }
-
-        .main {
-            margin-left: 0;
-        }
-    }
-</style>
-
-<body>
+<body style="margin:0; font-family:Arial; background:#f4f6f9;">
 
 <%- include("../partials/sidebar") %>
 
-<div class="main">
+<div style="
+    margin-left:240px;
+    padding:35px;
+">
 
-    <div class="title">Dashboard</div>
-    <div class="subtitle">Welcome to Platform Admin Panel 🎉 Manage hospitals, admins and system settings here.</div>
+    <h1 style="margin-bottom:10px;">
+        Platform Dashboard
+    </h1>
 
-    <div class="grid">
+    <p style="color:#666;">
+        Welcome to the Platform Administration Panel.
+    </p>
 
-        <div class="card">
-            <h3>🏥 Create Hospital</h3>
-            <p>Add new hospital to system</p>
-            <a href="/platform/create-hospital">Open</a>
+    <div style="
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+        gap:25px;
+        margin-top:35px;
+    ">
+
+        <div style="
+            background:white;
+            padding:25px;
+            border-radius:12px;
+            box-shadow:0 4px 10px rgba(0,0,0,.08);
+        ">
+            <h2>Create Hospital</h2>
+
+            <p>Add a new hospital to the system.</p>
+
+            <a href="/platform/create-hospital"
+               style="
+               display:inline-block;
+               margin-top:15px;
+               padding:10px 18px;
+               background:#3498db;
+               color:white;
+               text-decoration:none;
+               border-radius:6px;">
+                Open
+            </a>
         </div>
 
-        <div class="card">
-            <h3>📋 View Hospital</h3>
-            <p>See all registered hospitals</p>
-            <a href="/platform/view-hospital">Open</a>
+        <div style="
+            background:white;
+            padding:25px;
+            border-radius:12px;
+            box-shadow:0 4px 10px rgba(0,0,0,.08);
+        ">
+            <h2>View Hospitals</h2>
+
+            <p>Manage all hospitals.</p>
+
+            <a href="/platform/view-hospital"
+               style="
+               display:inline-block;
+               margin-top:15px;
+               padding:10px 18px;
+               background:#27ae60;
+               color:white;
+               text-decoration:none;
+               border-radius:6px;">
+                Open
+            </a>
         </div>
 
-        <div class="card">
-            <h3>👨‍⚕️ Create Hospital Admin</h3>
-            <p>Assign admin to specific hospital</p>
-            <a href="/platform/create-hospital-admin">Open</a>
+        <div style="
+            background:white;
+            padding:25px;
+            border-radius:12px;
+            box-shadow:0 4px 10px rgba(0,0,0,.08);
+        ">
+            <h2>Create Hospital Admin</h2>
+
+            <p>Create and assign hospital administrators.</p>
+
+            <a href="/platform/create-hospital-admin"
+               style="
+               display:inline-block;
+               margin-top:15px;
+               padding:10px 18px;
+               background:#9b59b6;
+               color:white;
+               text-decoration:none;
+               border-radius:6px;">
+                Open
+            </a>
         </div>
 
-        <div class="card">
-            <h3>🧑‍💼 View Hospital Admin</h3>
-            <p>Manage hospital admin accounts</p>
-            <a href="/platform/view-hospital-admin">Open</a>
+        <div style="
+            background:white;
+            padding:25px;
+            border-radius:12px;
+            box-shadow:0 4px 10px rgba(0,0,0,.08);
+        ">
+            <h2>View Hospital Admins</h2>
+
+            <p>Manage hospital administrator accounts.</p>
+
+            <a href="/platform/view-hospital-admin"
+               style="
+               display:inline-block;
+               margin-top:15px;
+               padding:10px 18px;
+               background:#f39c12;
+               color:white;
+               text-decoration:none;
+               border-radius:6px;">
+                Open
+            </a>
         </div>
 
     </div>

@@ -6,33 +6,27 @@ const session = require("express-session");
 
 const connectDB = require("./config/db");
 
-// Routes
-const platformRoutes = require("./routes/platformRoutes");
-
-const app = express();
+const app = express(); // ⭐ THIS MUST COME BEFORE app.get()
 
 /* -------------------------
-   DATABASE CONNECTION
+   DB CONNECTION
 --------------------------*/
 connectDB();
 
 /* -------------------------
    MIDDLEWARES
 --------------------------*/
-
-// Body parser
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Session setup
 app.use(
     session({
         secret: process.env.SESSION_SECRET || "mySecretKey",
         resave: false,
         saveUninitialized: false,
         cookie: {
-            secure: false, // keep false for development (HTTP)
-            maxAge: 1000 * 60 * 60 // 1 hour
+            secure: false,
+            maxAge: 1000 * 60 * 60
         }
     })
 );
@@ -43,7 +37,7 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 
 /* -------------------------
-   VIEW ENGINE (EJS)
+   VIEW ENGINE
 --------------------------*/
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -52,23 +46,40 @@ app.set("views", path.join(__dirname, "views"));
    ROUTES
 --------------------------*/
 
-// Default route → redirect to platform login
+// HOME → Platform login
 app.get("/", (req, res) => {
     res.redirect("/platform/login");
 });
 
-// Platform Routes
+/* -------------------------
+   PLATFORM ROUTES
+--------------------------*/
+const platformRoutes = require("./routes/platformRoutes");
 app.use("/platform", platformRoutes);
 
 /* -------------------------
-   START SERVER
+   HOSPITAL AUTH ROUTES
+--------------------------*/
+const hospitalAuthRoutes = require("./routes/hospitalAuthRoutes");
+app.use("/hospital", hospitalAuthRoutes);
+
+/* -------------------------
+   HOSPITAL FEATURES ROUTES
+--------------------------*/
+const hospitalRoutes = require("./routes/hospitalRoutes");
+app.use("/hospital", hospitalRoutes);
+
+/* -------------------------
+   PLATFORM HOSPITAL ADMIN ROUTES
+--------------------------*/
+const hospitalAdminRoutes = require("./routes/hospitalAdminRoutes");
+app.use("/platform", hospitalAdminRoutes);
+
+/* -------------------------
+   SERVER START
 --------------------------*/
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-
-const hospitalRoutes = require("./routes/hospitalRoutes");
-
-app.use("/platform", hospitalRoutes);

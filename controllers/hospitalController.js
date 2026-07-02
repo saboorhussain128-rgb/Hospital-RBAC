@@ -1,44 +1,70 @@
 const Hospital = require("../models/Hospital");
+const HospitalAdmin = require("../models/HospitalAdmin");
+const bcrypt = require("bcryptjs");
 
-/* -----------------------
-   CREATE PAGE
-------------------------*/
-exports.createPage = (req, res) => {
-    res.render("platform/createHospital");
+/* -------------------------
+   LOGIN PAGE
+--------------------------*/
+exports.loginPage = (req, res) => {
+    res.render("hospital/login");
 };
 
-/* -----------------------
-   CREATE HOSPITAL (POST)
-------------------------*/
-exports.createHospital = async (req, res) => {
+/* -------------------------
+   LOGIN (FIXED RBAC SAFE)
+--------------------------*/
+exports.login = async (req, res) => {
     try {
-        const { name, address, status } = req.body;
+        const { email, password } = req.body;
 
-        await Hospital.create({
-            name,
-            address,
-            status
-        });
+        const admin = await HospitalAdmin.findOne({ email });
 
-        res.redirect("/platform/view-hospital");
+        if (!admin) {
+            return res.send("Invalid Hospital Admin Credentials");
+        }
+
+        const isMatch = await bcrypt.compare(password, admin.password);
+
+        if (!isMatch) {
+            return res.send("Invalid Hospital Admin Credentials");
+        }
+
+        // ✅ FIX: always ensure permissions array exists
+        req.session.hospitalAdmin = {
+            id: admin._id,
+            name: admin.name,
+            email: admin.email,
+            hospital: admin.hospital,
+            permissions: admin.permissions || []
+        };
+
+        return res.redirect("/hospital/dashboard");
 
     } catch (error) {
         console.log(error);
-        res.send("Error creating hospital");
+        return res.send("Login Failed");
     }
 };
 
-/* -----------------------
-   VIEW HOSPITALS
-------------------------*/
-exports.viewHospitals = async (req, res) => {
-    try {
-        const hospitals = await Hospital.find();
+/* -------------------------
+   DASHBOARD
+--------------------------*/
+exports.dashboard = (req, res) => {
+    res.render("hospital/dashboard", {
+        admin: req.session.hospitalAdmin
+    });
+};
 
-        res.render("platform/viewHospital", { hospitals });
 
-    } catch (error) {
-        console.log(error);
-        res.send("Error fetching hospitals");
-    }
+/* -------------------------
+   LOGOUT
+--------------------------*/
+exports.logout = (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.log("Logout Error:", err);
+            return res.send("Error logging out");
+        }
+
+        res.redirect("/hospital/login");
+    });
 };

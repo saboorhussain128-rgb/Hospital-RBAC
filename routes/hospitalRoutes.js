@@ -1,15 +1,49 @@
 const express = require("express");
 const router = express.Router();
 
-const hospitalController = require("../controllers/hospitalController");
+const doctorController = require("../controllers/doctorController");
+const { checkPermission } = require("../middleware/rbacMiddleware");
 
-// create page
-router.get("/create-hospital", hospitalController.createPage);
+/* -------------------------
+   HOSPITAL DASHBOARD
+--------------------------*/
+router.get("/dashboard", (req, res) => {
+    res.render("hospital/dashboard", {
+        admin: req.session.hospitalAdmin
+    });
+});
 
-// create hospital POST
-router.post("/create-hospital", hospitalController.createHospital);
+/* -------------------------
+   CREATE DOCTOR (RBAC PROTECTED)
+--------------------------*/
+router.get(
+    "/create-doctor",
+    checkPermission("create_doctor"),
+    doctorController.createPage
+);
 
-// view hospitals
-router.get("/view-hospital", hospitalController.viewHospitals);
+router.post(
+    "/create-doctor",
+    checkPermission("create_doctor"),
+    doctorController.createDoctor
+);
+
+/* -------------------------
+   VIEW DOCTORS (RBAC PROTECTED)
+--------------------------*/
+router.get(
+    "/view-doctor",
+    checkPermission("view_doctor"),
+    doctorController.viewDoctors
+);
+
+/* -------------------------
+   DELETE DOCTOR (RBAC PROTECTED)
+--------------------------*/
+router.get(
+    "/delete-doctor/:id",
+    checkPermission("delete_doctor"),
+    doctorController.deleteDoctor
+);
 
 module.exports = router;

@@ -1,56 +1,65 @@
-const bcrypt = require("bcryptjs");
-const PlatformAdmin = require("../models/PlatformAdmin");
+const Hospital = require("../models/Hospital");
+const HospitalAdmin = require("../models/HospitalAdmin");
 
-// LOGIN PAGE
+/* -------------------------
+   LOGIN PAGE
+--------------------------*/
 exports.loginPage = (req, res) => {
     res.render("platform/login");
 };
 
-// LOGIN POST
-exports.login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
+/* -------------------------
+   LOGIN (PLATFORM ADMIN)
+--------------------------*/
+exports.login = (req, res) => {
+    const { email, password } = req.body;
 
-        // find admin
-        const admin = await PlatformAdmin.findOne({ email });
+    // Simple hardcoded admin (you can move to DB later)
+    if (email === "admin@gmail.com" && password === "admin123") {
 
-        if (!admin) {
-            return res.send("Invalid Email or Password");
-        }
-
-        // check password
-        const isMatch = await bcrypt.compare(password, admin.password);
-
-        if (!isMatch) {
-            return res.send("Invalid Email or Password");
-        }
-
-        // session create
-        req.session.admin = {
-            id: admin._id,
-            email: admin.email
+        req.session.user = {
+            role: "platform_admin"
         };
 
-        res.redirect("/platform/dashboard");
+        return res.redirect("/platform/dashboard");
+    }
+
+    res.send("Invalid Platform Admin Credentials");
+};
+
+/* -------------------------
+   DASHBOARD
+--------------------------*/
+exports.dashboard = async (req, res) => {
+    try {
+        const hospitalCount = await Hospital.countDocuments();
+        const adminCount = await HospitalAdmin.countDocuments();
+
+        res.render("platform/dashboard", {
+            hospitalCount,
+            adminCount
+        });
 
     } catch (error) {
         console.log(error);
-        res.send("Server Error");
+        res.send("Dashboard Error");
     }
 };
 
-// DASHBOARD
-exports.dashboard = (req, res) => {
-    if (!req.session.admin) {
-        return res.redirect("/platform/login");
-    }
-
-    res.render("platform/dashboard");
-};
-
-// LOGOUT
+/* -------------------------
+   LOGOUT
+--------------------------*/
 exports.logout = (req, res) => {
-    req.session.destroy(() => {
+
+    req.session.destroy((err) => {
+
+        if (err) {
+            console.log(err);
+            return res.send("Logout Failed");
+        }
+
         res.redirect("/platform/login");
+
     });
+
 };

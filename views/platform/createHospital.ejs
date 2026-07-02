@@ -3,43 +3,66 @@
 
 <%- include("../partials/header") %>
 
-<body>
+<body style="margin:0; font-family:Arial; background:#f4f6f9;">
 
 <%- include("../partials/sidebar") %>
 
 <div style="margin-left:240px; padding:30px;">
 
-    <h2>Create Hospital</h2>
+    <!-- TOP BAR -->
+    <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
 
-    <form action="/platform/create-hospital" method="POST">
+        <a href="/platform/dashboard" style="
+            background:#34495e;
+            color:white;
+            padding:8px 14px;
+            border-radius:6px;
+            text-decoration:none;">
+            ← Back to Dashboard
+        </a>
 
-        <div>
+        <a href="/platform/view-hospital" style="
+            background:#27ae60;
+            color:white;
+            padding:8px 14px;
+            border-radius:6px;
+            text-decoration:none;">
+            View Hospitals
+        </a>
+
+    </div>
+
+    <div style="background:white; padding:25px; border-radius:10px;">
+
+        <h2>Create Hospital</h2>
+
+        <form action="/platform/create-hospital" method="POST">
+
             <label>Name</label><br>
-            <input type="text" name="name" required>
-        </div>
+            <input type="text" name="name" required style="width:100%;padding:10px;margin:8px 0;"><br>
 
-        <br>
-
-        <div>
             <label>Address</label><br>
-            <input type="text" name="address" required>
-        </div>
+            <input type="text" name="address" required style="width:100%;padding:10px;margin:8px 0;"><br>
 
-        <br>
-
-        <div>
             <label>Status</label><br>
-            <select name="status">
+            <select name="status" style="width:100%;padding:10px;margin:8px 0;">
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
-            </select>
-        </div>
+            </select><br><br>
 
-        <br>
+            <button style="
+                background:#3498db;
+                color:white;
+                padding:10px 20px;
+                border:none;
+                border-radius:6px;
+                cursor:pointer;">
+                Create Hospital
+            </button>
 
-        <button type="submit">Create</button>
+        </form>
 
-    </form>
+    </div>
 
 </div>
 

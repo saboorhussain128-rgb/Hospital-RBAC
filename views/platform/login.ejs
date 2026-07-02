@@ -1,15 +1,21 @@
-<form action="/platform/login" method="POST">
+<!DOCTYPE html>
+<html>
 
-    <div class="form-group">
-        <label>Email</label>
-        <input type="email" name="email" required>
-    </div>
+<body style="font-family:Arial;">
 
-    <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" required>
-    </div>
+<h2>Platform Admin Login</h2>
+
+<form method="POST" action="/platform/login">
+
+    <input type="email" name="email" placeholder="Email" required>
+    <br><br>
+
+    <input type="password" name="password" placeholder="Password" required>
+    <br><br>
 
     <button type="submit">Login</button>
 
 </form>
+
+</body>
+</html>
