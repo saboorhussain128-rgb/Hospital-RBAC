@@ -1,77 +1,151 @@
 const Doctor = require("../models/Doctor");
-const Hospital = require("../models/Hospital");
 
-/* -------------------------
+/* =====================================================
    CREATE DOCTOR PAGE
---------------------------*/
+===================================================== */
+
 exports.createPage = async (req, res) => {
+
     try {
-        const hospitalId = req.session.user.hospital;
 
         res.render("hospital/createDoctor", {
-            hospitalId
+            admin: req.session.user
         });
 
     } catch (error) {
-        console.log(error);
-        res.send("Error loading create doctor page");
+
+        console.log("Create Doctor Page Error:", error);
+
+        res.send("Error loading Create Doctor page.");
+
     }
+
 };
 
-/* -------------------------
+/* =====================================================
    CREATE DOCTOR
---------------------------*/
+===================================================== */
+
 exports.createDoctor = async (req, res) => {
+
     try {
-        const hospitalId = req.session.user.hospital;
+
         const { name, email } = req.body;
 
+        const hospitalId = req.session.user.hospital._id;
+
         await Doctor.create({
+
             hospital: hospitalId,
+
             name,
+
             email
+
         });
 
         res.redirect("/hospital/view-doctor");
 
     } catch (error) {
-        console.log(error);
-        res.send("Error creating doctor");
+
+        console.log("Create Doctor Error:", error);
+
+        res.send("Error creating doctor.");
+
     }
+
 };
 
-/* -------------------------
-   VIEW DOCTORS (FILTER BY HOSPITAL)
---------------------------*/
-exports.viewDoctors = async (req, res) => {
-    try {
-        const hospitalId = req.session.user.hospital;
+/* =====================================================
+   VIEW DOCTORS
+===================================================== */
 
-        const doctors = await Doctor.find({ hospital: hospitalId });
+exports.viewDoctors = async (req, res) => {
+
+    try {
+
+        const hospitalId = req.session.user.hospital._id;
+
+        const doctors = await Doctor.find({
+
+            hospital: hospitalId
+
+        }).sort({
+
+            createdAt: -1
+
+        });
 
         res.render("hospital/viewDoctor", {
+
             doctors
+
         });
 
     } catch (error) {
-        console.log(error);
-        res.send("Error fetching doctors");
+
+        console.log("View Doctors Error:", error);
+
+        res.send("Error fetching doctors.");
+
     }
+
 };
 
-/* -------------------------
-   DELETE DOCTOR
---------------------------*/
-exports.deleteDoctor = async (req, res) => {
+/* =====================================================
+   DELETE DOCTOR PAGE
+===================================================== */
+
+exports.deleteDoctorPage = async (req, res) => {
+
     try {
-        const { id } = req.params;
 
-        await Doctor.findByIdAndDelete(id);
+        const hospitalId = req.session.user.hospital._id;
 
-        res.redirect("/hospital/view-doctor");
+        const doctors = await Doctor.find({
+
+            hospital: hospitalId
+
+        }).sort({
+
+            createdAt: -1
+
+        });
+
+        res.render("hospital/deleteDoctor", {
+
+            doctors
+
+        });
 
     } catch (error) {
-        console.log(error);
-        res.send("Error deleting doctor");
+
+        console.log("Delete Doctor Page Error:", error);
+
+        res.send("Error loading delete doctor page.");
+
     }
+
+};
+
+/* =====================================================
+   DELETE DOCTOR
+===================================================== */
+
+exports.deleteDoctor = async (req, res) => {
+
+    try {
+
+        await Doctor.findByIdAndDelete(req.params.id);
+
+        res.redirect("/hospital/delete-doctor");
+
+    } catch (error) {
+
+        console.log("Delete Doctor Error:", error);
+
+        res.send("Error deleting doctor.");
+
+    }
+
 };

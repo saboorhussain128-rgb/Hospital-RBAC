@@ -1,70 +1,155 @@
 const Hospital = require("../models/Hospital");
-const HospitalAdmin = require("../models/HospitalAdmin");
-const bcrypt = require("bcryptjs");
 
-/* -------------------------
-   LOGIN PAGE
---------------------------*/
-exports.loginPage = (req, res) => {
-    res.render("hospital/login");
+/* =====================================================
+   CREATE HOSPITAL PAGE
+===================================================== */
+
+exports.createPage = (req, res) => {
+
+    res.render("platform/createHospital");
+
 };
 
-/* -------------------------
-   LOGIN (FIXED RBAC SAFE)
---------------------------*/
-exports.login = async (req, res) => {
+/* =====================================================
+   CREATE HOSPITAL
+===================================================== */
+
+exports.createHospital = async (req, res) => {
+
     try {
-        const { email, password } = req.body;
 
-        const admin = await HospitalAdmin.findOne({ email });
+        const { name, address, status } = req.body;
 
-        if (!admin) {
-            return res.send("Invalid Hospital Admin Credentials");
-        }
+        await Hospital.create({
 
-        const isMatch = await bcrypt.compare(password, admin.password);
+            name,
+            address,
+            status
 
-        if (!isMatch) {
-            return res.send("Invalid Hospital Admin Credentials");
-        }
+        });
 
-        // ✅ FIX: always ensure permissions array exists
-        req.session.hospitalAdmin = {
-            id: admin._id,
-            name: admin.name,
-            email: admin.email,
-            hospital: admin.hospital,
-            permissions: admin.permissions || []
-        };
-
-        return res.redirect("/hospital/dashboard");
+        res.redirect("/platform/view-hospital");
 
     } catch (error) {
+
         console.log(error);
-        return res.send("Login Failed");
+
+        res.send("Error creating hospital");
+
     }
+
 };
 
-/* -------------------------
-   DASHBOARD
---------------------------*/
-exports.dashboard = (req, res) => {
-    res.render("hospital/dashboard", {
-        admin: req.session.hospitalAdmin
-    });
+/* =====================================================
+   VIEW HOSPITALS
+===================================================== */
+
+exports.viewHospitals = async (req, res) => {
+
+    try {
+
+        const hospitals = await Hospital.find().sort({
+
+            createdAt: -1
+
+        });
+
+        res.render("platform/viewHospital", {
+
+            hospitals
+
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.send("Error fetching hospitals");
+
+    }
+
 };
 
+/* =====================================================
+   EDIT HOSPITAL PAGE
+===================================================== */
 
-/* -------------------------
-   LOGOUT
---------------------------*/
-exports.logout = (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.log("Logout Error:", err);
-            return res.send("Error logging out");
-        }
+exports.editPage = async (req, res) => {
 
-        res.redirect("/hospital/login");
-    });
+    try {
+
+        const hospital = await Hospital.findById(req.params.id);
+
+        res.render("platform/editHospital", {
+
+            hospital
+
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.send("Error loading edit page");
+
+    }
+
+};
+
+/* =====================================================
+   UPDATE HOSPITAL
+===================================================== */
+
+exports.updateHospital = async (req, res) => {
+
+    try {
+
+        const { name, address, status } = req.body;
+
+        await Hospital.findByIdAndUpdate(
+
+            req.params.id,
+
+            {
+
+                name,
+                address,
+                status
+
+            }
+
+        );
+
+        res.redirect("/platform/view-hospital");
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.send("Error updating hospital");
+
+    }
+
+};
+
+/* =====================================================
+   DELETE HOSPITAL
+===================================================== */
+
+exports.deleteHospital = async (req, res) => {
+
+    try {
+
+        await Hospital.findByIdAndDelete(req.params.id);
+
+        res.redirect("/platform/view-hospital");
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.send("Error deleting hospital");
+
+    }
+
 };
