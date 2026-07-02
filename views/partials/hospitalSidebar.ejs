@@ -5,42 +5,66 @@ background:#2c3e50;
 position:fixed;
 left:0;
 top:0;
-padding-top:30px;">
+overflow:auto;">
 
-    <h2 style="color:white;text-align:center;">
+    <h2 style="
+    color:white;
+    text-align:center;
+    padding:20px 10px;
+    border-bottom:1px solid rgba(255,255,255,.2);">
+
         Hospital Admin
+
     </h2>
 
-    <% if (session.user.permissions.includes("create_doctor")) { %>
+    <% if(session.user && session.user.permissions.includes("create_doctor")){ %>
 
         <a href="/hospital/create-doctor"
-           style="display:block;padding:15px;color:white;text-decoration:none;">
-            Create Doctor
+           style="
+           display:block;
+           padding:15px 20px;
+           color:white;
+           text-decoration:none;">
+            ➕ Create Doctor
         </a>
 
     <% } %>
 
-    <% if (session.user.permissions.includes("view_doctor")) { %>
+    <% if(session.user && session.user.permissions.includes("view_doctor")){ %>
 
         <a href="/hospital/view-doctor"
-           style="display:block;padding:15px;color:white;text-decoration:none;">
-            View Doctor
+           style="
+           display:block;
+           padding:15px 20px;
+           color:white;
+           text-decoration:none;">
+            👨‍⚕️ View Doctor
         </a>
 
     <% } %>
 
-    <% if (session.user.permissions.includes("delete_doctor")) { %>
+    <% if(session.user && session.user.permissions.includes("delete_doctor")){ %>
 
         <a href="/hospital/delete-doctor"
-           style="display:block;padding:15px;color:white;text-decoration:none;">
-            Delete Doctor
+           style="
+           display:block;
+           padding:15px 20px;
+           color:white;
+           text-decoration:none;">
+            ❌ Delete Doctor
         </a>
 
     <% } %>
 
+    <hr style="border-color:rgba(255,255,255,.2);">
+
     <a href="/logout"
-       style="display:block;padding:15px;color:white;text-decoration:none;">
-        Logout
+       style="
+       display:block;
+       padding:15px 20px;
+       color:white;
+       text-decoration:none;">
+        🚪 Logout
     </a>
 
 </div>
