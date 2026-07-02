@@ -6,80 +6,119 @@ const session = require("express-session");
 
 const connectDB = require("./config/db");
 
-const app = express(); // ⭐ THIS MUST COME BEFORE app.get()
+const app = express();
 
-/* -------------------------
-   DB CONNECTION
---------------------------*/
+/* =====================================================
+   DATABASE CONNECTION
+===================================================== */
+
 connectDB();
 
-/* -------------------------
+/* =====================================================
    MIDDLEWARES
---------------------------*/
+===================================================== */
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(
+
     session({
-        secret: process.env.SESSION_SECRET || "mySecretKey",
+
+        secret: process.env.SESSION_SECRET,
+
         resave: false,
+
         saveUninitialized: false,
+
         cookie: {
+
             secure: false,
+
             maxAge: 1000 * 60 * 60
+
         }
+
     })
+
 );
 
-/* -------------------------
-   STATIC FILES
---------------------------*/
-app.use(express.static(path.join(__dirname, "public")));
+/* =====================================================
+   MAKE SESSION AVAILABLE TO ALL EJS FILES
+===================================================== */
 
-/* -------------------------
-   VIEW ENGINE
---------------------------*/
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.use((req, res, next) => {
 
-/* -------------------------
-   ROUTES
---------------------------*/
+    res.locals.session = req.session;
 
-// HOME → Platform login
-app.get("/", (req, res) => {
-    res.redirect("/platform/login");
+    next();
+
 });
 
-/* -------------------------
+/* =====================================================
+   STATIC FILES
+===================================================== */
+
+app.use(express.static(path.join(__dirname, "public")));
+
+/* =====================================================
+   VIEW ENGINE
+===================================================== */
+
+app.set("view engine", "ejs");
+
+app.set("views", path.join(__dirname, "views"));
+
+/* =====================================================
+   HOME
+===================================================== */
+
+app.get("/", (req, res) => {
+
+    res.redirect("/platform/login");
+
+});
+
+/* =====================================================
    PLATFORM ROUTES
---------------------------*/
+===================================================== */
+
 const platformRoutes = require("./routes/platformRoutes");
+
 app.use("/platform", platformRoutes);
 
-/* -------------------------
-   HOSPITAL AUTH ROUTES
---------------------------*/
+/* =====================================================
+   HOSPITAL LOGIN ROUTES
+===================================================== */
+
 const hospitalAuthRoutes = require("./routes/hospitalAuthRoutes");
+
 app.use("/hospital", hospitalAuthRoutes);
 
-/* -------------------------
-   HOSPITAL FEATURES ROUTES
---------------------------*/
+/* =====================================================
+   HOSPITAL ROUTES
+===================================================== */
+
 const hospitalRoutes = require("./routes/hospitalRoutes");
+
 app.use("/hospital", hospitalRoutes);
 
-/* -------------------------
-   PLATFORM HOSPITAL ADMIN ROUTES
---------------------------*/
+/* =====================================================
+   HOSPITAL ADMIN ROUTES
+===================================================== */
+
 const hospitalAdminRoutes = require("./routes/hospitalAdminRoutes");
+
 app.use("/platform", hospitalAdminRoutes);
 
-/* -------------------------
-   SERVER START
---------------------------*/
+/* =====================================================
+   SERVER
+===================================================== */
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+
+    console.log(`Server Running on Port ${PORT}`);
+
 });

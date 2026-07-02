@@ -12,6 +12,7 @@ exports.platformLoginPage = (req, res) => {
    PLATFORM LOGIN
 --------------------------*/
 exports.platformLogin = (req, res) => {
+
     const { email, password } = req.body;
 
     if (email === "admin@gmail.com" && password === "admin123") {
@@ -23,7 +24,7 @@ exports.platformLogin = (req, res) => {
         return res.redirect("/platform/dashboard");
     }
 
-    res.send("Invalid credentials");
+    res.send("Invalid Platform Admin Credentials");
 };
 
 /* -------------------------
@@ -34,48 +35,70 @@ exports.hospitalLoginPage = (req, res) => {
 };
 
 /* -------------------------
-   HOSPITAL LOGIN (SECURE)
+   HOSPITAL LOGIN
 --------------------------*/
 exports.hospitalLogin = async (req, res) => {
+
     try {
+
         const { email, password } = req.body;
 
-        const admin = await HospitalAdmin.findOne({ email });
+        const admin = await HospitalAdmin
+            .findOne({ email })
+            .populate("hospital");
 
         if (!admin) {
-            return res.send("Invalid credentials");
+            return res.send("Invalid Email or Password");
         }
 
         const isMatch = await bcrypt.compare(password, admin.password);
 
         if (!isMatch) {
-            return res.send("Invalid credentials");
+            return res.send("Invalid Email or Password");
         }
 
         req.session.user = {
+
             id: admin._id,
-            role: "hospital_admin",
-            hospital: admin.hospital
+
+            role: admin.role,
+
+            hospital: admin.hospital,
+
+            name: admin.name,
+
+            permissions: admin.permissions
+
         };
 
         res.redirect("/hospital/dashboard");
 
     } catch (error) {
+
         console.log(error);
-        res.send("Login error");
+        res.send("Login Error");
+
     }
+
 };
 
 /* -------------------------
    LOGOUT
 --------------------------*/
 exports.logout = (req, res) => {
+
     req.session.destroy((err) => {
+
         if (err) {
-            console.log("Logout Error:", err);
-            return res.send("Error logging out");
+
+            console.log(err);
+
+            return res.send("Logout Failed");
+
         }
 
         res.redirect("/hospital/login");
+
     });
+
 };
