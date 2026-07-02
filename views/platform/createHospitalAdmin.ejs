@@ -3,64 +3,124 @@
 
 <%- include("../partials/header") %>
 
-<body style="margin:0; font-family:Arial; background:#f4f6f9;">
+<body style="margin:0;font-family:Arial;background:#f4f6f9;">
 
 <%- include("../partials/sidebar") %>
 
-<div style="margin-left:240px; padding:30px;">
+<div style="margin-left:240px;padding:30px;">
 
-    <!-- TOP BAR -->
-    <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+    <!-- Top Bar -->
+    <div style="display:flex;justify-content:space-between;margin-bottom:20px;">
 
-        <a href="/platform/dashboard" style="
-            background:#34495e;
-            color:white;
-            padding:8px 14px;
-            border-radius:6px;
-            text-decoration:none;">
+        <a href="/platform/dashboard"
+           style="background:#34495e;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;">
             ← Back to Dashboard
         </a>
 
-        <a href="/platform/view-hospital-admin" style="
-            background:#9b59b6;
-            color:white;
-            padding:8px 14px;
-            border-radius:6px;
-            text-decoration:none;">
-            View Admins
+        <a href="/platform/view-hospital-admin"
+           style="background:#8e44ad;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;">
+            View Hospital Admins
         </a>
 
     </div>
 
-    <div style="background:white; padding:25px; border-radius:10px;">
+    <div style="background:#fff;padding:30px;border-radius:10px;box-shadow:0 0 8px rgba(0,0,0,.1);">
 
         <h2>Create Hospital Admin</h2>
 
-        <form method="POST" action="/platform/create-hospital-admin">
+        <form action="/platform/create-hospital-admin" method="POST">
 
-            <select name="hospital" style="width:100%;padding:10px;margin:10px 0;">
-                <% hospitals.forEach(h => { %>
-                    <option value="<%= h._id %>"><%= h.name %></option>
+            <label><b>Select Hospital</b></label>
+
+            <select name="hospital"
+                    required
+                    style="width:100%;padding:10px;margin-top:8px;margin-bottom:20px;">
+
+                <option value="">Select Hospital</option>
+
+                <% hospitals.forEach(hospital=>{ %>
+
+                    <option value="<%= hospital._id %>">
+                        <%= hospital.name %>
+                    </option>
+
                 <% }) %>
+
             </select>
 
-            <input type="text" name="name" placeholder="Admin Name"
-                   style="width:100%;padding:10px;margin:10px 0;">
+            <label><b>Hospital Admin Name</b></label>
 
-            <input type="email" name="email" placeholder="Email"
-                   style="width:100%;padding:10px;margin:10px 0;">
+            <input
+                type="text"
+                name="name"
+                required
+                placeholder="Enter Hospital Admin Name"
+                style="width:100%;padding:10px;margin-top:8px;margin-bottom:20px;">
 
-            <input type="password" name="password" placeholder="Password"
-                   style="width:100%;padding:10px;margin:10px 0;">
+            <label><b>Email</b></label>
 
-            <button style="
-                background:#9b59b6;
-                color:white;
-                padding:10px 20px;
-                border:none;
-                border-radius:6px;
-                cursor:pointer;">
-                Create Admin
+            <input
+                type="email"
+                name="email"
+                required
+                placeholder="Enter Email"
+                style="width:100%;padding:10px;margin-top:8px;margin-bottom:20px;">
+
+            <label><b>Password</b></label>
+
+            <input
+                type="password"
+                name="password"
+                required
+                placeholder="Enter Password"
+                style="width:100%;padding:10px;margin-top:8px;margin-bottom:25px;">
+
+            <hr>
+
+            <h3>Assign Permissions</h3>
+
+            <p>Select the permissions for this Hospital Admin.</p>
+
+            <div style="margin-top:20px;">
+
+                <label style="display:block;margin-bottom:12px;">
+
+                    <input type="checkbox"
+                           name="permissions"
+                           value="create_doctor">
+
+                    Create Doctor
+
+                </label>
+
+                <label style="display:block;margin-bottom:12px;">
+
+                    <input type="checkbox"
+                           name="permissions"
+                           value="view_doctor">
+
+                    View Doctor
+
+                </label>
+
+                <label style="display:block;margin-bottom:20px;">
+
+                    <input type="checkbox"
+                           name="permissions"
+                           value="delete_doctor">
+
+                    Delete Doctor
+
+                </label>
+
+            </div>
+
+            <button
+                type="submit"
+                style="background:#8e44ad;color:#fff;border:none;padding:12px 25px;border-radius:6px;cursor:pointer;">
+
+                Create Hospital Admin
+
             </button>
 
         </form>

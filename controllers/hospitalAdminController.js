@@ -15,23 +15,33 @@ exports.createPage = async (req, res) => {
     }
 };
 
-/* -------------------------
-   CREATE ADMIN
---------------------------*/
 exports.createAdmin = async (req, res) => {
+
     try {
-        const { hospital, name, email, password } = req.body;
+
+        const {
+            hospital,
+            name,
+            email,
+            password
+        } = req.body;
 
         let permissions = req.body.permissions || [];
 
+        // Convert single checkbox selection to array
         if (!Array.isArray(permissions)) {
             permissions = [permissions];
+        }
+
+        // At least one permission must be selected
+        if (permissions.length === 0) {
+            return res.send("Please select at least one permission.");
         }
 
         const exists = await HospitalAdmin.findOne({ email });
 
         if (exists) {
-            return res.send("Admin already exists");
+            return res.send("Hospital Admin already exists.");
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -47,9 +57,12 @@ exports.createAdmin = async (req, res) => {
         res.redirect("/platform/view-hospital-admin");
 
     } catch (error) {
-        console.log("Create Admin Error:", error);
-        res.send("Error creating admin");
+
+        console.log(error);
+        res.send("Error creating Hospital Admin.");
+
     }
+
 };
 
 /* -------------------------
