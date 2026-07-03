@@ -3,51 +3,58 @@
 
 <%- include("../partials/header") %>
 
-<body style="margin:0;font-family:Arial;background:#f4f6f9;">
+<body style="margin:0;background:#f4f6f9;">
 
 <%- include("../partials/sidebar") %>
 
-<div style="margin-left:240px;padding:30px;">
+<div class="page">
 
-    <!-- TOP BAR -->
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <!-- ================= PAGE HEADER ================= -->
 
-        <a href="/platform/dashboard"
-           style="background:#34495e;
-                  color:white;
-                  padding:10px 18px;
-                  border-radius:6px;
-                  text-decoration:none;">
-            ← Back to Dashboard
-        </a>
+    <div class="page-header">
 
-        <a href="/platform/create-hospital-admin"
-           style="background:#9b59b6;
-                  color:white;
-                  padding:10px 18px;
-                  border-radius:6px;
-                  text-decoration:none;">
-            + Create Hospital Admin
-        </a>
+        <div class="page-title">
+
+            <h1>Hospital Admin List</h1>
+
+            <p>
+                Manage all Hospital Administrators and their assigned permissions.
+            </p>
+
+        </div>
+
+        <div>
+
+            <a href="/platform/dashboard" class="btn btn-gray">
+                ← Dashboard
+            </a>
+
+            <a href="/platform/create-hospital-admin"
+               class="btn btn-green"
+               style="margin-left:10px;">
+                + Create Hospital Admin
+            </a>
+
+        </div>
 
     </div>
 
-    <div style="background:white;padding:25px;border-radius:10px;">
+    <!-- ================= TABLE CARD ================= -->
 
-        <h2>Hospital Admin List</h2>
+    <div class="card">
 
-        <table style="width:100%;border-collapse:collapse;margin-top:20px;">
+        <table class="table">
 
             <thead>
 
-                <tr style="background:#ecf0f1;">
+                <tr>
 
-                    <th style="padding:12px;">S.No</th>
+                    <th>S.No</th>
                     <th>Hospital</th>
                     <th>Admin Name</th>
                     <th>Email</th>
                     <th>Permissions</th>
-                    <th>Action</th>
+                    <th>Actions</th>
 
                 </tr>
 
@@ -55,55 +62,64 @@
 
             <tbody>
 
-            <% if (admins.length > 0) { %>
+            <% if(admins.length > 0){ %>
 
                 <% admins.forEach((admin,index)=>{ %>
 
-                    <tr style="border-bottom:1px solid #ddd;">
+                <tr>
 
-                        <td style="padding:12px;">
-                            <%= index + 1 %>
-                        </td>
+                    <td><%= index+1 %></td>
 
-                        <td>
+                    <td>
+
+                        <strong>
+
                             <%= admin.hospital ? admin.hospital.name : "-" %>
-                        </td>
 
-                        <td>
-                            <%= admin.name %>
-                        </td>
+                        </strong>
 
-                        <td>
-                            <%= admin.email %>
-                        </td>
+                    </td>
 
-                        <td>
+                    <td>
 
-                            <% if(admin.permissions.length){ %>
+                        <%= admin.name %>
 
-                                <%= admin.permissions.join(", ") %>
+                    </td>
 
-                            <% } else { %>
+                    <td>
 
-                                No Permissions
+                        <%= admin.email %>
 
-                            <% } %>
+                    </td>
 
-                        </td>
+                    <td>
 
-                        <td>
+                        <span class="status active">
 
-                            <a href="/platform/delete-hospital-admin/<%= admin._id %>"
-                               onclick="return confirm('Delete this Hospital Admin?')"
-                               style="color:red;text-decoration:none;">
+                            <%= admin.permissions ? admin.permissions.length : 0 %>
 
-                                Delete
+                            Permission(s)
 
-                            </a>
+                        </span>
 
-                        </td>
+                    </td>
 
-                    </tr>
+                    <td>
+
+                        <a href="/platform/edit-hospital-admin/<%= admin._id %>"
+                           class="action-btn edit-btn">
+                            Edit
+                        </a>
+
+                        <a href="/platform/delete-hospital-admin/<%= admin._id %>"
+                           onclick="return confirm('Delete this Hospital Admin?')"
+                           class="action-btn delete-btn">
+                            Delete
+                        </a>
+
+                    </td>
+
+                </tr>
 
                 <% }) %>
 
@@ -111,10 +127,9 @@
 
                 <tr>
 
-                    <td colspan="6"
-                        style="text-align:center;padding:20px;">
+                    <td colspan="6" class="empty">
 
-                        No Hospital Admins Found
+                        No Hospital Admins Found.
 
                     </td>
 
@@ -125,6 +140,13 @@
             </tbody>
 
         </table>
+
+        <div class="table-footer">
+
+            Total Hospital Admins :
+            <strong><%= admins.length %></strong>
+
+        </div>
 
     </div>
 
