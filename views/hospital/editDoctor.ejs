@@ -3,27 +3,56 @@
 
 <%- include("../partials/header") %>
 
-<body style="margin:0;font-family:Arial;background:#eef1f7;">
+<body style="margin:0;background:#f4f6f9;">
 
 <div style="display:flex;min-height:100vh;">
 
-    <!-- Sidebar -->
+    <!-- ================= SIDEBAR ================= -->
 
-    <div style="width:240px;background:#1f2d3d;color:white;">
+    <div style="
+        width:220px;
+        background:#1f2a38;
+        color:white;
+        padding:20px;
+        box-shadow:2px 0 10px rgba(0,0,0,.15);
+    ">
 
-        <div style="padding:30px;font-size:34px;font-weight:bold;border-bottom:1px solid rgba(255,255,255,.15);">
+        <h2 style="text-align:center;margin-bottom:25px;">
             Hospital Admin
-        </div>
+        </h2>
 
-        <div style="padding:20px;">
+        <hr style="border:.5px solid rgba(255,255,255,.2);">
+
+        <div style="
+            margin-top:25px;
+            display:flex;
+            flex-direction:column;
+            gap:15px;
+        ">
 
             <a href="/hospital/dashboard"
-               style="display:block;background:#34495e;color:white;text-decoration:none;padding:15px;border-radius:8px;margin-bottom:15px;text-align:center;">
+               style="
+                    background:#5dade2;
+                    color:#1f2a38;
+                    text-decoration:none;
+                    padding:12px;
+                    border-radius:8px;
+                    text-align:center;
+                    font-weight:bold;
+               ">
                 Dashboard
             </a>
 
             <a href="/hospital/logout"
-               style="display:block;background:#e74c3c;color:white;text-decoration:none;padding:15px;border-radius:8px;text-align:center;">
+               style="
+                    background:#e74c3c;
+                    color:white;
+                    text-decoration:none;
+                    padding:12px;
+                    border-radius:8px;
+                    text-align:center;
+                    font-weight:bold;
+               ">
                 Logout
             </a>
 
@@ -31,47 +60,90 @@
 
     </div>
 
-    <!-- Content -->
+    <!-- ================= CONTENT ================= -->
 
-    <div style="flex:1;padding:40px;">
+    <div class="page">
 
-        <div style="display:flex;justify-content:space-between;margin-bottom:25px;">
+        <div class="page-header">
 
-            <a href="/hospital/view-doctor"
-               style="background:#34495e;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;">
-                ← View Doctors
-            </a>
+            <div class="page-title">
+
+                <h1>Edit Doctor</h1>
+
+                <p>
+                    Update doctor information.
+                </p>
+
+            </div>
+
+            <div>
+
+                <a href="/hospital/view-doctor" class="btn btn-gray">
+                    ← Doctor List
+                </a>
+
+            </div>
 
         </div>
 
-        <div style="background:white;padding:30px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.12);">
+        <div class="card">
 
-            <h2>Edit Doctor</h2>
+            <form
+                action="/hospital/edit-doctor/<%= doctor._id %>"
+                method="POST"
+            >
 
-            <form action="/hospital/edit-doctor/<%= doctor._id %>" method="POST">
+                <div style="margin-bottom:20px;">
 
-                <label><b>Doctor Name</b></label>
+                    <label style="font-weight:bold;">
+                        Doctor Name
+                    </label>
 
-                <input
-                    type="text"
-                    name="name"
-                    value="<%= doctor.name %>"
-                    required
-                    style="width:100%;padding:12px;margin:10px 0 20px 0;"
-                >
+                    <input
+                        type="text"
+                        name="name"
+                        value="<%= doctor.name %>"
+                        required
+                        style="
+                            width:100%;
+                            padding:14px;
+                            margin-top:8px;
+                            border:1px solid #ddd;
+                            border-radius:8px;
+                            font-size:15px;
+                        "
+                    >
 
-                <label><b>Email</b></label>
+                </div>
 
-                <input
-                    type="email"
-                    name="email"
-                    value="<%= doctor.email %>"
-                    required
-                    style="width:100%;padding:12px;margin:10px 0 25px 0;"
-                >
+                <div style="margin-bottom:30px;">
+
+                    <label style="font-weight:bold;">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        value="<%= doctor.email %>"
+                        required
+                        style="
+                            width:100%;
+                            padding:14px;
+                            margin-top:8px;
+                            border:1px solid #ddd;
+                            border-radius:8px;
+                            font-size:15px;
+                        "
+                    >
+
+                </div>
 
                 <button
-                    style="background:#3498db;color:white;border:none;padding:14px 25px;border-radius:8px;cursor:pointer;">
+                    type="submit"
+                    class="btn btn-blue"
+                    style="border:none;cursor:pointer;"
+                >
                     Update Doctor
                 </button>
 
