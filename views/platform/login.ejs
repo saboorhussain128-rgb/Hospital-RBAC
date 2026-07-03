@@ -1,21 +1,158 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
-<body style="font-family:Arial;">
+<head>
+    <meta charset="UTF-8">
+    <title>Platform Admin Login</title>
 
-<h2>Platform Admin Login</h2>
+    <style>
 
-<form method="POST" action="/platform/login">
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
 
-    <input type="email" name="email" placeholder="Email" required>
-    <br><br>
+        body{
+            background:#f4f7fb;
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
 
-    <input type="password" name="password" placeholder="Password" required>
-    <br><br>
+        .login-card{
 
-    <button type="submit">Login</button>
+            width:420px;
+            background:#fff;
+            padding:40px;
+            border-radius:12px;
+            box-shadow:0 10px 25px rgba(0,0,0,.08);
 
-</form>
+        }
+
+        h1{
+
+            text-align:center;
+            color:#1f2937;
+            margin-bottom:10px;
+            font-size:28px;
+
+        }
+
+        p{
+
+            text-align:center;
+            color:#6b7280;
+            margin-bottom:35px;
+
+        }
+
+        label{
+
+            display:block;
+            margin-bottom:8px;
+            font-weight:bold;
+            color:#374151;
+
+        }
+
+        input{
+
+            width:100%;
+            padding:14px;
+            border:1px solid #d1d5db;
+            border-radius:8px;
+            margin-bottom:20px;
+            font-size:15px;
+
+        }
+
+        input:focus{
+
+            outline:none;
+            border-color:#2563eb;
+
+        }
+
+        button{
+
+            width:100%;
+            padding:14px;
+            background:#2563eb;
+            color:#fff;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+            font-weight:bold;
+            transition:.3s;
+
+        }
+
+        button:hover{
+
+            background:#1d4ed8;
+
+        }
+
+        .footer{
+
+            text-align:center;
+            margin-top:25px;
+            color:#9ca3af;
+            font-size:13px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="login-card">
+
+    <h1>Hospital RBAC</h1>
+
+    <p>Platform Administrator Login</p>
+
+    <form action="/platform/login" method="POST">
+
+        <label>Email</label>
+
+        <input
+            type="email"
+            name="email"
+            placeholder="Enter Email"
+            required
+        >
+
+        <label>Password</label>
+
+        <input
+            type="password"
+            name="password"
+            placeholder="Enter Password"
+            required
+        >
+
+        <button type="submit">
+
+            Login
+
+        </button>
+
+    </form>
+
+    <div class="footer">
+
+        Hospital Role Based Access Control System
+
+    </div>
+
+</div>
 
 </body>
 </html>
