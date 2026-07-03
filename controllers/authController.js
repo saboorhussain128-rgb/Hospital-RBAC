@@ -23,10 +23,13 @@ exports.platformLogin = (req, res) => {
     ) {
 
         req.session.user = {
+
             role: "platform_admin"
+
         };
 
         return res.redirect("/platform/dashboard");
+
     }
 
     res.send("Invalid Platform Admin Credentials");
@@ -38,7 +41,9 @@ exports.platformLogin = (req, res) => {
 ===================================================== */
 
 exports.hospitalLoginPage = (req, res) => {
+
     res.render("hospital/login");
+
 };
 
 /* =====================================================
@@ -52,19 +57,27 @@ exports.hospitalLogin = async (req, res) => {
         const { email, password } = req.body;
 
         const admin = await HospitalAdmin
-            .findOne({ email });
+            .findOne({ email })
+            .populate("hospital");
 
         if (!admin) {
+
             return res.send("Invalid Email or Password");
+
         }
 
         const match = await bcrypt.compare(
+
             password,
+
             admin.password
+
         );
 
         if (!match) {
+
             return res.send("Invalid Email or Password");
+
         }
 
         req.session.user = {
@@ -73,7 +86,9 @@ exports.hospitalLogin = async (req, res) => {
 
             role: "hospital_admin",
 
-            hospital: admin.hospital,
+            hospital: admin.hospital._id,
+
+            hospitalName: admin.hospital.name,
 
             name: admin.name,
 

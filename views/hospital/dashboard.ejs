@@ -3,52 +3,58 @@
 
 <%- include("../partials/header") %>
 
-<body style="margin:0;font-family:Arial;background:#eef1f7;">
+<body style="margin:0;background:#f4f6f9;">
 
 <div style="display:flex;min-height:100vh;">
 
     <!-- ================= SIDEBAR ================= -->
 
     <div style="
-        width:240px;
-        background:#1f2d3d;
+        width:220px;
+        background:#1f2a38;
         color:white;
-        display:flex;
-        flex-direction:column;
+        padding:20px;
+        box-shadow:2px 0 10px rgba(0,0,0,.15);
     ">
 
-        <div style="
-            padding:30px;
-            font-size:34px;
-            font-weight:bold;
-            border-bottom:1px solid rgba(255,255,255,.15);
+        <h2 style="
+            text-align:center;
+            margin-bottom:25px;
         ">
             Hospital Admin
-        </div>
+        </h2>
 
-        <div style="padding:20px;">
+        <hr style="border:.5px solid rgba(255,255,255,.2);">
+
+        <div style="
+            margin-top:25px;
+            display:flex;
+            flex-direction:column;
+            gap:15px;
+        ">
 
             <div style="
-                background:#34495e;
-                padding:15px;
+                background:#5dade2;
+                color:#1f2a38;
+                padding:12px;
                 border-radius:8px;
-                margin-bottom:15px;
-                font-size:18px;
+                text-align:center;
+                font-weight:bold;
+                font-size:17px;
             ">
                 Dashboard
             </div>
 
             <a href="/hospital/logout"
                style="
-                display:block;
-                text-align:center;
                 background:#e74c3c;
                 color:white;
                 text-decoration:none;
-                padding:14px;
+                padding:12px;
                 border-radius:8px;
-                font-size:18px;
-               ">
+                text-align:center;
+                font-weight:bold;
+            ">
                 Logout
             </a>
 
@@ -58,98 +64,141 @@
 
     <!-- ================= CONTENT ================= -->
 
-    <div style="flex:1;padding:40px;">
+    <div style="flex:1;padding:35px;">
 
-        <h1 style="margin-top:0;">
-            Hospital Admin Dashboard
-        </h1>
+        <!-- Header -->
 
-        <hr>
+        <div class="card" style="text-align:center;margin-bottom:30px;">
+
+            <h1 style="margin-bottom:10px;">
+                Hospital Admin
+            </h1>
+
+            <p style="color:#666;">
+                Welcome to the Hospital Management Dashboard
+            </p>
+
+        </div>
+
+        <!-- Statistics -->
 
         <div style="
             display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+            grid-template-columns:repeat(2,1fr);
             gap:25px;
-            margin-top:40px;
+            margin-bottom:35px;
         ">
 
-            <!-- CREATE DOCTOR -->
+            <div class="card" style="text-align:center;">
 
-            <a href="/hospital/create-doctor"
-               style="
-                text-decoration:none;
-                color:white;
-               ">
+                <div style="font-size:42px;">🩺</div>
 
-                <div style="
-                    background:#3498db;
-                    padding:40px;
-                    border-radius:12px;
-                    text-align:center;
-                    font-size:24px;
-                    font-weight:bold;
-                    box-shadow:0 3px 10px rgba(0,0,0,.15);
+                <h3 style="margin:15px 0;">
+                    Doctors
+                </h3>
+
+                <h1 style="color:#3498db;">
+                    <%= doctorCount || 0 %>
+                </h1>
+
+            </div>
+
+            <div class="card" style="text-align:center;">
+
+                <div style="font-size:42px;">🏥</div>
+
+                <h3 style="margin:15px 0;">
+                    Hospital
+                </h3>
+
+                <h2 style="color:#27ae60;">
+                    <%= hospitalName || "Hospital" %>
+                </h2>
+
+            </div>
+
+        </div>
+
+        <!-- Quick Actions -->
+
+        <div class="card">
+
+            <h2 style="
+                text-align:center;
+                margin-bottom:25px;
+            ">
+                Quick Actions
+            </h2>
+
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(2,1fr);
+                gap:25px;
+            ">
+
+                <a href="/hospital/create-doctor"
+                   style="text-decoration:none;color:inherit;">
+
+                    <div style="
+                        border:1px solid #ecf0f1;
+                        border-radius:12px;
+                        padding:30px;
+                        text-align:center;
+                    ">
+
+                        <div style="font-size:42px;">➕</div>
+
+                        <h3>Create Doctor</h3>
+
+                    </div>
+
+                </a>
+
+                <a href="/hospital/view-doctor"
+                   style="text-decoration:none;color:inherit;">
+
+                    <div style="
+                        border:1px solid #ecf0f1;
+                        border-radius:12px;
+                        padding:30px;
+                        text-align:center;
+                    ">
+
+                        <div style="font-size:42px;">📋</div>
+
+                        <h3>View Doctors</h3>
+
+                    </div>
+
+                </a>
+
+                <a href="/hospital/view-doctor"
+                   style="
+                    grid-column:1 / span 2;
+                    text-decoration:none;
+                    color:inherit;
                 ">
 
-                    <br><br>
+                    <div style="
+                        border:1px solid #ecf0f1;
+                        border-radius:12px;
+                        padding:30px;
+                        text-align:center;
+                    ">
 
-                    Create Doctor
+                        <div style="font-size:42px;">🗑️</div>
 
-                </div>
+                        <h3>Delete Doctor</h3>
 
-            </a>
+                        <p style="color:#777;">
+                            Select a doctor from the list to delete.
+                        </p>
 
-            <!-- VIEW DOCTOR -->
+                    </div>
 
-            <a href="/hospital/view-doctor"
-               style="
-                text-decoration:none;
-                color:white;
-               ">
+                </a>
 
-                <div style="
-                    background:#27ae60;
-                    padding:40px;
-                    border-radius:12px;
-                    text-align:center;
-                    font-size:24px;
-                    font-weight:bold;
-                    box-shadow:0 3px 10px rgba(0,0,0,.15);
-                ">
-
-                    <br><br>
-
-                    View Doctors
-
-                </div>
-
-            </a>
-
-            <!-- DELETE DOCTOR -->
-
-            <a href="/hospital/view-doctor"
-               style="
-                text-decoration:none;
-                color:white;
-               ">
-
-                <div style="
-                    background:#e74c3c;
-                    padding:40px;
-                    border-radius:12px;
-                    text-align:center;
-                    font-size:24px;
-                    font-weight:bold;
-                    box-shadow:0 3px 10px rgba(0,0,0,.15);
-                ">
-
-                    <br><br>
-
-                    Delete Doctor
-
-                </div>
-
-            </a>
+            </div>
 
         </div>
 

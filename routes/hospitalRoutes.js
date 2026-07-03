@@ -3,6 +3,8 @@ const router = express.Router();
 
 const doctorController = require("../controllers/doctorController");
 
+const Doctor = require("../models/Doctor");
+
 const {
     isAuthenticated,
     isHospitalAdmin
@@ -20,11 +22,33 @@ router.get(
     "/dashboard",
     isAuthenticated,
     isHospitalAdmin,
-    (req, res) => {
+    async (req, res) => {
 
-        res.render("hospital/dashboard", {
-            admin: req.session.user
-        });
+        try {
+
+            const doctorCount = await Doctor.countDocuments({
+
+                hospital: req.session.user.hospital
+
+            });
+
+            res.render("hospital/dashboard", {
+
+                admin: req.session.user,
+
+                doctorCount,
+
+                hospitalName: req.session.user.hospitalName || "Hospital"
+
+            });
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.send("Dashboard Error");
+
+        }
 
     }
 );
