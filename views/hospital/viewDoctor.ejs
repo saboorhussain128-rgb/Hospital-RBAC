@@ -3,27 +3,56 @@
 
 <%- include("../partials/header") %>
 
-<body style="margin:0;font-family:Arial;background:#eef1f7;">
+<body style="margin:0;background:#f4f6f9;">
 
 <div style="display:flex;min-height:100vh;">
 
-    <!-- Sidebar -->
+    <!-- ================= SIDEBAR ================= -->
 
-    <div style="width:240px;background:#1f2d3d;color:white;">
+    <div style="
+        width:220px;
+        background:#1f2a38;
+        color:white;
+        padding:20px;
+        box-shadow:2px 0 10px rgba(0,0,0,.15);
+    ">
 
-        <div style="padding:30px;font-size:34px;font-weight:bold;border-bottom:1px solid rgba(255,255,255,.15);">
+        <h2 style="text-align:center;margin-bottom:25px;">
             Hospital Admin
-        </div>
+        </h2>
 
-        <div style="padding:20px;">
+        <hr style="border:.5px solid rgba(255,255,255,.2);">
+
+        <div style="
+            margin-top:25px;
+            display:flex;
+            flex-direction:column;
+            gap:15px;
+        ">
 
             <a href="/hospital/dashboard"
-               style="display:block;background:#34495e;color:white;text-decoration:none;padding:15px;border-radius:8px;margin-bottom:15px;text-align:center;">
+               style="
+                    background:#5dade2;
+                    color:#1f2a38;
+                    text-decoration:none;
+                    padding:12px;
+                    border-radius:8px;
+                    text-align:center;
+                    font-weight:bold;
+               ">
                 Dashboard
             </a>
 
             <a href="/hospital/logout"
-               style="display:block;background:#e74c3c;color:white;text-decoration:none;padding:15px;border-radius:8px;text-align:center;">
+               style="
+                    background:#e74c3c;
+                    color:white;
+                    text-decoration:none;
+                    padding:12px;
+                    border-radius:8px;
+                    text-align:center;
+                    font-weight:bold;
+               ">
                 Logout
             </a>
 
@@ -31,69 +60,95 @@
 
     </div>
 
-    <!-- Main Content -->
+    <!-- ================= CONTENT ================= -->
 
-    <div style="flex:1;padding:40px;">
+    <div class="page">
 
-        <div style="display:flex;justify-content:space-between;margin-bottom:25px;">
+        <!-- Header -->
 
-            <a href="/hospital/dashboard"
-               style="background:#34495e;color:white;padding:12px 18px;text-decoration:none;border-radius:8px;">
-                ← Dashboard
-            </a>
+        <div class="page-header">
 
-            <a href="/hospital/create-doctor"
-               style="background:#27ae60;color:white;padding:12px 18px;text-decoration:none;border-radius:8px;">
-                + Create Doctor
-            </a>
+            <div class="page-title">
+
+                <h1>Doctor List</h1>
+
+                <p>
+                    View, update and delete doctors.
+                </p>
+
+            </div>
+
+            <div>
+
+                <a href="/hospital/dashboard" class="btn btn-gray">
+                    ← Dashboard
+                </a>
+
+                <a href="/hospital/create-doctor" class="btn btn-green">
+                    + Create Doctor
+                </a>
+
+            </div>
 
         </div>
 
-        <div style="background:white;padding:30px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.12);">
+        <!-- Table -->
 
-            <h2>Doctor List</h2>
+        <div class="card">
 
-            <table style="width:100%;border-collapse:collapse;margin-top:20px;">
+            <table class="table">
 
-                <tr style="background:#ecf0f1;">
+                <thead>
 
-                    <th style="padding:15px;">S.No</th>
-                    <th>Name</th>
+                <tr>
+
+                    <th>S.No</th>
+                    <th>Doctor Name</th>
                     <th>Email</th>
-                    <th>Action</th>
+                    <th>Actions</th>
 
                 </tr>
 
-                <% if(doctors.length > 0){ %>
+                </thead>
+
+                <tbody>
+
+                <% if(doctors.length){ %>
 
                     <% doctors.forEach((doctor,index)=>{ %>
 
-                        <tr style="border-bottom:1px solid #ddd;">
+                    <tr>
 
-                            <td style="padding:15px;"><%= index+1 %></td>
+                        <td><%= index+1 %></td>
 
-                            <td><%= doctor.name %></td>
+                        <td>
+                            <strong><%= doctor.name %></strong>
+                        </td>
 
-                            <td><%= doctor.email %></td>
+                        <td>
+                            <%= doctor.email %>
+                        </td>
 
-                            <td>
+                        <td>
 
-                                <a href="/hospital/edit-doctor/<%= doctor._id %>"
-                                   style="color:#3498db;text-decoration:none;font-weight:bold;">
-                                    Edit
-                                </a>
+                            <a
+                                href="/hospital/edit-doctor/<%= doctor._id %>"
+                                class="action-btn edit-btn"
+                            >
+                                Edit
+                            </a>
 
-                                |
+                            <a
+                                href="/hospital/delete-doctor/<%= doctor._id %>"
+                                class="action-btn delete-btn"
+                                onclick="return confirm('Delete this doctor?')"
+                            >
+                                Delete
+                            </a>
 
-                                <a href="/hospital/delete-doctor/<%= doctor._id %>"
-                                   onclick="return confirm('Delete this doctor?')"
-                                   style="color:red;text-decoration:none;font-weight:bold;">
-                                    Delete
-                                </a>
+                        </td>
 
-                            </td>
-
-                        </tr>
+                    </tr>
 
                     <% }) %>
 
@@ -101,7 +156,7 @@
 
                     <tr>
 
-                        <td colspan="4" style="text-align:center;padding:30px;">
+                        <td colspan="4" class="empty">
 
                             No Doctors Found
 
@@ -111,7 +166,16 @@
 
                 <% } %>
 
+                </tbody>
+
             </table>
+
+            <div class="table-footer">
+
+                Total Doctors :
+                <strong><%= doctors.length %></strong>
+
+            </div>
 
         </div>
 

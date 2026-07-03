@@ -1,70 +1,57 @@
 <div style="
-width:230px;
-height:100vh;
-background:#2c3e50;
-position:fixed;
-left:0;
-top:0;
-overflow:auto;">
+    width:220px;
+    height:100vh;
+    background:#1f2a38;
+    color:white;
+    padding:20px;
+    position:fixed;
+    box-shadow:2px 0 10px rgba(0,0,0,.2);
+">
 
     <h2 style="
-    color:white;
-    text-align:center;
-    padding:20px 10px;
-    border-bottom:1px solid rgba(255,255,255,.2);">
-
+        text-align:center;
+        margin-bottom:25px;
+    ">
         Hospital Admin
-
     </h2>
 
-    <% if(session.user && session.user.permissions.includes("create_doctor")){ %>
+    <hr style="border:0.5px solid rgba(255,255,255,.2);">
 
-        <a href="/hospital/create-doctor"
+    <div style="
+        margin-top:25px;
+        display:flex;
+        flex-direction:column;
+        gap:15px;
+    ">
+
+        <a href="/hospital/dashboard"
            style="
-           display:block;
-           padding:15px 20px;
-           color:white;
-           text-decoration:none;">
-            ➕ Create Doctor
+                display:block;
+                padding:12px;
+                text-align:center;
+                text-decoration:none;
+                font-weight:bold;
+                border-radius:8px;
+                background:#5dade2;
+                color:#1f2a38;
+           ">
+            Dashboard
         </a>
 
-    <% } %>
-
-    <% if(session.user && session.user.permissions.includes("view_doctor")){ %>
-
-        <a href="/hospital/view-doctor"
+        <a href="/hospital/logout"
            style="
-           display:block;
-           padding:15px 20px;
-           color:white;
-           text-decoration:none;">
-            👨‍⚕️ View Doctor
+                display:block;
+                padding:12px;
+                text-align:center;
+                text-decoration:none;
+                font-weight:bold;
+                border-radius:8px;
+                background:#e74c3c;
+                color:white;
+           ">
+            Logout
         </a>
 
-    <% } %>
-
-    <% if(session.user && session.user.permissions.includes("delete_doctor")){ %>
-
-        <a href="/hospital/delete-doctor"
-           style="
-           display:block;
-           padding:15px 20px;
-           color:white;
-           text-decoration:none;">
-            ❌ Delete Doctor
-        </a>
-
-    <% } %>
-
-    <hr style="border-color:rgba(255,255,255,.2);">
-
-    <a href="/logout"
-       style="
-       display:block;
-       padding:15px 20px;
-       color:white;
-       text-decoration:none;">
-        🚪 Logout
-    </a>
+    </div>
 
 </div>
