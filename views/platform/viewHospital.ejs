@@ -3,43 +3,61 @@
 
 <%- include("../partials/header") %>
 
-<body style="margin:0;font-family:Arial;background:#f4f6f9;">
+<body style="margin:0;background:#f4f6f9;">
 
 <%- include("../partials/sidebar") %>
 
-<div style="margin-left:240px;padding:30px;">
+<div class="page">
 
-    <!-- TOP BAR -->
-    <div style="display:flex;justify-content:space-between;margin-bottom:20px;">
+    <!-- ================= PAGE HEADER ================= -->
 
-        <a href="/platform/dashboard"
-           style="background:#34495e;color:white;padding:10px 16px;
-                  text-decoration:none;border-radius:6px;">
-            ← Back to Dashboard
-        </a>
+    <div class="page-header">
 
-        <a href="/platform/create-hospital"
-           style="background:#27ae60;color:white;padding:10px 16px;
-                  text-decoration:none;border-radius:6px;">
-            + Create Hospital
-        </a>
+        <div class="page-title">
+
+            <h1>Hospital List</h1>
+
+            <p>
+                Manage all hospitals registered in the Hospital RBAC System.
+            </p>
+
+        </div>
+
+        <div>
+
+            <a href="/platform/dashboard" class="btn btn-gray">
+                ← Dashboard
+            </a>
+
+            <a href="/platform/create-hospital"
+               class="btn btn-green"
+               style="margin-left:10px;">
+                + Create Hospital
+            </a>
+
+        </div>
 
     </div>
 
-    <div style="background:white;padding:25px;border-radius:10px;">
+    <!-- ================= TABLE CARD ================= -->
 
-        <h2>Hospital List</h2>
+    <div class="card">
 
-        <table style="width:100%;border-collapse:collapse;margin-top:20px;">
+        <table class="table">
 
             <thead>
 
-                <tr style="background:#ecf0f1;">
+                <tr>
 
-                    <th style="padding:12px;">S.No</th>
-                    <th>Name</th>
+                    <th>S.No</th>
+
+                    <th>Hospital Name</th>
+
                     <th>Address</th>
+
                     <th>Status</th>
+
+                    <th>Actions</th>
 
                 </tr>
 
@@ -47,43 +65,62 @@
 
             <tbody>
 
-            <% if (hospitals.length > 0) { %>
+            <% if(hospitals.length > 0){ %>
 
                 <% hospitals.forEach((hospital,index)=>{ %>
 
-                    <tr style="border-bottom:1px solid #ddd;">
+                <tr>
 
-                        <td style="padding:12px;">
-                            <%= index + 1 %>
-                        </td>
+                    <td><%= index+1 %></td>
 
-                        <td>
+                    <td>
+
+                        <strong>
                             <%= hospital.name %>
-                        </td>
+                        </strong>
 
-                        <td>
-                            <%= hospital.address %>
-                        </td>
+                    </td>
 
-                        <td>
+                    <td>
 
-                            <% if(hospital.status==="active"){ %>
+                        <%= hospital.address %>
 
-                                <span style="color:green;font-weight:bold;">
-                                    Active
-                                </span>
+                    </td>
 
-                            <% } else { %>
+                    <td>
 
-                                <span style="color:red;font-weight:bold;">
-                                    Inactive
-                                </span>
+                        <% if(hospital.status==="active"){ %>
 
-                            <% } %>
+                            <span class="status active">
+                                Active
+                            </span>
 
-                        </td>
+                        <% } else { %>
 
-                    </tr>
+                            <span class="status inactive">
+                                Inactive
+                            </span>
+
+                        <% } %>
+
+                    </td>
+
+                    <td>
+
+                        <a href="/platform/edit-hospital/<%= hospital._id %>"
+                           class="action-btn edit-btn">
+                            Edit
+                        </a>
+
+                        <a href="/platform/delete-hospital/<%= hospital._id %>"
+                           class="action-btn delete-btn"
+                           onclick="return confirm('Delete this hospital?')">
+                            Delete
+                        </a>
+
+                    </td>
+
+                </tr>
 
                 <% }) %>
 
@@ -91,8 +128,7 @@
 
                 <tr>
 
-                    <td colspan="4"
-                        style="padding:20px;text-align:center;">
+                    <td colspan="5" class="empty">
 
                         No hospitals found.
 
@@ -105,6 +141,13 @@
             </tbody>
 
         </table>
+
+        <div class="table-footer">
+
+            Total Hospitals :
+            <strong><%= hospitals.length %></strong>
+
+        </div>
 
     </div>
 
