@@ -1,12 +1,15 @@
 const HospitalAdmin = require("../models/HospitalAdmin");
 const bcrypt = require("bcryptjs");
+const { generateToken } = require("../utils/jwt");
 
 /* =====================================================
    PLATFORM LOGIN PAGE
 ===================================================== */
 
 exports.platformLoginPage = (req, res) => {
+
     res.render("platform/login");
+
 };
 
 /* =====================================================
@@ -22,11 +25,31 @@ exports.platformLogin = (req, res) => {
         password === "admin123"
     ) {
 
-        req.session.user = {
+        const user = {
 
-            role: "platform_admin"
+            id: "platform_admin",
+
+            role: "platform_admin",
+
+            name: "Platform Admin",
+
+            permissions: []
 
         };
+
+        req.session.user = user;
+
+        const token = generateToken(user);
+
+        res.cookie("token", token, {
+
+            httpOnly: true,
+
+            secure: false,
+
+            maxAge: 24 * 60 * 60 * 1000
+
+        });
 
         return res.redirect("/platform/dashboard");
 
@@ -80,7 +103,7 @@ exports.hospitalLogin = async (req, res) => {
 
         }
 
-        req.session.user = {
+        const user = {
 
             id: admin._id,
 
@@ -95,6 +118,28 @@ exports.hospitalLogin = async (req, res) => {
             permissions: admin.permissions || []
 
         };
+
+        /* ===========================
+           Existing Session
+        =========================== */
+
+        req.session.user = user;
+
+        /* ===========================
+           JWT Token
+        =========================== */
+
+        const token = generateToken(user);
+
+        res.cookie("token", token, {
+
+            httpOnly: true,
+
+            secure: false,
+
+            maxAge: 24 * 60 * 60 * 1000
+
+        });
 
         res.redirect("/hospital/dashboard");
 
@@ -115,6 +160,8 @@ exports.hospitalLogin = async (req, res) => {
 ===================================================== */
 
 exports.logout = (req, res) => {
+
+    res.clearCookie("token");
 
     req.session.destroy((err) => {
 
