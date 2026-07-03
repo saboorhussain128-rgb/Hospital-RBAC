@@ -3,61 +3,129 @@
 
 <%- include("../partials/header") %>
 
-<body style="margin:0; font-family:Arial; background:#f4f6f9;">
+<body style="margin:0;background:#f4f6f9;">
 
 <%- include("../partials/sidebar") %>
 
-<div style="margin-left:240px; padding:30px;">
+<div class="page">
 
-    <!-- TOP BAR -->
-    <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+    <!-- ================= PAGE HEADER ================= -->
 
-        <a href="/platform/dashboard" style="
-            background:#34495e;
-            color:white;
-            padding:8px 14px;
-            border-radius:6px;
-            text-decoration:none;">
-            ← Back to Dashboard
-        </a>
+    <div class="page-header">
 
-        <a href="/platform/view-hospital" style="
-            background:#27ae60;
-            color:white;
-            padding:8px 14px;
-            border-radius:6px;
-            text-decoration:none;">
-            View Hospitals
-        </a>
+        <div class="page-title">
+
+            <h1>Create Hospital</h1>
+
+            <p>
+                Register a new hospital in the Hospital RBAC System.
+            </p>
+
+        </div>
+
+        <div>
+
+            <a href="/platform/dashboard" class="btn btn-gray">
+                ← Dashboard
+            </a>
+
+            <a href="/platform/view-hospital"
+               class="btn btn-green"
+               style="margin-left:10px;">
+                View Hospitals
+            </a>
+
+        </div>
 
     </div>
 
-    <div style="background:white; padding:25px; border-radius:10px;">
+    <!-- ================= FORM CARD ================= -->
 
-        <h2>Create Hospital</h2>
+    <div class="card" style="max-width:700px;margin:auto;">
 
         <form action="/platform/create-hospital" method="POST">
 
-            <label>Name</label><br>
-            <input type="text" name="name" required style="width:100%;padding:10px;margin:8px 0;"><br>
+            <div style="margin-bottom:20px;">
 
-            <label>Address</label><br>
-            <input type="text" name="address" required style="width:100%;padding:10px;margin:8px 0;"><br>
+                <label style="font-weight:bold;">
+                    Hospital Name
+                </label>
 
-            <label>Status</label><br>
-            <select name="status" style="width:100%;padding:10px;margin:8px 0;">
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-            </select><br><br>
+                <input
+                    type="text"
+                    name="name"
+                    required
+                    placeholder="Enter Hospital Name"
+                    style="
+                        width:100%;
+                        padding:12px;
+                        margin-top:8px;
+                        border:1px solid #ccc;
+                        border-radius:8px;
+                        font-size:15px;
+                    "
+                >
 
-            <button style="
-                background:#3498db;
-                color:white;
-                padding:10px 20px;
-                border:none;
-                border-radius:6px;
-                cursor:pointer;">
+            </div>
+
+            <div style="margin-bottom:20px;">
+
+                <label style="font-weight:bold;">
+                    Hospital Address
+                </label>
+
+                <textarea
+                    name="address"
+                    required
+                    rows="4"
+                    placeholder="Enter Hospital Address"
+                    style="
+                        width:100%;
+                        padding:12px;
+                        margin-top:8px;
+                        border:1px solid #ccc;
+                        border-radius:8px;
+                        resize:none;
+                        font-size:15px;
+                    "
+                ></textarea>
+
+            </div>
+
+            <div style="margin-bottom:25px;">
+
+                <label style="font-weight:bold;">
+                    Status
+                </label>
+
+                <select
+                    name="status"
+                    style="
+                        width:100%;
+                        padding:12px;
+                        margin-top:8px;
+                        border:1px solid #ccc;
+                        border-radius:8px;
+                        font-size:15px;
+                    "
+                >
+
+                    <option value="active">
+                        Active
+                    </option>
+
+                    <option value="inactive">
+                        Inactive
+                    </option>
+
+                </select>
+
+            </div>
+
+            <button class="btn btn-blue">
+
                 Create Hospital
+
             </button>
 
         </form>
