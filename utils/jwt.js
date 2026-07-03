@@ -4,16 +4,32 @@ const jwt = require("jsonwebtoken");
    GENERATE JWT TOKEN
 ===================================================== */
 
-exports.generateToken = (payload) => {
+exports.generateToken = (user) => {
 
     return jwt.sign(
 
-        payload,
+        {
+
+            id: user.id,
+
+            role: user.role,
+
+            hospital: user.hospital,
+
+            hospitalName: user.hospitalName,
+
+            name: user.name,
+
+            permissions: user.permissions
+
+        },
 
         process.env.JWT_SECRET,
 
         {
-            expiresIn: "1d"
+
+            expiresIn: "24h"
+
         }
 
     );

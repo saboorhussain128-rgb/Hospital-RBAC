@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
+const cookieParser = require("cookie-parser");
 
 const connectDB = require("./config/db");
 
@@ -21,6 +22,17 @@ connectDB();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+/* =====================================================
+   COOKIE PARSER
+===================================================== */
+
+app.use(cookieParser());
+
+/* =====================================================
+   SESSION
+   (Keep this until JWT migration is completed)
+===================================================== */
+
 app.use(
 
     session({
@@ -34,6 +46,8 @@ app.use(
         cookie: {
 
             secure: false,
+
+            httpOnly: true,
 
             maxAge: 1000 * 60 * 60
 

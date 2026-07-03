@@ -8,15 +8,13 @@ exports.verifyJWT = (req, res, next) => {
 
     try {
 
-        const authHeader = req.headers.authorization;
+        const token = req.cookies.token;
 
-        if (!authHeader) {
+        if (!token) {
 
-            return res.status(401).send("Access Denied");
+            return res.redirect("/hospital/login");
 
         }
-
-        const token = authHeader.split(" ")[1];
 
         const decoded = jwt.verify(
 
@@ -32,9 +30,11 @@ exports.verifyJWT = (req, res, next) => {
 
     }
 
-    catch (error) {
+    catch (err) {
 
-        return res.status(401).send("Invalid Token");
+        console.log(err);
+
+        return res.redirect("/hospital/login");
 
     }
 
