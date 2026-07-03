@@ -18,7 +18,7 @@
             <h1>Hospital List</h1>
 
             <p>
-                Manage all hospitals registered in the Hospital RBAC System.
+                View and manage all registered hospitals.
             </p>
 
         </div>
@@ -26,13 +26,17 @@
         <div>
 
             <a href="/platform/dashboard" class="btn btn-gray">
+
                 ← Dashboard
+
             </a>
 
             <a href="/platform/create-hospital"
-               class="btn btn-green"
+               class="btn btn-blue"
                style="margin-left:10px;">
+
                 + Create Hospital
+
             </a>
 
         </div>
@@ -50,13 +54,9 @@
                 <tr>
 
                     <th>S.No</th>
-
                     <th>Hospital Name</th>
-
                     <th>Address</th>
-
                     <th>Status</th>
-
                     <th>Actions</th>
 
                 </tr>
@@ -65,78 +65,92 @@
 
             <tbody>
 
-            <% if(hospitals.length > 0){ %>
+                <% if(hospitals.length > 0){ %>
 
-                <% hospitals.forEach((hospital,index)=>{ %>
+                    <% hospitals.forEach((hospital,index)=>{ %>
 
-                <tr>
+                        <tr>
 
-                    <td><%= index+1 %></td>
+                            <td><%= index + 1 %></td>
 
-                    <td>
+                            <td>
 
-                        <strong>
-                            <%= hospital.name %>
-                        </strong>
+                                <strong>
 
-                    </td>
+                                    <%= hospital.name %>
 
-                    <td>
+                                </strong>
 
-                        <%= hospital.address %>
+                            </td>
 
-                    </td>
+                            <td>
 
-                    <td>
+                                <%= hospital.address %>
 
-                        <% if(hospital.status==="active"){ %>
+                            </td>
 
-                            <span class="status active">
-                                Active
-                            </span>
+                            <td>
 
-                        <% } else { %>
+                                <% if(hospital.status==="active"){ %>
 
-                            <span class="status inactive">
-                                Inactive
-                            </span>
+                                    <span class="status active">
 
-                        <% } %>
+                                        Active
 
-                    </td>
+                                    </span>
 
-                    <td>
+                                <% }else{ %>
 
-                        <a href="/platform/edit-hospital/<%= hospital._id %>"
-                           class="action-btn edit-btn">
-                            Edit
-                        </a>
+                                    <span class="status inactive">
 
-                        <a href="/platform/delete-hospital/<%= hospital._id %>"
-                           class="action-btn delete-btn"
-                           onclick="return confirm('Delete this hospital?')">
-                            Delete
-                        </a>
+                                        Inactive
 
-                    </td>
+                                    </span>
 
-                </tr>
+                                <% } %>
 
-                <% }) %>
+                            </td>
 
-            <% } else { %>
+                            <td>
 
-                <tr>
+                                <a
+                                    href="/platform/edit-hospital/<%= hospital._id %>"
+                                    class="action-btn edit-btn"
+                                >
 
-                    <td colspan="5" class="empty">
+                                    Edit
 
-                        No hospitals found.
+                                </a>
 
-                    </td>
+                                <a
+                                    href="/platform/delete-hospital/<%= hospital._id %>"
+                                    onclick="return confirm('Delete this hospital?')"
+                                    class="action-btn delete-btn"
+                                >
 
-                </tr>
+                                    Delete
 
-            <% } %>
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    <% }) %>
+
+                <% }else{ %>
+
+                    <tr>
+
+                        <td colspan="5" class="empty">
+
+                            No hospitals found.
+
+                        </td>
+
+                    </tr>
+
+                <% } %>
 
             </tbody>
 
@@ -145,7 +159,11 @@
         <div class="table-footer">
 
             Total Hospitals :
-            <strong><%= hospitals.length %></strong>
+            <strong>
+
+                <%= hospitals.length %>
+
+            </strong>
 
         </div>
 
@@ -154,4 +172,5 @@
 </div>
 
 </body>
+
 </html>

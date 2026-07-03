@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+
+<%- include("../partials/header") %>
+
+<body style="margin:0;background:#f4f6f9;">
+
+<%- include("../partials/sidebar") %>
+
+<div class="page">
+
+    <!-- ================= PAGE HEADER ================= -->
+
+    <div class="page-header">
+
+        <div class="page-title">
+
+            <h1>Edit Hospital Admin</h1>
+
+            <p>
+                Update administrator details and RBAC permissions.
+            </p>
+
+        </div>
+
+        <div>
+
+            <a href="/platform/dashboard"
+               class="btn btn-gray">
+
+                ← Dashboard
+
+            </a>
+
+            <a href="/platform/view-hospital-admin"
+               class="btn btn-green"
+               style="margin-left:10px;">
+
+                View Hospital Admins
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ================= FORM CARD ================= -->
+
+    <div class="card" style="max-width:850px;margin:auto;">
+
+        <form
+            method="POST"
+            action="/platform/edit-hospital-admin/<%= admin._id %>"
+        >
+
+            <!-- Hospital -->
+
+            <div style="margin-bottom:20px;">
+
+                <label><b>Select Hospital</b></label>
+
+                <select
+                    name="hospital"
+                    required
+                    style="
+                        width:100%;
+                        padding:12px;
+                        margin-top:8px;
+                        border:1px solid #ccc;
+                        border-radius:8px;
+                    ">
+
+                    <% hospitals.forEach(hospital=>{ %>
+
+                        <option
+                            value="<%= hospital._id %>"
+                            <%= hospital._id.toString() === admin.hospital._id.toString() ? "selected" : "" %>
+                        >
+
+                            <%= hospital.name %>
+
+                        </option>
+
+                    <% }) %>
+
+                </select>
+
+            </div>
+
+            <!-- Name -->
+
+            <div style="margin-bottom:20px;">
+
+                <label><b>Administrator Name</b></label>
+
+                <input
+                    type="text"
+                    name="name"
+                    value="<%= admin.name %>"
+                    required
+                    style="
+                        width:100%;
+                        padding:12px;
+                        margin-top:8px;
+                        border:1px solid #ccc;
+                        border-radius:8px;
+                    "
+                >
+
+            </div>
+
+            <!-- Email -->
+
+            <div style="margin-bottom:20px;">
+
+                <label><b>Email</b></label>
+
+                <input
+                    type="email"
+                    name="email"
+                    value="<%= admin.email %>"
+                    required
+                    style="
+                        width:100%;
+                        padding:12px;
+                        margin-top:8px;
+                        border:1px solid #ccc;
+                        border-radius:8px;
+                    "
+                >
+
+            </div>
+
+            <!-- Password -->
+
+            <div style="margin-bottom:30px;">
+
+                <label><b>Password</b></label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Leave blank to keep existing password"
+                    style="
+                        width:100%;
+                        padding:12px;
+                        margin-top:8px;
+                        border:1px solid #ccc;
+                        border-radius:8px;
+                    "
+                >
+
+            </div>
+
+            <!-- Permissions -->
+
+            <h3 style="margin-bottom:20px;color:#2c3e50;">
+
+                RBAC Permissions
+
+            </h3>
+
+            <div
+                style="
+                    display:grid;
+                    grid-template-columns:repeat(3,1fr);
+                    gap:20px;
+                    margin-bottom:35px;
+                "
+            >
+
+                <label class="card" style="text-align:center;cursor:pointer;">
+
+                    <input
+                        type="checkbox"
+                        name="permissions"
+                        value="create_doctor"
+                        <%= admin.permissions.includes("create_doctor") ? "checked" : "" %>
+                    >
+
+                    <br><br>
+
+                    🩺
+
+                    <h4>Create Doctor</h4>
+
+                </label>
+
+                <label class="card" style="text-align:center;cursor:pointer;">
+
+                    <input
+                        type="checkbox"
+                        name="permissions"
+                        value="view_doctor"
+                        <%= admin.permissions.includes("view_doctor") ? "checked" : "" %>
+                    >
+
+                    <br><br>
+
+                    📋
+
+                    <h4>View Doctor</h4>
+
+                </label>
+
+                <label class="card" style="text-align:center;cursor:pointer;">
+
+                    <input
+                        type="checkbox"
+                        name="permissions"
+                        value="delete_doctor"
+                        <%= admin.permissions.includes("delete_doctor") ? "checked" : "" %>
+                    >
+
+                    <br><br>
+
+                    ❌
+
+                    <h4>Delete Doctor</h4>
+
+                </label>
+
+            </div>
+
+            <button
+                class="btn btn-blue"
+                style="font-size:16px;"
+            >
+
+                Update Hospital Admin
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>
