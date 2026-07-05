@@ -41,11 +41,20 @@
 
     <!-- ================= VALIDATION ERRORS ================= -->
 
-    <% if (typeof errors !== "undefined" && errors.length > 0) { %>
+    <% if (errors && errors.length > 0) { %>
 
-        <div class="error-box">
+        <div style="
+            background:#fdecea;
+            color:#b71c1c;
+            border:1px solid #f5c6cb;
+            padding:15px;
+            border-radius:8px;
+            margin-bottom:25px;
+        ">
 
-            <ul>
+            <strong>Please fix the following errors:</strong>
+
+            <ul style="margin-top:10px;">
 
                 <% errors.forEach(error => { %>
 
@@ -59,11 +68,13 @@
 
     <% } %>
 
-    <!-- ================= FORM CARD ================= -->
+    <!-- ================= FORM ================= -->
 
     <div class="card" style="max-width:700px;margin:auto;">
 
         <form action="/platform/create-hospital" method="POST">
+
+            <!-- Hospital Name -->
 
             <div style="margin-bottom:20px;">
 
@@ -74,9 +85,9 @@
                 <input
                     type="text"
                     name="name"
-                    value="<%= typeof req !== 'undefined' ? req.body?.name : '' %>"
                     required
                     placeholder="Enter Hospital Name"
+                    value="<%= body?.name || '' %>"
                     style="
                         width:100%;
                         padding:12px;
@@ -88,6 +99,8 @@
                 >
 
             </div>
+
+            <!-- Hospital Address -->
 
             <div style="margin-bottom:20px;">
 
@@ -109,9 +122,11 @@
                         resize:none;
                         font-size:15px;
                     "
-                ><%= typeof req !== 'undefined' ? req.body?.address : '' %></textarea>
+                ><%= body?.address || "" %></textarea>
 
             </div>
+
+            <!-- Status -->
 
             <div style="margin-bottom:25px;">
 
@@ -131,9 +146,17 @@
                     "
                 >
 
-                    <option value="active">Active</option>
+                    <option
+                        value="active"
+                        <%= body?.status === "active" ? "selected" : "" %>>
+                        Active
+                    </option>
 
-                    <option value="inactive">Inactive</option>
+                    <option
+                        value="inactive"
+                        <%= body?.status === "inactive" ? "selected" : "" %>>
+                        Inactive
+                    </option>
 
                 </select>
 
