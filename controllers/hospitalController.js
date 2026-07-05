@@ -1,4 +1,5 @@
 const Hospital = require("../models/Hospital");
+const { validationResult } = require("express-validator");
 
 /* =====================================================
    CREATE HOSPITAL PAGE
@@ -6,7 +7,12 @@ const Hospital = require("../models/Hospital");
 
 exports.createPage = (req, res) => {
 
-    res.render("platform/createHospital");
+    res.render("platform/createHospital", {
+
+        errors: [],
+        body: {}
+
+    });
 
 };
 
@@ -18,32 +24,83 @@ exports.createHospital = async (req, res) => {
 
     try {
 
-        console.log("========== REQUEST BODY ==========");
-        console.log(req.body);
+        /* ===============================
+           VALIDATION
+        =============================== */
 
-        const { name, address, status } = req.body;
+        const errors = validationResult(req);
 
-        const hospital = new Hospital({
+        if (!errors.isEmpty()) {
+
+            return res.render("platform/createHospital", {
+
+                errors: errors.array(),
+
+                body: req.body
+
+            });
+
+        }
+
+        const {
+
             name,
             address,
             status
+
+        } = req.body;
+
+        /* ===============================
+           DUPLICATE HOSPITAL CHECK
+        =============================== */
+
+        const exists = await Hospital.findOne({
+
+            name: name.trim()
+
         });
 
-        console.log("Hospital Object:", hospital);
+        if (exists) {
 
-        await hospital.save();
+            return res.render("platform/createHospital", {
 
-        console.log("Hospital saved successfully.");
+                body: req.body,
+
+                errors: [
+
+                    {
+
+                        msg: "Hospital already exists."
+
+                    }
+
+                ]
+
+            });
+
+        }
+
+        /* ===============================
+           CREATE HOSPITAL
+        =============================== */
+
+        await Hospital.create({
+
+            name,
+            address,
+            status
+
+        });
 
         return res.redirect("/platform/view-hospital");
 
-    } catch (error) {
+    }
 
-        console.log("========== CREATE HOSPITAL ERROR ==========");
-        console.error(error);
-        console.log("===========================================");
+    catch (error) {
 
-        return res.status(500).send(error.stack);
+        console.log(error);
+
+        return res.status(500).send("Error creating hospital.");
 
     }
 
@@ -57,11 +114,13 @@ exports.viewHospitals = async (req, res) => {
 
     try {
 
-        const hospitals = await Hospital.find().sort({
+        const hospitals = await Hospital.find()
 
-            createdAt: -1
+            .sort({
 
-        });
+                createdAt: -1
+
+            });
 
         res.render("platform/viewHospital", {
 
@@ -69,7 +128,9 @@ exports.viewHospitals = async (req, res) => {
 
         });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.log(error);
 
@@ -87,7 +148,17 @@ exports.editPage = async (req, res) => {
 
     try {
 
-        const hospital = await Hospital.findById(req.params.id);
+        const hospital = await Hospital.findById(
+
+            req.params.id
+
+        );
+
+        if (!hospital) {
+
+            return res.send("Hospital not found.");
+
+        }
 
         res.render("platform/editHospital", {
 
@@ -95,7 +166,9 @@ exports.editPage = async (req, res) => {
 
         });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.log(error);
 
@@ -113,7 +186,13 @@ exports.updateHospital = async (req, res) => {
 
     try {
 
-        const { name, address, status } = req.body;
+        const {
+
+            name,
+            address,
+            status
+
+        } = req.body;
 
         await Hospital.findByIdAndUpdate(
 
@@ -125,13 +204,21 @@ exports.updateHospital = async (req, res) => {
                 address,
                 status
 
+            },
+
+            {
+
+                new: true
+
             }
 
         );
 
         res.redirect("/platform/view-hospital");
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.log(error);
 
@@ -149,11 +236,17 @@ exports.deleteHospital = async (req, res) => {
 
     try {
 
-        await Hospital.findByIdAndDelete(req.params.id);
+        await Hospital.findByIdAndDelete(
+
+            req.params.id
+
+        );
 
         res.redirect("/platform/view-hospital");
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.log(error);
 
