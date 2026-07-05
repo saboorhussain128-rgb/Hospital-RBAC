@@ -1,9 +1,15 @@
 const express = require("express");
 const router = express.Router();
 
+const { validationResult } = require("express-validator");
+
 const platformController = require("../controllers/platformController");
 const hospitalController = require("../controllers/hospitalController");
 const hospitalAdminController = require("../controllers/hospitalAdminController");
+
+const {
+    createHospitalValidation
+} = require("../validators/hospitalValidator");
 
 const {
     isAuthenticated,
@@ -53,6 +59,26 @@ router.post(
     "/create-hospital",
     isAuthenticated,
     isPlatformAdmin,
+    createHospitalValidation,
+
+    (req, res, next) => {
+
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+
+            return res.render("platform/createHospital", {
+
+                errors: errors.array()
+
+            });
+
+        }
+
+        next();
+
+    },
+
     hospitalController.createHospital
 );
 
