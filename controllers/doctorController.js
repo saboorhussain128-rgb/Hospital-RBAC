@@ -1,4 +1,5 @@
 const Doctor = require("../models/Doctor");
+const { validationResult } = require("express-validator");
 
 /* =====================================================
    CREATE DOCTOR PAGE
@@ -6,7 +7,13 @@ const Doctor = require("../models/Doctor");
 
 exports.createPage = (req, res) => {
 
-    res.render("hospital/createDoctor");
+    res.render("hospital/createDoctor", {
+
+        errors: [],
+
+        body: {}
+
+    });
 
 };
 
@@ -21,10 +28,60 @@ exports.createDoctor = async (req, res) => {
         const hospitalAdmin = req.session.user;
 
         if (!hospitalAdmin) {
+
             return res.redirect("/hospital/login");
+
         }
 
-        const { name, email } = req.body;
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+
+            return res.render("hospital/createDoctor", {
+
+                errors: errors.array(),
+
+                body: req.body
+
+            });
+
+        }
+
+        const {
+
+            name,
+
+            email
+
+        } = req.body;
+
+        const doctorExists = await Doctor.findOne({
+
+            email,
+
+            hospital: hospitalAdmin.hospital
+
+        });
+
+        if (doctorExists) {
+
+            return res.render("hospital/createDoctor", {
+
+                errors: [
+
+                    {
+
+                        msg: "Doctor already exists with this email."
+
+                    }
+
+                ],
+
+                body: req.body
+
+            });
+
+        }
 
         await Doctor.create({
 
@@ -42,7 +99,6 @@ exports.createDoctor = async (req, res) => {
 
     catch (error) {
 
-        console.log("CREATE DOCTOR ERROR");
         console.log(error);
 
         res.send("Error creating doctor");
@@ -62,7 +118,9 @@ exports.viewDoctors = async (req, res) => {
         const hospitalAdmin = req.session.user;
 
         if (!hospitalAdmin) {
+
             return res.redirect("/hospital/login");
+
         }
 
         const doctors = await Doctor.find({
@@ -85,7 +143,6 @@ exports.viewDoctors = async (req, res) => {
 
     catch (error) {
 
-        console.log("VIEW DOCTOR ERROR");
         console.log(error);
 
         res.send("Error fetching doctors");
@@ -102,17 +159,29 @@ exports.editPage = async (req, res) => {
 
     try {
 
-        const doctor = await Doctor.findById(req.params.id);
+        const hospitalAdmin = req.session.user;
+
+        const doctor = await Doctor.findOne({
+
+            _id: req.params.id,
+
+            hospital: hospitalAdmin.hospital
+
+        });
 
         if (!doctor) {
 
-            return res.send("Doctor not found");
+            return res.send("Doctor not found.");
 
         }
 
         res.render("hospital/editDoctor", {
 
-            doctor
+            doctor,
+
+            errors: [],
+
+            body: {}
 
         });
 
@@ -122,7 +191,7 @@ exports.editPage = async (req, res) => {
 
         console.log(error);
 
-        res.send("Error loading doctor");
+        res.send("Error loading doctor.");
 
     }
 
@@ -136,21 +205,43 @@ exports.updateDoctor = async (req, res) => {
 
     try {
 
-        const { name, email } = req.body;
+        const hospitalAdmin = req.session.user;
 
-        await Doctor.findByIdAndUpdate(
+        const errors = validationResult(req);
 
-            req.params.id,
+        const doctor = await Doctor.findOne({
 
-            {
+            _id: req.params.id,
 
-                name,
+            hospital: hospitalAdmin.hospital
 
-                email
+        });
 
-            }
+        if (!doctor) {
 
-        );
+            return res.send("Doctor not found.");
+
+        }
+
+        if (!errors.isEmpty()) {
+
+            return res.render("hospital/editDoctor", {
+
+                doctor,
+
+                errors: errors.array(),
+
+                body: req.body
+
+            });
+
+        }
+
+        doctor.name = req.body.name;
+
+        doctor.email = req.body.email;
+
+        await doctor.save();
 
         res.redirect("/hospital/view-doctor");
 
@@ -174,7 +265,15 @@ exports.deleteDoctor = async (req, res) => {
 
     try {
 
-        await Doctor.findByIdAndDelete(req.params.id);
+        const hospitalAdmin = req.session.user;
+
+        await Doctor.findOneAndDelete({
+
+            _id: req.params.id,
+
+            hospital: hospitalAdmin.hospital
+
+        });
 
         res.redirect("/hospital/view-doctor");
 

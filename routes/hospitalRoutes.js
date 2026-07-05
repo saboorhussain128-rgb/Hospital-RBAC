@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const doctorController = require("../controllers/doctorController");
-
 const Doctor = require("../models/Doctor");
 
 const {
@@ -13,6 +12,10 @@ const {
 const {
     checkPermission
 } = require("../middleware/rbacMiddleware");
+
+const {
+    createDoctorValidation
+} = require("../validators/doctorValidator");
 
 /* =====================================================
    HOSPITAL DASHBOARD
@@ -70,6 +73,7 @@ router.post(
     isAuthenticated,
     isHospitalAdmin,
     checkPermission("create_doctor"),
+    createDoctorValidation,
     doctorController.createDoctor
 );
 
@@ -102,6 +106,7 @@ router.post(
     isAuthenticated,
     isHospitalAdmin,
     checkPermission("create_doctor"),
+    createDoctorValidation,
     doctorController.updateDoctor
 );
 
