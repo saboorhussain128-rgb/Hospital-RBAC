@@ -1,26 +1,95 @@
-module.exports = {
+const { verifyToken } = require("../utils/jwt");
 
-    // Check if user is logged in
-    isAuthenticated: (req, res, next) => {
-        if (req.session.user) {
-            return next();
-        }
-        return res.redirect("/platform/login");
-    },
+/* =====================================================
+   AUTHENTICATION
+===================================================== */
 
-    // Only Platform Admin
-    isPlatformAdmin: (req, res, next) => {
-        if (req.session.user && req.session.user.role === "platform_admin") {
-            return next();
-        }
-        return res.send("Access Denied: Platform Admins Only");
-    },
+exports.isAuthenticated = (req, res, next) => {
 
-    // Only Hospital Admin
-    isHospitalAdmin: (req, res, next) => {
-        if (req.session.user && req.session.user.role === "hospital_admin") {
-            return next();
-        }
-        return res.send("Access Denied: Hospital Admins Only");
+    /* ==========================================
+       SESSION LOGIN
+    ========================================== */
+
+    if (req.session && req.session.user) {
+
+        req.user = req.session.user;
+
+        return next();
+
     }
+
+    /* ==========================================
+       JWT LOGIN
+    ========================================== */
+
+    const token = req.cookies.token;
+
+    if (!token) {
+
+        return res.redirect("/hospital/login");
+
+    }
+
+    const decoded = verifyToken(token);
+
+    if (!decoded) {
+
+        res.clearCookie("token");
+
+        return res.redirect("/hospital/login");
+
+    }
+
+    req.user = decoded;
+
+    next();
+
+};
+
+/* =====================================================
+   PLATFORM ADMIN
+===================================================== */
+
+exports.isPlatformAdmin = (req, res, next) => {
+
+    const user = req.user || req.session.user;
+
+    if (!user) {
+
+        return res.redirect("/platform/login");
+
+    }
+
+    if (user.role !== "platform_admin") {
+
+        return res.send("Access Denied");
+
+    }
+
+    next();
+
+};
+
+/* =====================================================
+   HOSPITAL ADMIN
+===================================================== */
+
+exports.isHospitalAdmin = (req, res, next) => {
+
+    const user = req.user || req.session.user;
+
+    if (!user) {
+
+        return res.redirect("/hospital/login");
+
+    }
+
+    if (user.role !== "hospital_admin") {
+
+        return res.send("Access Denied");
+
+    }
+
+    next();
+
 };

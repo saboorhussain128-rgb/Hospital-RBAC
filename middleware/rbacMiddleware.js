@@ -2,18 +2,26 @@ exports.checkPermission = (permission) => {
 
     return (req, res, next) => {
 
-        if (!req.session.user) {
+        /* =====================================================
+           GET USER (SESSION OR JWT)
+        ===================================================== */
+
+        const user = req.session.user || req.user;
+
+        if (!user) {
             return res.redirect("/hospital/login");
         }
 
-        const permissions = req.session.user.permissions || [];
+        const permissions = user.permissions || [];
+
+        /* =====================================================
+           CHECK PERMISSION
+        ===================================================== */
 
         if (!permissions.includes(permission)) {
             return res.send("Access Denied");
         }
 
         next();
-
     };
-
 };
