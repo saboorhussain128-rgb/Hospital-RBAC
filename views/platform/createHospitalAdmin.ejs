@@ -44,6 +44,35 @@
 
     </div>
 
+    <!-- ================= VALIDATION ERRORS ================= -->
+
+    <% if (errors && errors.length > 0) { %>
+
+        <div style="
+            background:#fdecea;
+            color:#c0392b;
+            border:1px solid #e74c3c;
+            padding:18px;
+            border-radius:10px;
+            margin-bottom:25px;
+        ">
+
+            <strong>Please fix the following errors:</strong>
+
+            <ul style="margin-top:10px;">
+
+                <% errors.forEach(error => { %>
+
+                    <li><%= error.msg %></li>
+
+                <% }) %>
+
+            </ul>
+
+        </div>
+
+    <% } %>
+
     <!-- ================= FORM ================= -->
 
     <div class="card" style="max-width:850px;margin:auto;">
@@ -70,9 +99,12 @@
 
                     <option value="">Choose Hospital</option>
 
-                    <% hospitals.forEach(hospital=>{ %>
+                    <% hospitals.forEach(hospital => { %>
 
-                        <option value="<%= hospital._id %>">
+                        <option
+                            value="<%= hospital._id %>"
+
+                            <%= body && body.hospital == hospital._id.toString() ? "selected" : "" %>>
 
                             <%= hospital.name %>
 
@@ -94,6 +126,7 @@
                     type="text"
                     name="name"
                     required
+                    value="<%= body ? body.name : '' %>"
                     placeholder="Enter Admin Name"
                     style="
                         width:100%;
@@ -115,6 +148,7 @@
                     type="email"
                     name="email"
                     required
+                    value="<%= body ? body.email : '' %>"
                     placeholder="Enter Email"
                     style="
                         width:100%;
@@ -167,7 +201,11 @@
                     <input
                         type="checkbox"
                         name="permissions"
-                        value="create_doctor">
+                        value="create_doctor"
+
+                        <%= body && body.permissions &&
+                        body.permissions.includes("create_doctor")
+                        ? "checked" : "" %>>
 
                     <br><br>
 
@@ -182,7 +220,11 @@
                     <input
                         type="checkbox"
                         name="permissions"
-                        value="view_doctor">
+                        value="view_doctor"
+
+                        <%= body && body.permissions &&
+                        body.permissions.includes("view_doctor")
+                        ? "checked" : "" %>>
 
                     <br><br>
 
@@ -197,7 +239,11 @@
                     <input
                         type="checkbox"
                         name="permissions"
-                        value="delete_doctor">
+                        value="delete_doctor"
+
+                        <%= body && body.permissions &&
+                        body.permissions.includes("delete_doctor")
+                        ? "checked" : "" %>>
 
                     <br><br>
 
