@@ -1,14 +1,15 @@
 /*
 ==================================================
 API RBAC Middleware
+Hospital RBAC System
 ==================================================
 */
 
 /* ==================================================
-   CHECK PERMISSION
+   AUTHORIZE USER
 ================================================== */
 
-exports.checkPermission = (permission) => {
+exports.authorize = (requiredRoleOrPermission) => {
 
     return (req, res, next) => {
 
@@ -26,6 +27,32 @@ exports.checkPermission = (permission) => {
 
         }
 
+        /* ==========================================
+           PLATFORM ADMIN
+        ========================================== */
+
+        if (requiredRoleOrPermission === "platform_admin") {
+
+            if (user.role !== "platform_admin") {
+
+                return res.status(403).json({
+
+                    success: false,
+
+                    message: "Access Denied."
+
+                });
+
+            }
+
+            return next();
+
+        }
+
+        /* ==========================================
+           HOSPITAL ADMIN PERMISSIONS
+        ========================================== */
+
         if (user.role === "platform_admin") {
 
             return next();
@@ -33,11 +60,8 @@ exports.checkPermission = (permission) => {
         }
 
         if (
-
             user.permissions &&
-
-            user.permissions.includes(permission)
-
+            user.permissions.includes(requiredRoleOrPermission)
         ) {
 
             return next();
