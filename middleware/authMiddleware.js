@@ -22,7 +22,7 @@ exports.isAuthenticated = (req, res, next) => {
        JWT LOGIN
     ========================================== */
 
-    const token = req.cookies.token;
+    const token = req.cookies?.token;
 
     if (!token) {
 

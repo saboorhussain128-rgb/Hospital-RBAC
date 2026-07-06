@@ -29,23 +29,27 @@ router.get(
 
         try {
 
+            const admin = req.user || req.session.user;
+
             const doctorCount = await Doctor.countDocuments({
 
-                hospital: req.session.user.hospital
+                hospital: admin.hospital
 
             });
 
             res.render("hospital/dashboard", {
 
-                admin: req.session.user,
+                admin,
 
                 doctorCount,
 
-                hospitalName: req.session.user.hospitalName || "Hospital"
+                hospitalName: admin.hospitalName || "Hospital"
 
             });
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.log(error);
 

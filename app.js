@@ -138,7 +138,7 @@ app.get("/", (req, res) => {
 });
 
 /* =====================================================
-   ROUTES
+   WEB ROUTES
 ===================================================== */
 
 const platformRoutes = require("./routes/platformRoutes");
@@ -150,6 +150,14 @@ app.use("/platform", platformRoutes);
 app.use("/hospital", hospitalAuthRoutes);
 app.use("/hospital", hospitalRoutes);
 app.use("/platform", hospitalAdminRoutes);
+
+/* =====================================================
+   API ROUTES
+===================================================== */
+
+const authApiRoutes = require("./api/routes/authApiRoutes");
+
+app.use("/api/auth", authApiRoutes);
 
 /* =====================================================
    SERVER
