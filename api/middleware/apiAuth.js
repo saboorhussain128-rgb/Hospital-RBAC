@@ -1,14 +1,13 @@
 /*
 ==================================================
-API JWT AUTH MIDDLEWARE
-Hospital RBAC System
+API JWT Authentication Middleware
 ==================================================
 */
 
 const jwt = require("jsonwebtoken");
 
 /* ==================================================
-   VERIFY JWT TOKEN
+   VERIFY TOKEN
 ================================================== */
 
 exports.authenticate = (req, res, next) => {
@@ -23,7 +22,7 @@ exports.authenticate = (req, res, next) => {
 
                 success: false,
 
-                message: "Access token is required."
+                message: "Authorization header is required."
 
             });
 
@@ -63,7 +62,7 @@ exports.authenticate = (req, res, next) => {
 
             success: false,
 
-            message: "Invalid or expired token."
+            message: "Invalid or Expired Token."
 
         });
 
