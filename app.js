@@ -157,9 +157,11 @@ app.use("/platform", hospitalAdminRoutes);
 
 const authApiRoutes = require("./api/routes/authApiRoutes");
 const hospitalApiRoutes = require("./api/routes/hospitalApiRoutes");
+const hospitalAdminApiRoutes = require("./api/routes/hospitalAdminApiRoutes");
 
 app.use("/api/auth", authApiRoutes);
 app.use("/api/hospitals", hospitalApiRoutes);
+app.use("/api/hospital-admins", hospitalAdminApiRoutes);
 
 /* =====================================================
    SERVER
