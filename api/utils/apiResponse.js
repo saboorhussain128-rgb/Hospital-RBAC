@@ -9,9 +9,9 @@ exports.success = (
 
     res,
 
-    message = "Success",
-
     data = null,
+
+    message = "Success",
 
     statusCode = 200
 

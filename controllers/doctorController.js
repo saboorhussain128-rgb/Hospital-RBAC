@@ -25,7 +25,7 @@ exports.createDoctor = async (req, res) => {
 
     try {
 
-        const hospitalAdmin = req.session.user;
+        const hospitalAdmin = req.user;
 
         if (!hospitalAdmin) {
 
@@ -115,7 +115,7 @@ exports.viewDoctors = async (req, res) => {
 
     try {
 
-        const hospitalAdmin = req.session.user;
+        const hospitalAdmin = req.user;
 
         if (!hospitalAdmin) {
 
@@ -159,7 +159,13 @@ exports.editPage = async (req, res) => {
 
     try {
 
-        const hospitalAdmin = req.session.user;
+        const hospitalAdmin = req.user;
+
+        if (!hospitalAdmin) {
+
+            return res.redirect("/hospital/login");
+
+        }
 
         const doctor = await Doctor.findOne({
 
@@ -205,7 +211,13 @@ exports.updateDoctor = async (req, res) => {
 
     try {
 
-        const hospitalAdmin = req.session.user;
+        const hospitalAdmin = req.user;
+
+        if (!hospitalAdmin) {
+
+            return res.redirect("/hospital/login");
+
+        }
 
         const errors = validationResult(req);
 
@@ -265,7 +277,13 @@ exports.deleteDoctor = async (req, res) => {
 
     try {
 
-        const hospitalAdmin = req.session.user;
+        const hospitalAdmin = req.user;
+
+        if (!hospitalAdmin) {
+
+            return res.redirect("/hospital/login");
+
+        }
 
         await Doctor.findOneAndDelete({
 

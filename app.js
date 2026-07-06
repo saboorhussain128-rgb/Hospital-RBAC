@@ -158,7 +158,6 @@ app.use("/platform", hospitalAdminRoutes);
 const authApiRoutes = require("./api/routes/authApiRoutes");
 
 app.use("/api/auth", authApiRoutes);
-
 /* =====================================================
    SERVER
 ===================================================== */

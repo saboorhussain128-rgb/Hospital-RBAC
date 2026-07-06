@@ -22,7 +22,7 @@ exports.isAuthenticated = (req, res, next) => {
        JWT LOGIN
     ========================================== */
 
-    const token = req.cookies?.token;
+    const token = req.cookies.token;
 
     if (!token) {
 
@@ -30,19 +30,21 @@ exports.isAuthenticated = (req, res, next) => {
 
     }
 
-    const decoded = verifyToken(token);
+    try {
 
-    if (!decoded) {
+        const decoded = verifyToken(token);
+
+        req.user = decoded;
+
+        return next();
+
+    } catch (error) {
 
         res.clearCookie("token");
 
         return res.redirect("/hospital/login");
 
     }
-
-    req.user = decoded;
-
-    next();
 
 };
 

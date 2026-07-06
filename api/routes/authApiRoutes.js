@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 
 const authController = require("../controllers/authController");
-const apiAuth = require("../middleware/apiAuth");
+
+const {
+    authenticate
+} = require("../middleware/apiAuth");
 
 /* =====================================================
    PLATFORM ADMIN LOGIN
@@ -23,12 +26,12 @@ router.post(
 );
 
 /* =====================================================
-   PROFILE
+   CURRENT USER PROFILE
 ===================================================== */
 
 router.get(
     "/profile",
-    apiAuth,
+    authenticate,
     authController.profile
 );
 
@@ -38,7 +41,7 @@ router.get(
 
 router.post(
     "/logout",
-    apiAuth,
+    authenticate,
     authController.logout
 );
 
