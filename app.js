@@ -158,10 +158,12 @@ app.use("/platform", hospitalAdminRoutes);
 const authApiRoutes = require("./api/routes/authApiRoutes");
 const hospitalApiRoutes = require("./api/routes/hospitalApiRoutes");
 const hospitalAdminApiRoutes = require("./api/routes/hospitalAdminApiRoutes");
+const doctorApiRoutes = require("./api/routes/doctorApiRoutes");
 
 app.use("/api/auth", authApiRoutes);
 app.use("/api/hospitals", hospitalApiRoutes);
 app.use("/api/hospital-admins", hospitalAdminApiRoutes);
+app.use("/api/doctors", doctorApiRoutes);
 
 /* =====================================================
    SERVER
