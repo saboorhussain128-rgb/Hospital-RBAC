@@ -1,60 +1,152 @@
 const { body } = require("express-validator");
 
 /* =====================================================
-   CREATE HOSPITAL ADMIN
+   CREATE HOSPITAL ADMIN VALIDATION
 ===================================================== */
 
 exports.createHospitalAdminValidation = [
 
-    body("hospital")
-        .notEmpty()
-        .withMessage("Hospital is required."),
+    /* =================================================
+       NAME
+    ================================================= */
 
     body("name")
         .trim()
         .notEmpty()
         .withMessage("Name is required.")
-        .isLength({ min: 3 })
-        .withMessage("Minimum 3 characters required."),
+        .isLength({ min: 3, max: 50 })
+        .withMessage("Name must be between 3 and 50 characters."),
+
+    /* =================================================
+       EMAIL
+    ================================================= */
 
     body("email")
         .trim()
+        .notEmpty()
+        .withMessage("Email is required.")
         .isEmail()
-        .withMessage("Valid email is required.")
+        .withMessage("Please enter a valid email.")
         .normalizeEmail(),
 
+    /* =================================================
+       PASSWORD
+    ================================================= */
+
     body("password")
+        .notEmpty()
+        .withMessage("Password is required.")
         .isLength({ min: 8 })
-        .withMessage("Password must be at least 8 characters."),
+        .withMessage("Password must be at least 8 characters.")
+        .matches(/[A-Z]/)
+        .withMessage("Password must contain at least one uppercase letter.")
+        .matches(/[a-z]/)
+        .withMessage("Password must contain at least one lowercase letter.")
+        .matches(/[0-9]/)
+        .withMessage("Password must contain at least one number."),
+
+    /* =================================================
+       HOSPITAL
+    ================================================= */
+
+    body("hospital")
+        .trim()
+        .notEmpty()
+        .withMessage("Hospital ID is required."),
+
+    /* =================================================
+       PERMISSIONS
+    ================================================= */
 
     body("permissions")
-        .isArray({ min: 1 })
-        .withMessage("Select at least one permission.")
+        .custom((value) => {
+
+            if (!value) {
+
+                throw new Error("Permissions are required.");
+
+            }
+
+            if (Array.isArray(value) && value.length === 0) {
+
+                throw new Error("Please assign at least one permission.");
+
+            }
+
+            return true;
+
+        })
 
 ];
 
 /* =====================================================
-   UPDATE HOSPITAL ADMIN
+   UPDATE HOSPITAL ADMIN VALIDATION
 ===================================================== */
 
 exports.updateHospitalAdminValidation = [
 
-    body("hospital")
-        .notEmpty()
-        .withMessage("Hospital is required."),
+    /* =================================================
+       NAME
+    ================================================= */
 
     body("name")
+        .optional()
         .trim()
-        .notEmpty()
-        .withMessage("Name is required."),
+        .isLength({ min: 3, max: 50 })
+        .withMessage("Name must be between 3 and 50 characters."),
+
+    /* =================================================
+       EMAIL
+    ================================================= */
 
     body("email")
+        .optional()
         .trim()
         .isEmail()
-        .withMessage("Valid email is required."),
+        .withMessage("Please enter a valid email.")
+        .normalizeEmail(),
+
+    /* =================================================
+       PASSWORD
+    ================================================= */
+
+    body("password")
+        .optional({ checkFalsy: true })
+        .isLength({ min: 8 })
+        .withMessage("Password must be at least 8 characters.")
+        .matches(/[A-Z]/)
+        .withMessage("Password must contain at least one uppercase letter.")
+        .matches(/[a-z]/)
+        .withMessage("Password must contain at least one lowercase letter.")
+        .matches(/[0-9]/)
+        .withMessage("Password must contain at least one number."),
+
+    /* =================================================
+       HOSPITAL
+    ================================================= */
+
+    body("hospital")
+        .optional()
+        .trim()
+        .notEmpty()
+        .withMessage("Hospital ID cannot be empty."),
+
+    /* =================================================
+       PERMISSIONS
+    ================================================= */
 
     body("permissions")
-        .isArray({ min: 1 })
-        .withMessage("Permissions are required.")
+        .optional()
+        .custom((value) => {
+
+            if (Array.isArray(value) && value.length === 0) {
+
+                throw new Error("Please assign at least one permission.");
+
+            }
+
+            return true;
+
+        })
 
 ];

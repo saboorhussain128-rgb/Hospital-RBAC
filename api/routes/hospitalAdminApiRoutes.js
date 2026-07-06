@@ -7,7 +7,8 @@ const { authenticate } = require("../middleware/apiAuth");
 const { authorize } = require("../middleware/apiRBAC");
 
 const {
-    createHospitalAdminValidation
+    createHospitalAdminValidation,
+    updateHospitalAdminValidation
 } = require("../validators/hospitalAdminValidator");
 
 /* =====================================================
@@ -56,7 +57,7 @@ router.put(
     "/:id",
     authenticate,
     authorize("platform_admin"),
-    createHospitalAdminValidation,
+    updateHospitalAdminValidation,
     hospitalAdminController.updateHospitalAdmin
 );
 
