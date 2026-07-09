@@ -9,7 +9,6 @@ const express = require("express");
 
 const router = express.Router();
 
-
 /*
 ==================================================
 IMPORT CONTROLLER
@@ -18,7 +17,6 @@ IMPORT CONTROLLER
 
 const authController = require("../controllers/authController");
 
-
 /*
 ==================================================
 IMPORT VALIDATORS
@@ -26,20 +24,32 @@ IMPORT VALIDATORS
 */
 
 const {
+
     loginValidation,
     forgotPasswordValidation,
     resetPasswordValidation
-} = require("../validators/authValidator");
 
+} = require("../validators/authValidator");
 
 /*
 ==================================================
-IMPORT VALIDATION RESULT HANDLER
+IMPORT AUTH MIDDLEWARE
+==================================================
+*/
+
+const {
+
+    authenticate
+
+} = require("../middleware/apiAuth");
+
+/*
+==================================================
+IMPORT VALIDATION RESULT
 ==================================================
 */
 
 const { validationResult } = require("express-validator");
-
 
 /*
 ==================================================
@@ -57,18 +67,17 @@ const validateRequest = (req, res, next) => {
 
             success: false,
 
+            message: "Validation Failed",
+
             errors: errors.array()
 
         });
 
     }
 
-
     next();
 
 };
-
-
 
 /*
 ==================================================
@@ -87,11 +96,9 @@ router.post(
 
     validateRequest,
 
-    authController.platformAdminLogin
+    authController.platformLogin
 
 );
-
-
 
 /*
 ==================================================
@@ -110,11 +117,9 @@ router.post(
 
     validateRequest,
 
-    authController.hospitalAdminLogin
+    authController.hospitalLogin
 
 );
-
-
 
 /*
 ==================================================
@@ -129,11 +134,11 @@ router.get(
 
     "/profile",
 
-    authController.getProfile
+    authenticate,
+
+    authController.profile
 
 );
-
-
 
 /*
 ==================================================
@@ -156,8 +161,6 @@ router.post(
 
 );
 
-
-
 /*
 ==================================================
 RESET PASSWORD
@@ -179,8 +182,6 @@ router.post(
 
 );
 
-
-
 /*
 ==================================================
 LOGOUT
@@ -194,11 +195,11 @@ router.post(
 
     "/logout",
 
+    authenticate,
+
     authController.logout
 
 );
-
-
 
 /*
 ==================================================

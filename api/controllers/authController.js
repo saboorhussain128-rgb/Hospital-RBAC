@@ -29,35 +29,24 @@ exports.platformLogin = async (req, res) => {
         if (!admin) {
 
             return apiResponse.error(
-
                 res,
-
                 "Invalid Email or Password",
-
                 401
-
             );
 
         }
 
         const matched = await bcrypt.compare(
-
             password,
-
             admin.password
-
         );
 
         if (!matched) {
 
             return apiResponse.error(
-
                 res,
-
                 "Invalid Email or Password",
-
                 401
-
             );
 
         }
@@ -66,11 +55,13 @@ exports.platformLogin = async (req, res) => {
 
             id: admin._id,
 
-            name: admin.name,
+            name: admin.name || "Platform Admin",
 
             email: admin.email,
 
-            role: "platform_admin"
+            role: "platform_admin",
+
+            permissions: []
 
         });
 
@@ -88,7 +79,7 @@ exports.platformLogin = async (req, res) => {
 
                     id: admin._id,
 
-                    name: admin.name,
+                    name: admin.name || "Platform Admin",
 
                     email: admin.email,
 
@@ -107,13 +98,9 @@ exports.platformLogin = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -131,19 +118,17 @@ exports.hospitalLogin = async (req, res) => {
         const { email, password } = req.body;
 
         const admin = await HospitalAdmin
+
             .findOne({ email })
-            .populate("hospital");
+
+            .populate("hospital", "name address status");
 
         if (!admin) {
 
             return apiResponse.error(
-
                 res,
-
                 "Invalid Email or Password",
-
                 401
-
             );
 
         }
@@ -159,13 +144,9 @@ exports.hospitalLogin = async (req, res) => {
         if (!matched) {
 
             return apiResponse.error(
-
                 res,
-
                 "Invalid Email or Password",
-
                 401
-
             );
 
         }
@@ -184,7 +165,7 @@ exports.hospitalLogin = async (req, res) => {
 
             hospitalName: admin.hospital.name,
 
-            permissions: admin.permissions
+            permissions: admin.permissions || []
 
         });
 
@@ -210,7 +191,7 @@ exports.hospitalLogin = async (req, res) => {
 
                     hospital: admin.hospital,
 
-                    permissions: admin.permissions
+                    permissions: admin.permissions || []
 
                 }
 
@@ -225,13 +206,9 @@ exports.hospitalLogin = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -267,6 +244,44 @@ exports.logout = async (req, res) => {
         res,
 
         "Logout Successful",
+
+        null
+
+    );
+
+};
+
+/* ==================================================
+   FORGOT PASSWORD
+   (Implemented in Part 2)
+================================================== */
+
+exports.forgotPassword = async (req, res) => {
+
+    return apiResponse.success(
+
+        res,
+
+        "Forgot Password module will be implemented in the next step.",
+
+        null
+
+    );
+
+};
+
+/* ==================================================
+   RESET PASSWORD
+   (Implemented in Part 2)
+================================================== */
+
+exports.resetPassword = async (req, res) => {
+
+    return apiResponse.success(
+
+        res,
+
+        "Reset Password module will be implemented in the next step.",
 
         null
 
