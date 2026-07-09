@@ -190,10 +190,12 @@ Hospital RBAC Team`;
 };
 
 /* ==================================================
-   OTP EMAIL
+   SEND OTP EMAIL
 ================================================== */
 
 const sendOTPEmail = async ({
+
+    name,
 
     email,
 
@@ -201,20 +203,21 @@ const sendOTPEmail = async ({
 
 }) => {
 
-    const subject = "Hospital RBAC OTP Verification";
+    const subject = "Hospital RBAC - OTP Verification";
 
     const text =
-`Hello,
+`Hello ${name},
 
-Your One Time Password (OTP) is:
+Your One-Time Password (OTP) for Hospital RBAC is:
 
 ${otp}
 
-This OTP will expire in 10 minutes.
+This OTP is valid for 10 minutes.
 
-Do not share this OTP with anyone.
+If you did not request this OTP, please ignore this email.
 
 Regards,
+
 Hospital RBAC Team`;
 
     return sendEmail({
