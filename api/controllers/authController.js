@@ -6,16 +6,11 @@ Hospital RBAC System
 */
 
 const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
 
 const PlatformAdmin = require("../../models/PlatformAdmin");
 const HospitalAdmin = require("../../models/HospitalAdmin");
 
 const { generateToken } = require("../../utils/jwt");
-
-const {
-    sendForgotPasswordEmail
-} = require("../../services/emailService");
 
 const apiResponse = require("../utils/apiResponse");
 
@@ -29,11 +24,7 @@ exports.platformLogin = async (req, res) => {
 
         const { email, password } = req.body;
 
-        const admin = await PlatformAdmin.findOne({
-
-            email: email.toLowerCase()
-
-        });
+        const admin = await PlatformAdmin.findOne({ email });
 
         if (!admin) {
 
@@ -75,6 +66,8 @@ exports.platformLogin = async (req, res) => {
 
             id: admin._id,
 
+            name: admin.name,
+
             email: admin.email,
 
             role: "platform_admin"
@@ -94,6 +87,8 @@ exports.platformLogin = async (req, res) => {
                 user: {
 
                     id: admin._id,
+
+                    name: admin.name,
 
                     email: admin.email,
 
@@ -136,13 +131,7 @@ exports.hospitalLogin = async (req, res) => {
         const { email, password } = req.body;
 
         const admin = await HospitalAdmin
-
-            .findOne({
-
-                email: email.toLowerCase()
-
-            })
-
+            .findOne({ email })
             .populate("hospital");
 
         if (!admin) {
@@ -255,34 +244,32 @@ exports.hospitalLogin = async (req, res) => {
 
 exports.profile = async (req, res) => {
 
-    try {
+    return apiResponse.success(
 
-        return apiResponse.success(
+        res,
 
-            res,
+        "Profile Loaded Successfully",
 
-            "Profile Loaded Successfully",
+        req.user
 
-            req.user
+    );
 
-        );
+};
 
-    }
+/* ==================================================
+   LOGOUT
+================================================== */
 
-    catch (error) {
+exports.logout = async (req, res) => {
 
-        console.log(error);
+    return apiResponse.success(
 
-        return apiResponse.error(
+        res,
 
-            res,
+        "Logout Successful",
 
-            "Server Error",
+        null
 
-            500
-
-        );
-
-    }
+    );
 
 };
