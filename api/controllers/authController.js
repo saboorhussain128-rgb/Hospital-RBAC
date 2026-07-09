@@ -395,6 +395,184 @@ exports.forgotPassword = async (req, res) => {
 };
 
 /* ==================================================
+   SEND OTP
+================================================== */
+
+exports.sendOTP = async (req, res) => {
+
+    try {
+
+        const email = req.body.email.trim().toLowerCase();
+
+        const admin = await HospitalAdmin.findOne({ email });
+
+        if (!admin) {
+
+            return apiResponse.error(
+
+                res,
+
+                "Hospital Admin not found.",
+
+                404
+
+            );
+
+        }
+
+        /* ==========================================
+           GENERATE 6-DIGIT OTP
+        ========================================== */
+
+        const otp = Math.floor(
+            100000 + Math.random() * 900000
+        ).toString();
+
+        /* ==========================================
+           SAVE OTP
+        ========================================== */
+
+        admin.otp = otp;
+
+        admin.otpExpires = new Date(
+
+            Date.now() + (10 * 60 * 1000)
+
+        );
+
+        await admin.save();
+
+        /* ==========================================
+           SEND EMAIL
+        ========================================== */
+
+        const {
+
+            sendOTPEmail
+
+        } = require("../../services/emailService");
+
+        await sendOTPEmail({
+
+            name: admin.name,
+
+            email: admin.email,
+
+            otp
+
+        });
+
+        return apiResponse.success(
+
+            res,
+
+            "OTP sent successfully."
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        return apiResponse.error(
+
+            res,
+
+            "Unable to send OTP.",
+
+            500
+
+        );
+
+    }
+
+};
+
+/* ==================================================
+   VERIFY OTP
+================================================== */
+
+exports.verifyOTP = async (req, res) => {
+
+    try {
+
+        const {
+
+            email,
+
+            otp
+
+        } = req.body;
+
+        const admin = await HospitalAdmin.findOne({
+
+            email: email.trim().toLowerCase(),
+
+            otp,
+
+            otpExpires: {
+
+                $gt: Date.now()
+
+            }
+
+        });
+
+        if (!admin) {
+
+            return apiResponse.error(
+
+                res,
+
+                "Invalid or expired OTP.",
+
+                400
+
+            );
+
+        }
+
+        /* ==========================================
+           CLEAR OTP
+        ========================================== */
+
+        admin.otp = null;
+
+        admin.otpExpires = null;
+
+        await admin.save();
+
+        return apiResponse.success(
+
+            res,
+
+            "OTP verified successfully."
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        return apiResponse.error(
+
+            res,
+
+            "Unable to verify OTP.",
+
+            500
+
+        );
+
+    }
+
+};
+
+/* ==================================================
    RESET PASSWORD
 ================================================== */
 
