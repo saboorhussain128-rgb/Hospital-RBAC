@@ -11,6 +11,10 @@ const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const apiResponse = require("../utils/apiResponse");
 
+const {
+    sendWelcomeEmail
+} = require("../../services/emailService");
+
 /* =====================================================
    CREATE HOSPITAL ADMIN
 ===================================================== */
@@ -40,6 +44,10 @@ exports.createHospitalAdmin = async (req, res) => {
             permissions
         } = req.body;
 
+        /* =====================================================
+           CHECK HOSPITAL
+        ===================================================== */
+
         const hospitalExists = await Hospital.findById(hospital);
 
         if (!hospitalExists) {
@@ -51,6 +59,10 @@ exports.createHospitalAdmin = async (req, res) => {
             );
 
         }
+
+        /* =====================================================
+           CHECK DUPLICATE EMAIL
+        ===================================================== */
 
         const adminExists = await HospitalAdmin.findOne({ email });
 
@@ -64,23 +76,64 @@ exports.createHospitalAdmin = async (req, res) => {
 
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        /* =====================================================
+           HASH PASSWORD
+        ===================================================== */
+
+        const temporaryPassword = password;
+
+        const hashedPassword = await bcrypt.hash(
+            temporaryPassword,
+            10
+        );
+
+        /* =====================================================
+           CREATE ADMIN
+        ===================================================== */
 
         let admin = await HospitalAdmin.create({
 
             hospital,
+
             name,
+
             email,
+
             password: hashedPassword,
+
             permissions
 
         });
+
+        /* =====================================================
+           SEND WELCOME EMAIL
+        ===================================================== */
+
+        await sendWelcomeEmail({
+
+            hospitalName: hospitalExists.name,
+
+            name,
+
+            email,
+
+            password: temporaryPassword
+
+        });
+
+        /* =====================================================
+           LOAD COMPLETE ADMIN
+        ===================================================== */
 
         admin = await HospitalAdmin.findById(admin._id)
 
             .populate("hospital", "name address status")
 
             .select("-password -__v");
+
+        /* =====================================================
+           SUCCESS RESPONSE
+        ===================================================== */
 
         return apiResponse.success(
             res,
