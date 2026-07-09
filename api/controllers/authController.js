@@ -6,11 +6,16 @@ Hospital RBAC System
 */
 
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 
 const PlatformAdmin = require("../../models/PlatformAdmin");
 const HospitalAdmin = require("../../models/HospitalAdmin");
 
 const { generateToken } = require("../../utils/jwt");
+
+const {
+    sendPasswordResetEmail
+} = require("../../services/emailService");
 
 const apiResponse = require("../utils/apiResponse");
 
@@ -36,12 +41,12 @@ exports.platformLogin = async (req, res) => {
 
         }
 
-        const matched = await bcrypt.compare(
+        const isPasswordValid = await bcrypt.compare(
             password,
             admin.password
         );
 
-        if (!matched) {
+        if (!isPasswordValid) {
 
             return apiResponse.error(
                 res,
@@ -55,7 +60,7 @@ exports.platformLogin = async (req, res) => {
 
             id: admin._id,
 
-            name: admin.name || "Platform Admin",
+            name: admin.name,
 
             email: admin.email,
 
@@ -79,7 +84,7 @@ exports.platformLogin = async (req, res) => {
 
                     id: admin._id,
 
-                    name: admin.name || "Platform Admin",
+                    name: admin.name,
 
                     email: admin.email,
 
@@ -98,9 +103,13 @@ exports.platformLogin = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
+
             res,
+
             "Server Error",
+
             500
+
         );
 
     }
@@ -126,14 +135,18 @@ exports.hospitalLogin = async (req, res) => {
         if (!admin) {
 
             return apiResponse.error(
+
                 res,
+
                 "Invalid Email or Password",
+
                 401
+
             );
 
         }
 
-        const matched = await bcrypt.compare(
+        const isPasswordValid = await bcrypt.compare(
 
             password,
 
@@ -141,12 +154,16 @@ exports.hospitalLogin = async (req, res) => {
 
         );
 
-        if (!matched) {
+        if (!isPasswordValid) {
 
             return apiResponse.error(
+
                 res,
+
                 "Invalid Email or Password",
+
                 401
+
             );
 
         }
@@ -189,7 +206,17 @@ exports.hospitalLogin = async (req, res) => {
 
                     role: "hospital_admin",
 
-                    hospital: admin.hospital,
+                    hospital: {
+
+                        id: admin.hospital._id,
+
+                        name: admin.hospital.name,
+
+                        address: admin.hospital.address,
+
+                        status: admin.hospital.status
+
+                    },
 
                     permissions: admin.permissions || []
 
@@ -203,12 +230,16 @@ exports.hospitalLogin = async (req, res) => {
 
     catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         return apiResponse.error(
+
             res,
+
             "Server Error",
+
             500
+
         );
 
     }
@@ -250,41 +281,196 @@ exports.logout = async (req, res) => {
     );
 
 };
-
 /* ==================================================
    FORGOT PASSWORD
-   (Implemented in Part 2)
 ================================================== */
 
 exports.forgotPassword = async (req, res) => {
 
-    return apiResponse.success(
+    try {
 
-        res,
+        const email = req.body.email.trim().toLowerCase();
 
-        "Forgot Password module will be implemented in the next step.",
+        console.log("====================================");
+        console.log("Forgot Password Request");
+        console.log("Email:", email);
+        console.log("====================================");
 
-        null
+        const admin = await HospitalAdmin.findOne({ email });
 
-    );
+        if (!admin) {
+
+            console.log("Hospital Admin Not Found");
+
+            return apiResponse.error(
+
+                res,
+
+                "Hospital Admin not found.",
+
+                404
+
+            );
+
+        }
+
+        /* ==========================================
+           GENERATE RESET TOKEN
+        ========================================== */
+
+        const resetToken = crypto
+            .randomBytes(32)
+            .toString("hex");
+
+        /* ==========================================
+           SAVE TOKEN
+        ========================================== */
+
+        admin.resetPasswordToken = resetToken;
+
+        admin.resetPasswordExpires = new Date(
+
+            Date.now() + (15 * 60 * 1000)
+
+        );
+
+        await admin.save();
+
+        /* ==========================================
+           CREATE RESET LINK
+        ========================================== */
+
+        const resetLink =
+            `http://localhost:3000/reset-password?token=${resetToken}`;
+
+        /* ==========================================
+           SEND RESET EMAIL
+        ========================================== */
+
+        await sendPasswordResetEmail({
+
+            name: admin.name,
+
+            email: admin.email,
+
+            resetLink
+
+        });
+
+        console.log("====================================");
+        console.log("Password Reset Email Sent");
+        console.log(admin.email);
+        console.log("====================================");
+
+        /* ==========================================
+           SUCCESS
+        ========================================== */
+
+        return apiResponse.success(
+
+            res,
+
+            "Password reset link has been sent successfully."
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        return apiResponse.error(
+
+            res,
+
+            "Unable to process forgot password request.",
+
+            500
+
+        );
+
+    }
 
 };
 
 /* ==================================================
    RESET PASSWORD
-   (Implemented in Part 2)
 ================================================== */
 
 exports.resetPassword = async (req, res) => {
 
-    return apiResponse.success(
+    try {
 
-        res,
+        const {
+            token,
+            password
+        } = req.body;
 
-        "Reset Password module will be implemented in the next step.",
+        const admin = await HospitalAdmin.findOne({
 
-        null
+            resetPasswordToken: token,
 
-    );
+            resetPasswordExpires: {
+                $gt: Date.now()
+            }
+
+        });
+
+        if (!admin) {
+
+            return apiResponse.error(
+
+                res,
+
+                "Invalid or expired reset token.",
+
+                400
+
+            );
+
+        }
+
+        const hashedPassword = await bcrypt.hash(
+
+            password,
+
+            10
+
+        );
+
+        admin.password = hashedPassword;
+
+        admin.resetPasswordToken = null;
+
+        admin.resetPasswordExpires = null;
+
+        await admin.save();
+
+        return apiResponse.success(
+
+            res,
+
+            "Password reset successful."
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        return apiResponse.error(
+
+            res,
+
+            "Unable to reset password.",
+
+            500
+
+        );
+
+    }
 
 };
