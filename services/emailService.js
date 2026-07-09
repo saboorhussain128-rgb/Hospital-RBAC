@@ -5,89 +5,57 @@ Hospital RBAC System
 ==================================================
 */
 
-
 const { transporter } = require("../config/email");
 
+/* ==================================================
+   GENERIC EMAIL SENDER
+================================================== */
 
+const sendEmail = async ({ to, subject, text }) => {
 
-/*
-==================================================
-GENERIC EMAIL SENDER
-==================================================
-*/
-
-
-const sendEmail = async (options)=>{
-
-
-    try{
-
+    try {
 
         const info = await transporter.sendMail({
 
-
             from: process.env.EMAIL_FROM,
 
+            to,
 
-            to: options.to,
+            subject,
 
-
-            subject: options.subject,
-
-
-            text: options.text
-
-
+            text
 
         });
 
-
-
         console.log("====================================");
         console.log("Email Sent Successfully");
-        console.log("To :", options.to);
-        console.log("Message ID :", info.messageId);
+        console.log("To:", to);
+        console.log("Subject:", subject);
+        console.log("Message ID:", info.messageId);
         console.log("====================================");
-
-
 
         return info;
 
-
-
     }
-    catch(error){
 
+    catch (error) {
 
         console.log("====================================");
         console.log("Email Sending Failed");
         console.log(error.message);
         console.log("====================================");
 
-
-
         throw error;
-
 
     }
 
-
 };
 
+/* ==================================================
+   WELCOME EMAIL
+================================================== */
 
-
-
-
-
-
-/*
-==================================================
-WELCOME EMAIL
-==================================================
-*/
-
-
-const sendWelcomeEmail = async({
+const sendWelcomeEmail = async ({
 
     hospitalName,
 
@@ -97,296 +65,184 @@ const sendWelcomeEmail = async({
 
     password
 
+}) => {
 
-})=>{
+    const subject = "Welcome to Hospital RBAC";
 
-
-    return sendEmail({
-
-
-        to:email,
-
-
-        subject:"Welcome to Hospital RBAC",
-
-
-        text:
-
+    const text =
 `Hello ${name},
-
 
 Welcome to Hospital RBAC.
 
+Your Hospital Admin account has been created successfully.
 
-Your Hospital Administrator account has been created successfully.
-
-
-
-Hospital:
-
+Hospital
 ${hospitalName}
 
-
-
-Login Email:
-
+Login Email
 ${email}
 
-
-
-Temporary Password:
-
+Temporary Password
 ${password}
 
-
-
-Login URL:
-
+Login URL
 http://localhost:3000/hospital/login
 
-
-
-Please login and change your password immediately.
-
-
+Please change your password after your first login.
 
 Regards,
-
-Hospital RBAC Team`
-
-
-    });
-
-
-};
-
-
-
-
-
-
-
-
-
-/*
-==================================================
-FORGOT PASSWORD EMAIL
-==================================================
-*/
-
-
-const sendForgotPasswordEmail = async({
-
-
-    name="User",
-
-
-    email,
-
-
-    resetLink
-
-
-
-})=>{
-
+Hospital RBAC Team`;
 
     return sendEmail({
 
+        to: email,
 
-        to:email,
+        subject,
 
-
-        subject:"Hospital RBAC Password Reset",
-
-
-        text:
-
-
-`Hello ${name},
-
-
-A password reset request has been received for your Hospital RBAC account.
-
-
-
-Click the link below to reset your password:
-
-
-
-${resetLink}
-
-
-
-This password reset link will expire in 15 minutes.
-
-
-
-If you did not request this password reset, please ignore this email.
-
-
-
-Regards,
-
-Hospital RBAC Team`
-
-
+        text
 
     });
 
+};
 
+/* ==================================================
+   PASSWORD RESET EMAIL
+================================================== */
+
+const sendPasswordResetEmail = async ({
+
+    name,
+
+    email,
+
+    resetLink
+
+}) => {
+
+    const subject = "Hospital RBAC Password Reset";
+
+    const text =
+`Hello ${name},
+
+A request was received to reset your Hospital RBAC password.
+
+Click the link below to reset your password.
+
+${resetLink}
+
+This password reset link will expire in 15 minutes.
+
+If you did not request this password reset, you can safely ignore this email.
+
+Regards,
+Hospital RBAC Team`;
+
+    return sendEmail({
+
+        to: email,
+
+        subject,
+
+        text
+
+    });
 
 };
 
+/* ==================================================
+   FORGOT PASSWORD EMAIL
+================================================== */
 
+const sendForgotPasswordEmail = async ({
 
+    email,
 
+    resetLink
 
+}) => {
 
+    const subject = "Hospital RBAC Forgot Password";
 
+    const text =
+`Hello,
 
+A request has been received to reset your password.
 
-/*
-==================================================
-OTP EMAIL
-==================================================
-*/
+Reset Link
 
+${resetLink}
 
-const sendOTPEmail = async({
+If you didn't request this password reset, simply ignore this email.
 
+Regards,
+Hospital RBAC Team`;
 
-    name,
+    return sendEmail({
+
+        to: email,
+
+        subject,
+
+        text
+
+    });
+
+};
+
+/* ==================================================
+   OTP EMAIL
+================================================== */
+
+const sendOTPEmail = async ({
 
     email,
 
     otp
 
+}) => {
 
+    const subject = "Hospital RBAC OTP Verification";
 
-})=>{
+    const text =
+`Hello,
 
-
-    return sendEmail({
-
-
-        to:email,
-
-
-        subject:"Hospital RBAC OTP Verification",
-
-
-        text:
-
-
-`Hello ${name},
-
-
-Your OTP verification code is:
-
+Your One Time Password (OTP) is:
 
 ${otp}
 
+This OTP will expire in 10 minutes.
 
-
-This OTP expires in 10 minutes.
-
-
+Do not share this OTP with anyone.
 
 Regards,
-
-Hospital RBAC Team`
-
-
-
-    });
-
-
-};
-
-
-
-
-
-
-
-
-
-/*
-==================================================
-PASSWORD CHANGED EMAIL
-==================================================
-*/
-
-
-const sendPasswordChangedEmail = async({
-
-
-    name,
-
-    email
-
-
-
-})=>{
-
+Hospital RBAC Team`;
 
     return sendEmail({
 
+        to: email,
 
-        to:email,
+        subject,
 
-
-        subject:"Hospital RBAC Password Changed",
-
-
-        text:
-
-
-`Hello ${name},
-
-
-Your Hospital RBAC password has been changed successfully.
-
-
-
-If you did not perform this action, contact your administrator immediately.
-
-
-
-Regards,
-
-Hospital RBAC Team`
-
-
+        text
 
     });
 
-
-
 };
 
-
-
-
-
+/* ==================================================
+   EXPORT EMAIL SERVICES
+================================================== */
 
 module.exports = {
 
-
     sendEmail,
-
 
     sendWelcomeEmail,
 
+    sendPasswordResetEmail,
 
     sendForgotPasswordEmail,
 
-
-    sendOTPEmail,
-
-
-    sendPasswordChangedEmail
-
+    sendOTPEmail
 
 };
