@@ -19,7 +19,50 @@ exports.createDoctorValidation = [
         .withMessage("Doctor email is required.")
         .isEmail()
         .withMessage("Please enter a valid email address.")
-        .normalizeEmail()
+        .normalizeEmail(),
+
+    body("phone")
+        .trim()
+        .notEmpty()
+        .withMessage("Phone number is required."),
+
+    body("gender")
+        .isIn(["Male", "Female", "Other"])
+        .withMessage("Invalid gender."),
+
+    body("dateOfBirth")
+        .notEmpty()
+        .withMessage("Date of Birth is required.")
+        .isISO8601()
+        .withMessage("Invalid date."),
+
+    body("qualification")
+        .trim()
+        .notEmpty()
+        .withMessage("Qualification is required."),
+
+    body("specialization")
+        .trim()
+        .notEmpty()
+        .withMessage("Specialization is required."),
+
+    body("experience")
+        .isInt({ min: 0 })
+        .withMessage("Experience must be a positive number."),
+
+    body("consultationFee")
+        .isFloat({ min: 0 })
+        .withMessage("Consultation Fee must be a positive number."),
+
+    body("address")
+        .trim()
+        .notEmpty()
+        .withMessage("Address is required."),
+
+    body("status")
+        .optional()
+        .isIn(["active", "inactive"])
+        .withMessage("Invalid status.")
 
 ];
 
@@ -29,17 +72,40 @@ exports.createDoctorValidation = [
 
 exports.updateDoctorValidation = [
 
-    body("name")
-        .optional()
-        .trim()
-        .isLength({ min: 3, max: 50 })
-        .withMessage("Doctor name must be between 3 and 50 characters."),
+    body("name").optional().trim(),
 
     body("email")
         .optional()
-        .trim()
         .isEmail()
-        .withMessage("Please enter a valid email address.")
-        .normalizeEmail()
+        .withMessage("Invalid email.")
+        .normalizeEmail(),
+
+    body("phone").optional(),
+
+    body("gender")
+        .optional()
+        .isIn(["Male", "Female", "Other"]),
+
+    body("dateOfBirth")
+        .optional()
+        .isISO8601(),
+
+    body("qualification").optional(),
+
+    body("specialization").optional(),
+
+    body("experience")
+        .optional()
+        .isInt({ min: 0 }),
+
+    body("consultationFee")
+        .optional()
+        .isFloat({ min: 0 }),
+
+    body("address").optional(),
+
+    body("status")
+        .optional()
+        .isIn(["active", "inactive"])
 
 ];

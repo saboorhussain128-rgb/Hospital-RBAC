@@ -1,3 +1,10 @@
+/*
+==================================================
+HOSPITAL ADMIN API CONTROLLER
+Hospital RBAC System
+==================================================
+*/
+
 const HospitalAdmin = require("../../models/HospitalAdmin");
 const Hospital = require("../../models/Hospital");
 const bcrypt = require("bcryptjs");
@@ -26,13 +33,11 @@ exports.createHospitalAdmin = async (req, res) => {
         }
 
         const {
-
             hospital,
             name,
             email,
             password,
             permissions
-
         } = req.body;
 
         const hospitalExists = await Hospital.findById(hospital);
@@ -61,30 +66,27 @@ exports.createHospitalAdmin = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const admin = await HospitalAdmin.create({
+        let admin = await HospitalAdmin.create({
 
             hospital,
-
             name,
-
             email,
-
             password: hashedPassword,
-
             permissions
 
         });
 
+        admin = await HospitalAdmin.findById(admin._id)
+
+            .populate("hospital", "name address status")
+
+            .select("-password -__v");
+
         return apiResponse.success(
-
             res,
-
             "Hospital Admin created successfully.",
-
             admin,
-
             201
-
         );
 
     }
@@ -94,13 +96,9 @@ exports.createHospitalAdmin = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -119,22 +117,16 @@ exports.getHospitalAdmins = async (req, res) => {
 
             .populate("hospital", "name address status")
 
-            .select("-password")
+            .select("-password -__v")
 
             .sort({
-
                 createdAt: -1
-
             });
 
         return apiResponse.success(
-
             res,
-
             "Hospital Admin list fetched successfully.",
-
             admins
-
         );
 
     }
@@ -144,13 +136,9 @@ exports.getHospitalAdmins = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -169,30 +157,22 @@ exports.getHospitalAdmin = async (req, res) => {
 
             .populate("hospital", "name address status")
 
-            .select("-password");
+            .select("-password -__v");
 
         if (!admin) {
 
             return apiResponse.error(
-
                 res,
-
                 "Hospital Admin not found.",
-
                 404
-
             );
 
         }
 
         return apiResponse.success(
-
             res,
-
             "Hospital Admin fetched successfully.",
-
             admin
-
         );
 
     }
@@ -202,13 +182,9 @@ exports.getHospitalAdmin = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -228,47 +204,32 @@ exports.updateHospitalAdmin = async (req, res) => {
         if (!errors.isEmpty()) {
 
             return apiResponse.error(
-
                 res,
-
                 "Validation Failed",
-
                 400,
-
                 errors.array()
-
             );
 
         }
 
-        const admin = await HospitalAdmin.findById(req.params.id);
+        let admin = await HospitalAdmin.findById(req.params.id);
 
         if (!admin) {
 
             return apiResponse.error(
-
                 res,
-
                 "Hospital Admin not found.",
-
                 404
-
             );
 
         }
 
         const {
-
             hospital,
-
             name,
-
             email,
-
             password,
-
             permissions
-
         } = req.body;
 
         const duplicate = await HospitalAdmin.findOne({
@@ -276,9 +237,7 @@ exports.updateHospitalAdmin = async (req, res) => {
             email,
 
             _id: {
-
                 $ne: req.params.id
-
             }
 
         });
@@ -286,23 +245,16 @@ exports.updateHospitalAdmin = async (req, res) => {
         if (duplicate) {
 
             return apiResponse.error(
-
                 res,
-
                 "Email already exists.",
-
                 409
-
             );
 
         }
 
         admin.hospital = hospital;
-
         admin.name = name;
-
         admin.email = email;
-
         admin.permissions = permissions;
 
         if (password && password.trim() !== "") {
@@ -313,14 +265,16 @@ exports.updateHospitalAdmin = async (req, res) => {
 
         await admin.save();
 
+        admin = await HospitalAdmin.findById(admin._id)
+
+            .populate("hospital", "name address status")
+
+            .select("-password -__v");
+
         return apiResponse.success(
-
             res,
-
             "Hospital Admin updated successfully.",
-
             admin
-
         );
 
     }
@@ -330,13 +284,9 @@ exports.updateHospitalAdmin = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -356,13 +306,9 @@ exports.deleteHospitalAdmin = async (req, res) => {
         if (!admin) {
 
             return apiResponse.error(
-
                 res,
-
                 "Hospital Admin not found.",
-
                 404
-
             );
 
         }
@@ -370,11 +316,8 @@ exports.deleteHospitalAdmin = async (req, res) => {
         await admin.deleteOne();
 
         return apiResponse.success(
-
             res,
-
             "Hospital Admin deleted successfully."
-
         );
 
     }
@@ -384,13 +327,9 @@ exports.deleteHospitalAdmin = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }

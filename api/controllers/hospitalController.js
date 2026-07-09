@@ -15,15 +15,10 @@ exports.createHospital = async (req, res) => {
         if (!errors.isEmpty()) {
 
             return apiResponse.error(
-
                 res,
-
                 "Validation Failed",
-
                 400,
-
                 errors.array()
-
             );
 
         }
@@ -35,35 +30,27 @@ exports.createHospital = async (req, res) => {
         if (hospitalExists) {
 
             return apiResponse.error(
-
                 res,
-
                 "Hospital already exists.",
-
                 409
-
             );
 
         }
 
         const hospital = await Hospital.create({
-
             name,
             address,
             status
-
         });
 
+        const response = await Hospital.findById(hospital._id)
+            .select("-__v");
+
         return apiResponse.success(
-
             res,
-
             "Hospital created successfully.",
-
-            hospital,
-
+            response,
             201
-
         );
 
     }
@@ -73,13 +60,9 @@ exports.createHospital = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -88,25 +71,96 @@ exports.createHospital = async (req, res) => {
 
 /* =====================================================
    GET ALL HOSPITALS
+   Pagination + Search + Filter + Sorting
 ===================================================== */
 
 exports.getHospitals = async (req, res) => {
 
     try {
 
-        const hospitals = await Hospital.find()
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const skip = (page - 1) * limit;
 
-            .sort({ createdAt: -1 });
+        const search = req.query.search || "";
+        const status = req.query.status;
 
-        return apiResponse.success(
+        let sort = { createdAt: -1 };
 
-            res,
+        if (req.query.sort) {
 
-            "Hospitals fetched successfully.",
+            switch (req.query.sort) {
 
-            hospitals
+                case "name":
+                    sort = { name: 1 };
+                    break;
 
-        );
+                case "-name":
+                    sort = { name: -1 };
+                    break;
+
+                case "createdAt":
+                    sort = { createdAt: 1 };
+                    break;
+
+                case "-createdAt":
+                    sort = { createdAt: -1 };
+                    break;
+
+            }
+
+        }
+
+        const filter = {};
+
+        if (search) {
+
+            filter.name = {
+                $regex: search,
+                $options: "i"
+            };
+
+        }
+
+        if (status) {
+
+            filter.status = status;
+
+        }
+
+        const totalRecords = await Hospital.countDocuments(filter);
+
+        const hospitals = await Hospital.find(filter)
+
+            .select("-__v")
+
+            .sort(sort)
+
+            .skip(skip)
+
+            .limit(limit);
+
+        return res.status(200).json({
+
+            success: true,
+
+            message: "Hospitals fetched successfully.",
+
+            pagination: {
+
+                currentPage: page,
+
+                totalPages: Math.ceil(totalRecords / limit),
+
+                totalRecords,
+
+                pageSize: limit
+
+            },
+
+            data: hospitals
+
+        });
 
     }
 
@@ -115,13 +169,9 @@ exports.getHospitals = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -136,30 +186,23 @@ exports.getHospital = async (req, res) => {
 
     try {
 
-        const hospital = await Hospital.findById(req.params.id);
+        const hospital = await Hospital.findById(req.params.id)
+            .select("-__v");
 
         if (!hospital) {
 
             return apiResponse.error(
-
                 res,
-
                 "Hospital not found.",
-
                 404
-
             );
 
         }
 
         return apiResponse.success(
-
             res,
-
             "Hospital fetched successfully.",
-
             hospital
-
         );
 
     }
@@ -169,13 +212,9 @@ exports.getHospital = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -191,43 +230,28 @@ exports.updateHospital = async (req, res) => {
     try {
 
         const hospital = await Hospital.findByIdAndUpdate(
-
             req.params.id,
-
             req.body,
-
             {
-
                 new: true,
-
                 runValidators: true
-
             }
-
-        );
+        ).select("-__v");
 
         if (!hospital) {
 
             return apiResponse.error(
-
                 res,
-
                 "Hospital not found.",
-
                 404
-
             );
 
         }
 
         return apiResponse.success(
-
             res,
-
             "Hospital updated successfully.",
-
             hospital
-
         );
 
     }
@@ -237,13 +261,9 @@ exports.updateHospital = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -258,32 +278,21 @@ exports.deleteHospital = async (req, res) => {
 
     try {
 
-        const hospital = await Hospital.findByIdAndDelete(
-
-            req.params.id
-
-        );
+        const hospital = await Hospital.findByIdAndDelete(req.params.id);
 
         if (!hospital) {
 
             return apiResponse.error(
-
                 res,
-
                 "Hospital not found.",
-
                 404
-
             );
 
         }
 
         return apiResponse.success(
-
             res,
-
             "Hospital deleted successfully."
-
         );
 
     }
@@ -293,13 +302,9 @@ exports.deleteHospital = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }

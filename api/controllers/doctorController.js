@@ -1,3 +1,10 @@
+/*
+==================================================
+DOCTOR API CONTROLLER
+Hospital RBAC System
+==================================================
+*/
+
 const Doctor = require("../../models/Doctor");
 const { validationResult } = require("express-validator");
 const apiResponse = require("../utils/apiResponse");
@@ -15,15 +22,10 @@ exports.createDoctor = async (req, res) => {
         if (!errors.isEmpty()) {
 
             return apiResponse.error(
-
                 res,
-
                 "Validation Failed",
-
                 400,
-
                 errors.array()
-
             );
 
         }
@@ -31,8 +33,16 @@ exports.createDoctor = async (req, res) => {
         const {
 
             name,
-
-            email
+            email,
+            phone,
+            gender,
+            dateOfBirth,
+            qualification,
+            specialization,
+            experience,
+            consultationFee,
+            address,
+            status
 
         } = req.body;
 
@@ -41,7 +51,6 @@ exports.createDoctor = async (req, res) => {
         const doctorExists = await Doctor.findOne({
 
             email,
-
             hospital
 
         });
@@ -49,13 +58,9 @@ exports.createDoctor = async (req, res) => {
         if (doctorExists) {
 
             return apiResponse.error(
-
                 res,
-
                 "Doctor already exists.",
-
                 409
-
             );
 
         }
@@ -65,21 +70,24 @@ exports.createDoctor = async (req, res) => {
             hospital,
 
             name,
-
-            email
+            email,
+            phone,
+            gender,
+            dateOfBirth,
+            qualification,
+            specialization,
+            experience,
+            consultationFee,
+            address,
+            status
 
         });
 
         return apiResponse.success(
-
             res,
-
             "Doctor created successfully.",
-
             doctor,
-
             201
-
         );
 
     }
@@ -89,13 +97,9 @@ exports.createDoctor = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -114,22 +118,16 @@ exports.getDoctors = async (req, res) => {
 
             hospital: req.user.hospital
 
-        })
-
-        .sort({
+        }).sort({
 
             createdAt: -1
 
         });
 
         return apiResponse.success(
-
             res,
-
             "Doctors fetched successfully.",
-
             doctors
-
         );
 
     }
@@ -139,13 +137,9 @@ exports.getDoctors = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -163,7 +157,6 @@ exports.getDoctor = async (req, res) => {
         const doctor = await Doctor.findOne({
 
             _id: req.params.id,
-
             hospital: req.user.hospital
 
         });
@@ -171,25 +164,17 @@ exports.getDoctor = async (req, res) => {
         if (!doctor) {
 
             return apiResponse.error(
-
                 res,
-
                 "Doctor not found.",
-
                 404
-
             );
 
         }
 
         return apiResponse.success(
-
             res,
-
             "Doctor fetched successfully.",
-
             doctor
-
         );
 
     }
@@ -199,13 +184,9 @@ exports.getDoctor = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -225,15 +206,10 @@ exports.updateDoctor = async (req, res) => {
         if (!errors.isEmpty()) {
 
             return apiResponse.error(
-
                 res,
-
                 "Validation Failed",
-
                 400,
-
                 errors.array()
-
             );
 
         }
@@ -241,7 +217,6 @@ exports.updateDoctor = async (req, res) => {
         const doctor = await Doctor.findOne({
 
             _id: req.params.id,
-
             hospital: req.user.hospital
 
         });
@@ -249,13 +224,9 @@ exports.updateDoctor = async (req, res) => {
         if (!doctor) {
 
             return apiResponse.error(
-
                 res,
-
                 "Doctor not found.",
-
                 404
-
             );
 
         }
@@ -265,7 +236,6 @@ exports.updateDoctor = async (req, res) => {
             const duplicate = await Doctor.findOne({
 
                 email: req.body.email,
-
                 hospital: req.user.hospital,
 
                 _id: {
@@ -279,41 +249,54 @@ exports.updateDoctor = async (req, res) => {
             if (duplicate) {
 
                 return apiResponse.error(
-
                     res,
-
                     "Doctor email already exists.",
-
                     409
-
                 );
 
             }
 
         }
 
-        if (req.body.name !== undefined) {
-
+        if (req.body.name !== undefined)
             doctor.name = req.body.name;
 
-        }
-
-        if (req.body.email !== undefined) {
-
+        if (req.body.email !== undefined)
             doctor.email = req.body.email;
 
-        }
+        if (req.body.phone !== undefined)
+            doctor.phone = req.body.phone;
+
+        if (req.body.gender !== undefined)
+            doctor.gender = req.body.gender;
+
+        if (req.body.dateOfBirth !== undefined)
+            doctor.dateOfBirth = req.body.dateOfBirth;
+
+        if (req.body.qualification !== undefined)
+            doctor.qualification = req.body.qualification;
+
+        if (req.body.specialization !== undefined)
+            doctor.specialization = req.body.specialization;
+
+        if (req.body.experience !== undefined)
+            doctor.experience = req.body.experience;
+
+        if (req.body.consultationFee !== undefined)
+            doctor.consultationFee = req.body.consultationFee;
+
+        if (req.body.address !== undefined)
+            doctor.address = req.body.address;
+
+        if (req.body.status !== undefined)
+            doctor.status = req.body.status;
 
         await doctor.save();
 
         return apiResponse.success(
-
             res,
-
             "Doctor updated successfully.",
-
             doctor
-
         );
 
     }
@@ -323,13 +306,9 @@ exports.updateDoctor = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }
@@ -347,7 +326,6 @@ exports.deleteDoctor = async (req, res) => {
         const doctor = await Doctor.findOne({
 
             _id: req.params.id,
-
             hospital: req.user.hospital
 
         });
@@ -355,13 +333,9 @@ exports.deleteDoctor = async (req, res) => {
         if (!doctor) {
 
             return apiResponse.error(
-
                 res,
-
                 "Doctor not found.",
-
                 404
-
             );
 
         }
@@ -369,11 +343,8 @@ exports.deleteDoctor = async (req, res) => {
         await doctor.deleteOne();
 
         return apiResponse.success(
-
             res,
-
             "Doctor deleted successfully."
-
         );
 
     }
@@ -383,13 +354,9 @@ exports.deleteDoctor = async (req, res) => {
         console.log(error);
 
         return apiResponse.error(
-
             res,
-
             "Server Error",
-
             500
-
         );
 
     }

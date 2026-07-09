@@ -1,18 +1,23 @@
 /*
 ==================================================
 API JWT Authentication Middleware
+Hospital RBAC System
 ==================================================
 */
 
 const jwt = require("jsonwebtoken");
 
 /* ==================================================
-   VERIFY TOKEN
+   AUTHENTICATE API REQUEST
 ================================================== */
 
 exports.authenticate = (req, res, next) => {
 
     try {
+
+        /* ==========================================
+           GET AUTHORIZATION HEADER
+        ========================================== */
 
         const authHeader = req.headers.authorization;
 
@@ -28,6 +33,10 @@ exports.authenticate = (req, res, next) => {
 
         }
 
+        /* ==========================================
+           CHECK BEARER TOKEN FORMAT
+        ========================================== */
+
         if (!authHeader.startsWith("Bearer ")) {
 
             return res.status(401).json({
@@ -40,7 +49,15 @@ exports.authenticate = (req, res, next) => {
 
         }
 
+        /* ==========================================
+           EXTRACT TOKEN
+        ========================================== */
+
         const token = authHeader.split(" ")[1];
+
+        /* ==========================================
+           VERIFY JWT TOKEN
+        ========================================== */
 
         const decoded = jwt.verify(
 
@@ -50,13 +67,23 @@ exports.authenticate = (req, res, next) => {
 
         );
 
+        /* ==========================================
+           STORE USER DETAILS
+        ========================================== */
+
         req.user = decoded;
+
+        /* ==========================================
+           CONTINUE TO NEXT MIDDLEWARE
+        ========================================== */
 
         next();
 
     }
 
     catch (error) {
+
+        console.log("JWT Error:", error.message);
 
         return res.status(401).json({
 

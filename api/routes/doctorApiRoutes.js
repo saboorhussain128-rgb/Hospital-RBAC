@@ -4,7 +4,6 @@ const router = express.Router();
 const doctorController = require("../controllers/doctorController");
 
 const { authenticate } = require("../middleware/apiAuth");
-
 const { authorize } = require("../middleware/apiRBAC");
 
 const {
@@ -14,63 +13,58 @@ const {
 
 /* =====================================================
    CREATE DOCTOR
-   POST /api/doctors
 ===================================================== */
 
 router.post(
     "/",
     authenticate,
-    authorize("hospital_admin"),
+    authorize("doctor.create"),
     createDoctorValidation,
     doctorController.createDoctor
 );
 
 /* =====================================================
    GET ALL DOCTORS
-   GET /api/doctors
 ===================================================== */
 
 router.get(
     "/",
     authenticate,
-    authorize("hospital_admin"),
+    authorize("doctor.view"),
     doctorController.getDoctors
 );
 
 /* =====================================================
    GET SINGLE DOCTOR
-   GET /api/doctors/:id
 ===================================================== */
 
 router.get(
     "/:id",
     authenticate,
-    authorize("hospital_admin"),
+    authorize("doctor.view"),
     doctorController.getDoctor
 );
 
 /* =====================================================
    UPDATE DOCTOR
-   PUT /api/doctors/:id
 ===================================================== */
 
 router.put(
     "/:id",
     authenticate,
-    authorize("hospital_admin"),
+    authorize("doctor.update"),
     updateDoctorValidation,
     doctorController.updateDoctor
 );
 
 /* =====================================================
    DELETE DOCTOR
-   DELETE /api/doctors/:id
 ===================================================== */
 
 router.delete(
     "/:id",
     authenticate,
-    authorize("hospital_admin"),
+    authorize("doctor.delete"),
     doctorController.deleteDoctor
 );
 
