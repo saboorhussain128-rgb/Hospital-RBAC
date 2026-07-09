@@ -94,7 +94,7 @@ const hospitalAdminSchema = new mongoose.Schema(
         },
 
         /* ==================================================
-           FORGOT PASSWORD TOKEN
+           RESET PASSWORD TOKEN
         ================================================== */
 
         resetPasswordToken: {
@@ -106,10 +106,34 @@ const hospitalAdminSchema = new mongoose.Schema(
         },
 
         /* ==================================================
-           TOKEN EXPIRY
+           RESET PASSWORD EXPIRY
         ================================================== */
 
         resetPasswordExpires: {
+
+            type: Date,
+
+            default: null
+
+        },
+
+        /* ==================================================
+           OTP CODE
+        ================================================== */
+
+        otp: {
+
+            type: String,
+
+            default: null
+
+        },
+
+        /* ==================================================
+           OTP EXPIRY
+        ================================================== */
+
+        otpExpires: {
 
             type: Date,
 
