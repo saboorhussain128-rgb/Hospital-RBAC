@@ -11,7 +11,7 @@ const { transporter } = require("../config/email");
    GENERIC EMAIL SENDER
 ================================================== */
 
-const sendEmail = async ({ to, subject, text }) => {
+const sendEmail = async (options) => {
 
     try {
 
@@ -19,17 +19,17 @@ const sendEmail = async ({ to, subject, text }) => {
 
             from: process.env.EMAIL_FROM,
 
-            to,
+            to: options.to,
 
-            subject,
+            subject: options.subject,
 
-            text
+            text: options.text
 
         });
 
         console.log("====================================");
         console.log("Email Sent Successfully");
-        console.log("Message ID:", info.messageId);
+        console.log("Message ID :", info.messageId);
         console.log("====================================");
 
         return info;
@@ -72,23 +72,38 @@ const sendWelcomeEmail = async ({
 
 Welcome to Hospital RBAC.
 
-Your Hospital Admin account has been created successfully.
+Your Hospital Administrator account has been created successfully.
+
+------------------------------------------------
 
 Hospital
+
 ${hospitalName}
 
+------------------------------------------------
+
 Login Email
+
 ${email}
 
+------------------------------------------------
+
 Temporary Password
+
 ${password}
 
+------------------------------------------------
+
 Login URL
+
 http://localhost:3000/hospital/login
 
-Please change your password after your first login.
+------------------------------------------------
+
+Please login and change your password immediately.
 
 Regards,
+
 Hospital RBAC Team`;
 
     return sendEmail({
@@ -109,6 +124,8 @@ Hospital RBAC Team`;
 
 const sendForgotPasswordEmail = async ({
 
+    name,
+
     email,
 
     resetLink
@@ -118,17 +135,22 @@ const sendForgotPasswordEmail = async ({
     const subject = "Hospital RBAC Password Reset";
 
     const text =
-`Hello,
+`Hello ${name},
 
-A request has been received to reset your password.
+A password reset request has been received for your account.
 
-Click the link below.
+Click the link below to reset your password.
 
 ${resetLink}
 
-If you didn't request this, simply ignore this email.
+This link will expire in 15 minutes.
+
+If you did not request this password reset,
+
+please ignore this email.
 
 Regards,
+
 Hospital RBAC Team`;
 
     return sendEmail({
@@ -149,6 +171,8 @@ Hospital RBAC Team`;
 
 const sendOTPEmail = async ({
 
+    name,
+
     email,
 
     otp
@@ -158,15 +182,55 @@ const sendOTPEmail = async ({
     const subject = "Hospital RBAC OTP Verification";
 
     const text =
-`Hello,
+`Hello ${name},
 
-Your OTP Code is
+Your One Time Password (OTP) is
 
 ${otp}
 
-This OTP will expire in 10 minutes.
+This OTP is valid for 10 minutes.
 
 Regards,
+
+Hospital RBAC Team`;
+
+    return sendEmail({
+
+        to: email,
+
+        subject,
+
+        text
+
+    });
+
+};
+
+/* ==================================================
+   PASSWORD CHANGED EMAIL
+================================================== */
+
+const sendPasswordChangedEmail = async ({
+
+    name,
+
+    email
+
+}) => {
+
+    const subject = "Hospital RBAC Password Changed";
+
+    const text =
+`Hello ${name},
+
+Your password has been changed successfully.
+
+If you did not perform this action,
+
+please contact the Platform Administrator immediately.
+
+Regards,
+
 Hospital RBAC Team`;
 
     return sendEmail({
@@ -189,6 +253,8 @@ module.exports = {
 
     sendForgotPasswordEmail,
 
-    sendOTPEmail
+    sendOTPEmail,
+
+    sendPasswordChangedEmail
 
 };
