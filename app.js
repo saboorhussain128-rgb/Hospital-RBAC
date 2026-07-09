@@ -7,11 +7,6 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 
 const connectDB = require("./config/db");
-
-/* =====================================================
-   EMAIL CONFIGURATION
-===================================================== */
-
 const { verifyEmailConnection } = require("./config/email");
 
 const app = express();
@@ -21,11 +16,6 @@ const app = express();
 ===================================================== */
 
 connectDB();
-
-/* =====================================================
-   VERIFY EMAIL SERVER
-===================================================== */
-
 verifyEmailConnection();
 
 /* =====================================================
@@ -72,9 +62,7 @@ app.use((req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (authHeader && authHeader.startsWith("Bearer ")) {
-
         token = authHeader.split(" ")[1];
-
     }
 
     /* ===============================================
@@ -82,9 +70,7 @@ app.use((req, res, next) => {
     =============================================== */
 
     if (!token && req.cookies) {
-
         token = req.cookies.token;
-
     }
 
     /* ===============================================
@@ -102,9 +88,7 @@ app.use((req, res, next) => {
 
             req.user = decoded;
 
-        }
-
-        catch (err) {
+        } catch (err) {
 
             console.log("JWT Error:", err.message);
 
@@ -173,11 +157,13 @@ const authApiRoutes = require("./api/routes/authApiRoutes");
 const hospitalApiRoutes = require("./api/routes/hospitalApiRoutes");
 const hospitalAdminApiRoutes = require("./api/routes/hospitalAdminApiRoutes");
 const doctorApiRoutes = require("./api/routes/doctorApiRoutes");
+const emailApiRoutes = require("./api/routes/emailApiRoutes");
 
 app.use("/api/auth", authApiRoutes);
 app.use("/api/hospitals", hospitalApiRoutes);
 app.use("/api/hospital-admins", hospitalAdminApiRoutes);
 app.use("/api/doctors", doctorApiRoutes);
+app.use("/api/email", emailApiRoutes);
 
 /* =====================================================
    SERVER
