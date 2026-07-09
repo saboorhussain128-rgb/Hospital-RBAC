@@ -87,49 +87,66 @@ exports.createHospitalAdmin = async (req, res) => {
             10
         );
 
-        /* =====================================================
-           CREATE ADMIN
-        ===================================================== */
+/* =====================================================
+   CREATE ADMIN
+===================================================== */
 
-        let admin = await HospitalAdmin.create({
+let admin = await HospitalAdmin.create({
 
-            hospital,
+    hospital,
 
-            name,
+    name,
 
-            email,
+    email,
 
-            password: hashedPassword,
+    password: hashedPassword,
 
-            permissions
+    permissions
 
-        });
+});
 
-        /* =====================================================
-           SEND WELCOME EMAIL
-        ===================================================== */
+/* =====================================================
+   SEND WELCOME EMAIL
+===================================================== */
 
-        await sendWelcomeEmail({
+try {
 
-            hospitalName: hospitalExists.name,
+    await sendWelcomeEmail({
 
-            name,
+        hospitalName: hospitalExists.name,
 
-            email,
+        name,
 
-            password: temporaryPassword
+        email,
 
-        });
+        password: temporaryPassword
 
-        /* =====================================================
-           LOAD COMPLETE ADMIN
-        ===================================================== */
+    });
 
-        admin = await HospitalAdmin.findById(admin._id)
+    console.log("====================================");
+    console.log("Welcome Email Sent Successfully");
+    console.log("====================================");
 
-            .populate("hospital", "name address status")
+}
+catch (emailError) {
 
-            .select("-password -__v");
+    console.log("====================================");
+    console.log("Welcome Email Failed");
+    console.log(emailError.message);
+    console.log("====================================");
+
+    // Do not stop Hospital Admin creation
+}
+
+/* =====================================================
+   LOAD COMPLETE ADMIN
+===================================================== */
+
+admin = await HospitalAdmin.findById(admin._id)
+
+    .populate("hospital", "name address status")
+
+    .select("-password -__v");
 
         /* =====================================================
            SUCCESS RESPONSE
