@@ -8,6 +8,12 @@ const jwt = require("jsonwebtoken");
 
 const connectDB = require("./config/db");
 
+/* =====================================================
+   EMAIL CONFIGURATION
+===================================================== */
+
+const { verifyEmailConnection } = require("./config/email");
+
 const app = express();
 
 /* =====================================================
@@ -15,6 +21,12 @@ const app = express();
 ===================================================== */
 
 connectDB();
+
+/* =====================================================
+   VERIFY EMAIL SERVER
+===================================================== */
+
+verifyEmailConnection();
 
 /* =====================================================
    MIDDLEWARES
@@ -90,7 +102,9 @@ app.use((req, res, next) => {
 
             req.user = decoded;
 
-        } catch (err) {
+        }
+
+        catch (err) {
 
             console.log("JWT Error:", err.message);
 
