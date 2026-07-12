@@ -10,9 +10,8 @@ const Hospital = require("../models/Hospital");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 
-const {
-    sendWelcomeEmail
-} = require("../services/emailService");
+const { sendWelcomeEmail } = require("../services/emailService");
+const createAuditLog = require("../services/auditLogService");
 
 /* =====================================================
    CREATE PAGE
@@ -25,11 +24,9 @@ exports.createPage = async (req, res) => {
         const hospitals = await Hospital.find().sort({ name: 1 });
 
         res.render("platform/createHospitalAdmin", {
-
             hospitals,
             errors: [],
             body: {}
-
         });
 
     }
@@ -37,7 +34,6 @@ exports.createPage = async (req, res) => {
     catch (error) {
 
         console.log(error);
-
         res.send("Error loading page.");
 
     }
@@ -59,30 +55,24 @@ exports.createAdmin = async (req, res) => {
         if (!errors.isEmpty()) {
 
             return res.render("platform/createHospitalAdmin", {
-
                 hospitals,
                 errors: errors.array(),
                 body: req.body
-
             });
 
         }
 
         const {
-
             hospital,
             name,
             email,
             password
-
         } = req.body;
 
         let permissions = req.body.permissions || [];
 
         if (!Array.isArray(permissions)) {
-
             permissions = [permissions];
-
         }
 
         const exists = await HospitalAdmin.findOne({ email });
@@ -90,26 +80,16 @@ exports.createAdmin = async (req, res) => {
         if (exists) {
 
             return res.render("platform/createHospitalAdmin", {
-
                 hospitals,
-
                 errors: [
-
                     {
                         msg: "Hospital Admin already exists."
                     }
-
                 ],
-
                 body: req.body
-
             });
 
         }
-
-        /* ===========================================
-           HASH PASSWORD
-        =========================================== */
 
         const temporaryPassword = password;
 
@@ -118,50 +98,48 @@ exports.createAdmin = async (req, res) => {
             10
         );
 
-        /* ===========================================
-           CREATE ADMIN
-        =========================================== */
-
-        await HospitalAdmin.create({
+        const admin = await HospitalAdmin.create({
 
             hospital,
-
             name,
-
             email,
-
             password: hashedPassword,
-
             permissions
 
         });
 
-        /* ===========================================
-           GET HOSPITAL DETAILS
-        =========================================== */
-
         const hospitalData = await Hospital.findById(hospital);
 
-        /* ===========================================
-           SEND WELCOME EMAIL
-        =========================================== */
+        /* ==========================================
+           AUDIT LOG
+        ========================================== */
+
+        await createAuditLog({
+
+            req,
+            module: "Hospital Admin",
+            action: "Create",
+            description: `Hospital Admin "${admin.name}" created for "${hospitalData.name}".`
+
+        });
+
+        /* ==========================================
+           SEND EMAIL
+        ========================================== */
 
         try {
 
             await sendWelcomeEmail({
 
                 hospitalName: hospitalData.name,
-
                 name,
-
                 email,
-
                 password: temporaryPassword
 
             });
 
             console.log("====================================");
-            console.log("WELCOME EMAIL SENT SUCCESSFULLY");
+            console.log("WELCOME EMAIL SENT");
             console.log("To :", email);
             console.log("====================================");
 
@@ -169,16 +147,9 @@ exports.createAdmin = async (req, res) => {
 
         catch (emailError) {
 
-            console.log("====================================");
-            console.log("WELCOME EMAIL FAILED");
             console.log(emailError.message);
-            console.log("====================================");
 
         }
-
-        /* ===========================================
-           REDIRECT
-        =========================================== */
 
         res.redirect("/platform/view-hospital-admin");
 
@@ -187,7 +158,6 @@ exports.createAdmin = async (req, res) => {
     catch (error) {
 
         console.log(error);
-
         res.send("Error creating Hospital Admin.");
 
     }
@@ -203,19 +173,11 @@ exports.viewAdmins = async (req, res) => {
     try {
 
         const admins = await HospitalAdmin.find()
-
             .populate("hospital")
-
-            .sort({
-
-                createdAt: -1
-
-            });
+            .sort({ createdAt: -1 });
 
         res.render("platform/viewHospitalAdmin", {
-
             admins
-
         });
 
     }
@@ -223,7 +185,6 @@ exports.viewAdmins = async (req, res) => {
     catch (error) {
 
         console.log(error);
-
         res.send("Error fetching admins.");
 
     }
@@ -238,25 +199,13 @@ exports.editPage = async (req, res) => {
 
     try {
 
-        const admin = await HospitalAdmin.findById(
-
-            req.params.id
-
-        );
+        const admin = await HospitalAdmin.findById(req.params.id);
 
         if (!admin) {
-
             return res.send("Hospital Admin not found.");
-
         }
 
-        const hospitals = await Hospital.find()
-
-            .sort({
-
-                name: 1
-
-            });
+        const hospitals = await Hospital.find().sort({ name: 1 });
 
         res.render("platform/editHospitalAdmin", {
 
@@ -270,7 +219,6 @@ exports.editPage = async (req, res) => {
     catch (error) {
 
         console.log(error);
-
         res.send("Error loading edit page.");
 
     }
@@ -286,26 +234,16 @@ exports.updateAdmin = async (req, res) => {
     try {
 
         const {
-
             hospital,
             name,
             email,
             password
-
         } = req.body;
 
         let permissions = req.body.permissions || [];
 
         if (!Array.isArray(permissions)) {
-
             permissions = [permissions];
-
-        }
-
-        if (permissions.length === 0) {
-
-            return res.send("Please select at least one permission.");
-
         }
 
         const updateData = {
@@ -317,36 +255,28 @@ exports.updateAdmin = async (req, res) => {
 
         };
 
-        if (
+        if (password && password.trim() !== "") {
 
-            password &&
-            password.trim() !== ""
-
-        ) {
-
-            updateData.password = await bcrypt.hash(
-
-                password,
-
-                10
-
-            );
+            updateData.password = await bcrypt.hash(password, 10);
 
         }
 
-        await HospitalAdmin.findByIdAndUpdate(
+        const updatedAdmin = await HospitalAdmin.findByIdAndUpdate(
 
             req.params.id,
-
             updateData,
+            { new: true }
 
-            {
+        ).populate("hospital");
 
-                new: true
+        await createAuditLog({
 
-            }
+            req,
+            module: "Hospital Admin",
+            action: "Update",
+            description: `Hospital Admin "${updatedAdmin.name}" updated successfully.`
 
-        );
+        });
 
         res.redirect("/platform/view-hospital-admin");
 
@@ -355,7 +285,6 @@ exports.updateAdmin = async (req, res) => {
     catch (error) {
 
         console.log(error);
-
         res.send("Error updating Hospital Admin.");
 
     }
@@ -370,11 +299,25 @@ exports.deleteAdmin = async (req, res) => {
 
     try {
 
-        await HospitalAdmin.findByIdAndDelete(
+        const admin = await HospitalAdmin.findById(req.params.id)
+            .populate("hospital");
 
-            req.params.id
+        if (!admin) {
 
-        );
+            return res.send("Hospital Admin not found.");
+
+        }
+
+        await createAuditLog({
+
+            req,
+            module: "Hospital Admin",
+            action: "Delete",
+            description: `Hospital Admin "${admin.name}" deleted from "${admin.hospital.name}".`
+
+        });
+
+        await HospitalAdmin.findByIdAndDelete(req.params.id);
 
         res.redirect("/platform/view-hospital-admin");
 
@@ -383,7 +326,6 @@ exports.deleteAdmin = async (req, res) => {
     catch (error) {
 
         console.log(error);
-
         res.send("Error deleting Hospital Admin.");
 
     }
