@@ -237,6 +237,10 @@ exports.changePassword = async (req, res) => {
 
     try {
 
+        /* ==========================================
+           USER MUST BE LOGGED IN
+        ========================================== */
+
         if (!req.session.user) {
 
             return res.redirect("/hospital/login");
@@ -245,13 +249,21 @@ exports.changePassword = async (req, res) => {
 
         const {
 
-            currentPassword,
-
             newPassword,
 
             confirmPassword
 
         } = req.body;
+
+        /* ==========================================
+           VALIDATION
+        ========================================== */
+
+        if (!newPassword || !confirmPassword) {
+
+            return res.send("Please enter all required fields.");
+
+        }
 
         if (newPassword !== confirmPassword) {
 
@@ -263,6 +275,10 @@ exports.changePassword = async (req, res) => {
 
         }
 
+        /* ==========================================
+           FIND HOSPITAL ADMIN
+        ========================================== */
+
         const admin = await HospitalAdmin.findById(
 
             req.session.user.id
@@ -271,23 +287,17 @@ exports.changePassword = async (req, res) => {
 
         if (!admin) {
 
-            return res.send("Hospital Admin not found.");
+            return res.send(
+
+                "Hospital Admin not found."
+
+            );
 
         }
 
-        const matched = await bcrypt.compare(
-
-            currentPassword,
-
-            admin.password
-
-        );
-
-        if (!matched) {
-
-            return res.send("Current Password is incorrect.");
-
-        }
+        /* ==========================================
+           HASH PASSWORD
+        ========================================== */
 
         admin.password = await bcrypt.hash(
 
@@ -296,6 +306,10 @@ exports.changePassword = async (req, res) => {
             10
 
         );
+
+        /* ==========================================
+           FIRST LOGIN COMPLETED
+        ========================================== */
 
         admin.mustChangePassword = false;
 
@@ -308,7 +322,7 @@ exports.changePassword = async (req, res) => {
         req.session.user.mustChangePassword = false;
 
         /* ==========================================
-           UPDATE JWT
+           CREATE NEW JWT
         ========================================== */
 
         const updatedUser = {
@@ -341,17 +355,33 @@ exports.changePassword = async (req, res) => {
 
         );
 
-        res.cookie("token", token, {
+        res.cookie(
 
-            httpOnly: true,
+            "token",
 
-            secure: false,
+            token,
 
-            maxAge: 24 * 60 * 60 * 1000
+            {
 
-        });
+                httpOnly: true,
 
-        return res.redirect("/hospital/dashboard");
+                secure: false,
+
+                maxAge: 24 * 60 * 60 * 1000
+
+            }
+
+        );
+
+        /* ==========================================
+           SUCCESS
+        ========================================== */
+
+        return res.redirect(
+
+            "/hospital/dashboard"
+
+        );
 
     }
 
@@ -359,7 +389,11 @@ exports.changePassword = async (req, res) => {
 
         console.log(error);
 
-        return res.send("Unable to change password.");
+        return res.send(
+
+            "Unable to change password."
+
+        );
 
     }
 
