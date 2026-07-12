@@ -1,119 +1,129 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
-<head>
+<%- include("../partials/header") %>
 
-    <meta charset="UTF-8">
+<body style="margin:0;background:#f4f6f9;">
 
-    <title>Audit Logs</title>
+<%- include("../partials/sidebar") %>
 
-    <link rel="stylesheet" href="/css/style.css">
+<div class="page">
 
-</head>
+    <div class="card">
 
-<body>
+        <h1 style="margin-bottom:10px;">
 
-<div class="container">
+            📜 Audit Logs
 
-    <h2>System Audit Logs</h2>
+        </h1>
+
+        <p style="color:#777;">
+
+            Complete activity history of the Hospital RBAC System.
+
+        </p>
+
+    </div>
 
     <br>
 
-    <a href="/platform/dashboard">
-        ← Back to Dashboard
-    </a>
+    <div class="card">
 
-    <br><br>
+        <table>
 
-    <table border="1" cellpadding="10" cellspacing="0" width="100%">
+            <thead>
 
-        <thead>
+                <tr>
 
-            <tr>
+                    <th>#</th>
 
-                <th>S.No</th>
+                    <th>Date & Time</th>
 
-                <th>Date & Time</th>
+                    <th>Module</th>
 
-                <th>Module</th>
+                    <th>Action</th>
 
-                <th>Action</th>
+                    <th>User</th>
 
-                <th>User</th>
+                    <th>IP Address</th>
 
-                <th>IP Address</th>
+                    <th>Description</th>
 
-                <th>Description</th>
+                </tr>
 
-            </tr>
+            </thead>
 
-        </thead>
+            <tbody>
 
-        <tbody>
+            <% if(logs.length===0){ %>
 
-        <% if(logs.length===0){ %>
+                <tr>
 
-            <tr>
+                    <td colspan="7" style="text-align:center;">
 
-                <td colspan="7" align="center">
+                        No Audit Logs Available
 
-                    No Audit Logs Found
+                    </td>
 
-                </td>
+                </tr>
 
-            </tr>
+            <% } %>
 
-        <% } %>
+            <% logs.forEach((log,index)=>{ %>
 
-        <% logs.forEach((log,index)=>{ %>
+                <tr>
 
-            <tr>
+                    <td>
 
-                <td><%= index+1 %></td>
+                        <%= index+1 %>
 
-                <td>
+                    </td>
 
-                    <%= new Date(log.createdAt).toLocaleString() %>
+                    <td>
 
-                </td>
+                        <%= new Date(log.createdAt).toLocaleString() %>
 
-                <td>
+                    </td>
 
-                    <%= log.module %>
+                    <td>
 
-                </td>
+                        <%= log.module %>
 
-                <td>
+                    </td>
 
-                    <%= log.action %>
+                    <td>
 
-                </td>
+                        <%= log.action %>
 
-                <td>
+                    </td>
 
-                    <%= log.userName || "Platform Admin" %>
+                    <td>
 
-                </td>
+                        <%= log.userName || "Platform Admin" %>
 
-                <td>
+                    </td>
 
-                    <%= log.ipAddress %>
+                    <td>
 
-                </td>
+                        <%= log.ipAddress %>
 
-                <td>
+                    </td>
 
-                    <%= log.description %>
+                    <td>
 
-                </td>
+                        <%= log.description %>
 
-            </tr>
+                    </td>
 
-        <% }) %>
+                </tr>
 
-        </tbody>
+            <% }) %>
 
-    </table>
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>
 
