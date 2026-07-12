@@ -30,7 +30,30 @@ const { verifyEmailConnection } = require("./config/email");
 
 /*
 =====================================================
-CREATE APP
+IMPORT WEB ROUTES
+=====================================================
+*/
+
+const platformRoutes = require("./routes/platformRoutes");
+const hospitalAuthRoutes = require("./routes/hospitalAuthRoutes");
+const hospitalRoutes = require("./routes/hospitalRoutes");
+const hospitalAdminRoutes = require("./routes/hospitalAdminRoutes");
+
+/*
+=====================================================
+IMPORT API ROUTES
+=====================================================
+*/
+
+const authApiRoutes = require("./api/routes/authApiRoutes");
+const hospitalApiRoutes = require("./api/routes/hospitalApiRoutes");
+const hospitalAdminApiRoutes = require("./api/routes/hospitalAdminApiRoutes");
+const doctorApiRoutes = require("./api/routes/doctorApiRoutes");
+const emailApiRoutes = require("./api/routes/emailApiRoutes");
+
+/*
+=====================================================
+CREATE EXPRESS APP
 =====================================================
 */
 
@@ -38,24 +61,27 @@ const app = express();
 
 /*
 =====================================================
-DATABASE CONNECTION
+CONNECT DATABASE
 =====================================================
 */
 
 connectDB();
 
+/*
+=====================================================
+VERIFY EMAIL CONNECTION
+=====================================================
+*/
+
 verifyEmailConnection();
 
 /*
 =====================================================
-GLOBAL MIDDLEWARES
+BODY PARSER
 =====================================================
 */
 
-app.use(express.urlencoded({ 
-    extended: true 
-}));
-
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 /*
@@ -68,7 +94,7 @@ app.use(cookieParser());
 
 /*
 =====================================================
-SESSION CONFIGURATION
+SESSION
 =====================================================
 */
 
@@ -96,111 +122,70 @@ app.use(
 
 /*
 =====================================================
-JWT AUTHENTICATION MIDDLEWARE
+JWT MIDDLEWARE
 =====================================================
 */
 
-app.use((req, res, next)=>{
+app.use((req, res, next) => {
 
     let token = null;
 
-    /*
-    ================================================
-    CHECK AUTHORIZATION HEADER
-    ================================================
-    */
-
     const authHeader = req.headers.authorization;
 
-    if(
+    if (
         authHeader &&
         authHeader.startsWith("Bearer ")
-    ){
+    ) {
 
         token = authHeader.split(" ")[1];
 
     }
 
-    /*
-    ================================================
-    CHECK COOKIE TOKEN
-    ================================================
-    */
-
-    if(!token && req.cookies){
+    if (!token && req.cookies) {
 
         token = req.cookies.token;
 
     }
 
-    /*
-    ================================================
-    VERIFY TOKEN
-    ================================================
-    */
+    if (token) {
 
-    if(token){
+        try {
 
-        try{
-
-
-            const decoded = jwt.verify(
-
+            req.user = jwt.verify(
                 token,
-
                 process.env.JWT_SECRET
-
             );
 
-
-            req.user = decoded;
-
-
-
         }
-        catch(error){
 
+        catch (error) {
 
             console.log(
                 "JWT Verification Failed:",
                 error.message
             );
 
-
         }
 
     }
 
-
     next();
-
 
 });
 
 /*
 =====================================================
-MAKE USER AVAILABLE IN ALL EJS FILES
+MAKE USER AVAILABLE TO EJS
 =====================================================
 */
 
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
 
-
-    res.locals.user = 
-
-        req.session.user || 
-        req.user || 
-        null;
-
+    res.locals.user = req.session.user || req.user || null;
 
     next();
 
-
 });
-
-
-
-
 
 /*
 =====================================================
@@ -209,21 +194,10 @@ STATIC FILES
 */
 
 app.use(
-
     express.static(
-
-        path.join(
-            __dirname,
-            "public"
-        )
-
+        path.join(__dirname, "public")
     )
-
 );
-
-
-
-
 
 /*
 =====================================================
@@ -231,38 +205,22 @@ VIEW ENGINE
 =====================================================
 */
 
-app.set(
-
-    "view engine",
-    "ejs"
-
-);
-
+app.set("view engine", "ejs");
 
 app.set(
-
     "views",
-
-    path.join(
-        __dirname,
-        "views"
-    )
-
+    path.join(__dirname, "views")
 );
 
 /*
 =====================================================
-HOME ROUTE
+HOME
 =====================================================
 */
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
 
-
-    res.redirect(
-        "/platform/login"
-    );
-
+    res.redirect("/platform/login");
 
 });
 
@@ -272,46 +230,13 @@ WEB ROUTES
 =====================================================
 */
 
+app.use("/platform", platformRoutes);
 
-const platformRoutes = require("./routes/platformRoutes");
+app.use("/hospital", hospitalAuthRoutes);
 
-const hospitalAuthRoutes = require("./routes/hospitalAuthRoutes");
+app.use("/hospital", hospitalRoutes);
 
-const hospitalRoutes = require("./routes/hospitalRoutes");
-
-const hospitalAdminRoutes = require("./routes/hospitalAdminRoutes");
-
-app.use(
-
-    "/platform",
-
-    platformRoutes
-
-);
-
-app.use(
-
-    "/hospital",
-
-    hospitalAuthRoutes
-
-);
-
-app.use(
-
-    "/hospital",
-
-    hospitalRoutes
-
-);
-
-app.use(
-
-    "/platform",
-
-    hospitalAdminRoutes
-
-);
+app.use("/platform", hospitalAdminRoutes);
 
 /*
 =====================================================
@@ -319,119 +244,46 @@ API ROUTES
 =====================================================
 */
 
-const authApiRoutes = require("./api/routes/authApiRoutes");
+app.use("/api/auth", authApiRoutes);
 
-const hospitalApiRoutes = require("./api/routes/hospitalApiRoutes");
+app.use("/api/hospitals", hospitalApiRoutes);
 
-const hospitalAdminApiRoutes = require("./api/routes/hospitalAdminApiRoutes");
+app.use("/api/hospital-admins", hospitalAdminApiRoutes);
 
-const doctorApiRoutes = require("./api/routes/doctorApiRoutes");
+app.use("/api/doctors", doctorApiRoutes);
 
-const emailApiRoutes = require("./api/routes/emailApiRoutes");
-
-/*
-AUTHENTICATION API
-
-POST
-/api/auth/platform-login
-
-POST
-/api/auth/hospital-login
-
-GET
-/api/auth/profile
-
-POST
-/api/auth/forgot-password
-
-POST
-/api/auth/reset-password
-
-POST
-/api/auth/logout
-*/
-
-app.use(
-
-    "/api/auth",
-
-    authApiRoutes
-
-);
-
-app.use(
-
-    "/api/hospitals",
-
-    hospitalApiRoutes
-
-);
-
-app.use(
-
-    "/api/hospital-admins",
-
-    hospitalAdminApiRoutes
-
-);
-
-app.use(
-
-    "/api/doctors",
-
-    doctorApiRoutes
-
-);
-
-app.use(
-
-    "/api/email",
-
-    emailApiRoutes
-
-);
+app.use("/api/email", emailApiRoutes);
 
 /*
 =====================================================
-404 HANDLER
+404 ROUTE
 =====================================================
 */
 
-app.use((req,res)=>{
+app.use((req, res) => {
 
+    return res.status(404).json({
 
-    res.status(404).json({
+        success: false,
 
-        success:false,
-
-        message:"Route Not Found"
+        message: "Route Not Found"
 
     });
-
 
 });
 
 /*
 =====================================================
-SERVER START
+SERVER
 =====================================================
 */
 
 const PORT = process.env.PORT || 3000;
-app.listen(
 
-    PORT,
+app.listen(PORT, () => {
 
-    ()=>{
+    console.log("========================================");
+    console.log(`🚀 Server Running on Port ${PORT}`);
+    console.log("========================================");
 
-
-        console.log(
-
-            `Server Running on Port ${PORT}`
-
-        );
-
-
-    }
-
-);
+});

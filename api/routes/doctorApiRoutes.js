@@ -1,71 +1,149 @@
+/*
+==================================================
+DOCTOR API ROUTES
+Hospital RBAC System
+==================================================
+*/
+
 const express = require("express");
+
 const router = express.Router();
+
+/*
+==================================================
+IMPORT CONTROLLER
+==================================================
+*/
 
 const doctorController = require("../controllers/doctorController");
 
-const { authenticate } = require("../middleware/apiAuth");
-const { authorize } = require("../middleware/apiRBAC");
+/*
+==================================================
+IMPORT AUTH MIDDLEWARE
+==================================================
+*/
 
 const {
-    createDoctorValidation,
-    updateDoctorValidation
-} = require("../validators/doctorValidator");
+    authenticate
+} = require("../middleware/apiAuth");
 
-/* =====================================================
-   CREATE DOCTOR
-===================================================== */
+/*
+==================================================
+IMPORT RBAC MIDDLEWARE
+==================================================
+*/
+
+const checkPermission = require("../middleware/checkPermission");
+
+/*
+==================================================
+CREATE DOCTOR
+
+POST
+/api/doctors
+==================================================
+*/
 
 router.post(
+
     "/",
+
     authenticate,
-    authorize("doctor.create"),
-    createDoctorValidation,
+
+    checkPermission("create_doctor"),
+
     doctorController.createDoctor
+
 );
 
-/* =====================================================
-   GET ALL DOCTORS
-===================================================== */
+/*
+==================================================
+VIEW ALL DOCTORS
+
+GET
+/api/doctors
+==================================================
+*/
 
 router.get(
+
     "/",
+
     authenticate,
-    authorize("doctor.view"),
-    doctorController.getDoctors
+
+    checkPermission("view_doctor"),
+
+    doctorController.viewDoctors
+
 );
 
-/* =====================================================
-   GET SINGLE DOCTOR
-===================================================== */
+/*
+==================================================
+VIEW SINGLE DOCTOR
+
+GET
+/api/doctors/:id
+==================================================
+*/
 
 router.get(
+
     "/:id",
+
     authenticate,
-    authorize("doctor.view"),
+
+    checkPermission("view_doctor"),
+
     doctorController.getDoctor
+
 );
 
-/* =====================================================
-   UPDATE DOCTOR
-===================================================== */
+/*
+==================================================
+UPDATE DOCTOR
+
+PUT
+/api/doctors/:id
+==================================================
+*/
 
 router.put(
+
     "/:id",
+
     authenticate,
-    authorize("doctor.update"),
-    updateDoctorValidation,
+
+    checkPermission("edit_doctor"),
+
     doctorController.updateDoctor
+
 );
 
-/* =====================================================
-   DELETE DOCTOR
-===================================================== */
+/*
+==================================================
+DELETE DOCTOR
+
+DELETE
+/api/doctors/:id
+==================================================
+*/
 
 router.delete(
+
     "/:id",
+
     authenticate,
-    authorize("doctor.delete"),
+
+    checkPermission("delete_doctor"),
+
     doctorController.deleteDoctor
+
 );
+
+/*
+==================================================
+EXPORT ROUTER
+==================================================
+*/
 
 module.exports = router;

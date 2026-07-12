@@ -139,6 +139,18 @@ const hospitalAdminSchema = new mongoose.Schema(
 
             default: null
 
+        },
+
+        /* ==================================================
+           FORCE PASSWORD CHANGE ON FIRST LOGIN
+        ================================================== */
+
+        mustChangePassword: {
+
+            type: Boolean,
+
+            default: true
+
         }
 
     },

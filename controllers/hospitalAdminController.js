@@ -1,7 +1,18 @@
+/*
+==================================================
+HOSPITAL ADMIN CONTROLLER
+Hospital RBAC System
+==================================================
+*/
+
 const HospitalAdmin = require("../models/HospitalAdmin");
 const Hospital = require("../models/Hospital");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
+
+const {
+    sendWelcomeEmail
+} = require("../services/emailService");
 
 /* =====================================================
    CREATE PAGE
@@ -21,9 +32,12 @@ exports.createPage = async (req, res) => {
 
         });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.log(error);
+
         res.send("Error loading page.");
 
     }
@@ -93,17 +107,78 @@ exports.createAdmin = async (req, res) => {
 
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        /* ===========================================
+           HASH PASSWORD
+        =========================================== */
+
+        const temporaryPassword = password;
+
+        const hashedPassword = await bcrypt.hash(
+            temporaryPassword,
+            10
+        );
+
+        /* ===========================================
+           CREATE ADMIN
+        =========================================== */
 
         await HospitalAdmin.create({
 
             hospital,
+
             name,
+
             email,
+
             password: hashedPassword,
+
             permissions
 
         });
+
+        /* ===========================================
+           GET HOSPITAL DETAILS
+        =========================================== */
+
+        const hospitalData = await Hospital.findById(hospital);
+
+        /* ===========================================
+           SEND WELCOME EMAIL
+        =========================================== */
+
+        try {
+
+            await sendWelcomeEmail({
+
+                hospitalName: hospitalData.name,
+
+                name,
+
+                email,
+
+                password: temporaryPassword
+
+            });
+
+            console.log("====================================");
+            console.log("WELCOME EMAIL SENT SUCCESSFULLY");
+            console.log("To :", email);
+            console.log("====================================");
+
+        }
+
+        catch (emailError) {
+
+            console.log("====================================");
+            console.log("WELCOME EMAIL FAILED");
+            console.log(emailError.message);
+            console.log("====================================");
+
+        }
+
+        /* ===========================================
+           REDIRECT
+        =========================================== */
 
         res.redirect("/platform/view-hospital-admin");
 

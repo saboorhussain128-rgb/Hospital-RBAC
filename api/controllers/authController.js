@@ -170,6 +170,40 @@ exports.hospitalLogin = async (req, res) => {
 
         const token = generateToken({
 
+    id: admin._id,
+
+    name: admin.name,
+
+    email: admin.email,
+
+    role: "hospital_admin",
+
+    hospital: admin.hospital._id,
+
+    hospitalName: admin.hospital.name,
+
+    permissions: admin.permissions || [],
+
+    mustChangePassword: admin.mustChangePassword
+
+  });
+
+        return apiResponse.success(
+
+    res,
+
+    admin.mustChangePassword
+        ? "Password change required."
+        : "Hospital Admin Login Successful",
+
+    {
+
+        token,
+
+        mustChangePassword: admin.mustChangePassword,
+
+        user: {
+
             id: admin._id,
 
             name: admin.name,
@@ -178,53 +212,25 @@ exports.hospitalLogin = async (req, res) => {
 
             role: "hospital_admin",
 
-            hospital: admin.hospital._id,
+            hospital: {
 
-            hospitalName: admin.hospital.name,
+                id: admin.hospital._id,
+
+                name: admin.hospital.name,
+
+                address: admin.hospital.address,
+
+                status: admin.hospital.status
+
+            },
 
             permissions: admin.permissions || []
 
-        });
+        }
 
-        return apiResponse.success(
+    }
 
-            res,
-
-            "Hospital Admin Login Successful",
-
-            {
-
-                token,
-
-                user: {
-
-                    id: admin._id,
-
-                    name: admin.name,
-
-                    email: admin.email,
-
-                    role: "hospital_admin",
-
-                    hospital: {
-
-                        id: admin.hospital._id,
-
-                        name: admin.hospital.name,
-
-                        address: admin.hospital.address,
-
-                        status: admin.hospital.status
-
-                    },
-
-                    permissions: admin.permissions || []
-
-                }
-
-            }
-
-        );
+);
 
     }
 
@@ -644,6 +650,171 @@ exports.resetPassword = async (req, res) => {
             res,
 
             "Unable to reset password.",
+
+            500
+
+        );
+
+    }
+
+};
+
+/* ==================================================
+   CHANGE PASSWORD
+================================================== */
+
+exports.changePassword = async (req, res) => {
+
+    try {
+
+        const {
+
+            currentPassword,
+
+            newPassword,
+
+            confirmPassword
+
+        } = req.body;
+
+        /* ==========================================
+           USER MUST BE LOGGED IN
+        ========================================== */
+
+        if (!req.user) {
+
+            return apiResponse.error(
+
+                res,
+
+                "Unauthorized.",
+
+                401
+
+            );
+
+        }
+
+        /* ==========================================
+           PASSWORD MATCH
+        ========================================== */
+
+        if (newPassword !== confirmPassword) {
+
+            return apiResponse.error(
+
+                res,
+
+                "New Password and Confirm Password do not match.",
+
+                400
+
+            );
+
+        }
+
+        /* ==========================================
+           FIND HOSPITAL ADMIN
+        ========================================== */
+
+        const admin = await HospitalAdmin.findById(req.user.id);
+
+        if (!admin) {
+
+            return apiResponse.error(
+
+                res,
+
+                "Hospital Admin not found.",
+
+                404
+
+            );
+
+        }
+
+        /* ==========================================
+           VERIFY CURRENT PASSWORD
+        ========================================== */
+
+        const matched = await bcrypt.compare(
+
+            currentPassword,
+
+            admin.password
+
+        );
+
+        if (!matched) {
+
+            return apiResponse.error(
+
+                res,
+
+                "Current password is incorrect.",
+
+                400
+
+            );
+
+        }
+
+       
+/* ==========================================
+   HASH NEW PASSWORD
+========================================== */
+
+admin.password = await bcrypt.hash(
+
+    newPassword,
+
+    10
+
+);
+
+/* ==========================================
+   FIRST LOGIN COMPLETED
+========================================== */
+
+admin.mustChangePassword = false;
+
+/* ==========================================
+   SAVE
+========================================== */
+
+await admin.save();
+
+        await admin.save();
+
+        /* ==========================================
+           SUCCESS
+        ========================================== */
+
+       return apiResponse.success(
+
+    res,
+
+    "Password changed successfully. You can now access your dashboard.",
+
+      {
+
+        mustChangePassword: false
+
+       }
+
+      );
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        return apiResponse.error(
+
+            res,
+
+            "Unable to change password.",
 
             500
 
