@@ -38,6 +38,7 @@ const platformRoutes = require("./routes/platformRoutes");
 const hospitalAuthRoutes = require("./routes/hospitalAuthRoutes");
 const hospitalRoutes = require("./routes/hospitalRoutes");
 const hospitalAdminRoutes = require("./routes/hospitalAdminRoutes");
+const auditLogRoutes = require("./routes/auditLogRoutes");
 
 /*
 =====================================================
@@ -237,6 +238,8 @@ app.use("/hospital", hospitalAuthRoutes);
 app.use("/hospital", hospitalRoutes);
 
 app.use("/platform", hospitalAdminRoutes);
+
+app.use("/platform", auditLogRoutes);
 
 /*
 =====================================================
