@@ -4,7 +4,7 @@ AUTH CONTROLLER
 Hospital RBAC System
 
 Web Authentication
-(Session + JWT Hybrid)
+(Session +JWT Hybrid)
 =====================================================
 */
 
@@ -31,10 +31,8 @@ exports.platformLogin = (req, res) => {
     const { email, password } = req.body;
 
     if (
-
         email === "admin@gmail.com" &&
         password === "admin123"
-
     ) {
 
         const user = {
@@ -49,15 +47,7 @@ exports.platformLogin = (req, res) => {
 
         };
 
-        /* ==========================================
-           SESSION
-        ========================================== */
-
         req.session.user = user;
-
-        /* ==========================================
-           JWT
-        ========================================== */
 
         const token = jwt.sign(
 
@@ -73,23 +63,15 @@ exports.platformLogin = (req, res) => {
 
         );
 
-        res.cookie(
+        res.cookie("token", token, {
 
-            "token",
+            httpOnly: true,
 
-            token,
+            secure: false,
 
-            {
+            maxAge: 24 * 60 * 60 * 1000
 
-                httpOnly: true,
-
-                secure: false,
-
-                maxAge: 24 * 60 * 60 * 1000
-
-            }
-
-        );
+        });
 
         return res.redirect("/platform/dashboard");
 
@@ -129,7 +111,7 @@ exports.hospitalLogin = async (req, res) => {
 
             .findOne({
 
-                email
+                email: email.trim().toLowerCase()
 
             })
 
@@ -137,11 +119,7 @@ exports.hospitalLogin = async (req, res) => {
 
         if (!admin) {
 
-            return res.send(
-
-                "Invalid Email or Password"
-
-            );
+            return res.send("Invalid Email or Password");
 
         }
 
@@ -155,17 +133,9 @@ exports.hospitalLogin = async (req, res) => {
 
         if (!matched) {
 
-            return res.send(
-
-                "Invalid Email or Password"
-
-            );
+            return res.send("Invalid Email or Password");
 
         }
-
-        /* ==========================================
-           SESSION USER
-        ========================================== */
 
         const user = {
 
@@ -185,10 +155,14 @@ exports.hospitalLogin = async (req, res) => {
 
         };
 
+        /* ==========================================
+           SAVE SESSION
+        ========================================== */
+
         req.session.user = user;
 
         /* ==========================================
-           JWT
+           CREATE JWT
         ========================================== */
 
         const token = jwt.sign(
@@ -205,47 +179,27 @@ exports.hospitalLogin = async (req, res) => {
 
         );
 
-        res.cookie(
+        res.cookie("token", token, {
 
-            "token",
+            httpOnly: true,
 
-            token,
+            secure: false,
 
-            {
+            maxAge: 24 * 60 * 60 * 1000
 
-                httpOnly: true,
-
-                secure: false,
-
-                maxAge: 24 * 60 * 60 * 1000
-
-            }
-
-        );
+        });
 
         /* ==========================================
-           FIRST LOGIN CHECK
+           FIRST LOGIN
         ========================================== */
 
         if (admin.mustChangePassword) {
 
-            return res.redirect(
-
-                "/hospital/change-password"
-
-            );
+            return res.redirect("/hospital/change-password");
 
         }
 
-        /* ==========================================
-           NORMAL LOGIN
-        ========================================== */
-
-        return res.redirect(
-
-            "/hospital/dashboard"
-
-        );
+        return res.redirect("/hospital/dashboard");
 
     }
 
@@ -253,11 +207,7 @@ exports.hospitalLogin = async (req, res) => {
 
         console.log(error);
 
-        return res.send(
-
-            "Login Error"
-
-        );
+        return res.send("Login Error");
 
     }
 
@@ -269,11 +219,149 @@ exports.hospitalLogin = async (req, res) => {
 
 exports.changePasswordPage = (req, res) => {
 
-    res.render(
+    if (!req.session.user) {
 
-        "hospital/change-password"
+        return res.redirect("/hospital/login");
 
-    );
+    }
+
+    res.render("hospital/change-password");
+
+};
+
+/* =====================================================
+   CHANGE PASSWORD
+===================================================== */
+
+exports.changePassword = async (req, res) => {
+
+    try {
+
+        if (!req.session.user) {
+
+            return res.redirect("/hospital/login");
+
+        }
+
+        const {
+
+            currentPassword,
+
+            newPassword,
+
+            confirmPassword
+
+        } = req.body;
+
+        if (newPassword !== confirmPassword) {
+
+            return res.send(
+
+                "New Password and Confirm Password do not match."
+
+            );
+
+        }
+
+        const admin = await HospitalAdmin.findById(
+
+            req.session.user.id
+
+        );
+
+        if (!admin) {
+
+            return res.send("Hospital Admin not found.");
+
+        }
+
+        const matched = await bcrypt.compare(
+
+            currentPassword,
+
+            admin.password
+
+        );
+
+        if (!matched) {
+
+            return res.send("Current Password is incorrect.");
+
+        }
+
+        admin.password = await bcrypt.hash(
+
+            newPassword,
+
+            10
+
+        );
+
+        admin.mustChangePassword = false;
+
+        await admin.save();
+
+        /* ==========================================
+           UPDATE SESSION
+        ========================================== */
+
+        req.session.user.mustChangePassword = false;
+
+        /* ==========================================
+           UPDATE JWT
+        ========================================== */
+
+        const updatedUser = {
+
+            id: admin._id,
+
+            role: "hospital_admin",
+
+            hospital: admin.hospital,
+
+            name: admin.name,
+
+            permissions: admin.permissions || [],
+
+            mustChangePassword: false
+
+        };
+
+        const token = jwt.sign(
+
+            updatedUser,
+
+            process.env.JWT_SECRET,
+
+            {
+
+                expiresIn: "1d"
+
+            }
+
+        );
+
+        res.cookie("token", token, {
+
+            httpOnly: true,
+
+            secure: false,
+
+            maxAge: 24 * 60 * 60 * 1000
+
+        });
+
+        return res.redirect("/hospital/dashboard");
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        return res.send("Unable to change password.");
+
+    }
 
 };
 
@@ -291,19 +379,11 @@ exports.logout = (req, res) => {
 
             console.log(err);
 
-            return res.send(
-
-                "Logout Failed"
-
-            );
+            return res.send("Logout Failed");
 
         }
 
-        return res.redirect(
-
-            "/hospital/login"
-
-        );
+        return res.redirect("/hospital/login");
 
     });
 
