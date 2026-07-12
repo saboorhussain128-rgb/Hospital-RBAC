@@ -106,12 +106,11 @@ exports.createDoctor = async (req, res) => {
 
 };
 
-/* =====================================================
-   GET ALL DOCTORS
-===================================================== */
+ /* =====================================================
+   VIEW ALL DOCTORS
+  ===================================================== */
 
-exports.getDoctors = async (req, res) => {
-
+ exports.viewDoctors = async (req, res) => {
     try {
 
         const doctors = await Doctor.find({
