@@ -1,5 +1,13 @@
+/*
+=====================================================
+HOSPITAL CONTROLLER
+Hospital RBAC System
+=====================================================
+*/
+
 const Hospital = require("../models/Hospital");
 const { validationResult } = require("express-validator");
+const createAuditLog = require("../services/auditLogService");
 
 /* =====================================================
    CREATE HOSPITAL PAGE
@@ -84,11 +92,27 @@ exports.createHospital = async (req, res) => {
            CREATE HOSPITAL
         =============================== */
 
-        await Hospital.create({
+        const hospital = await Hospital.create({
 
             name,
             address,
             status
+
+        });
+
+        /* ===============================
+           AUDIT LOG
+        =============================== */
+
+        await createAuditLog({
+
+            req,
+
+            module: "Hospital",
+
+            action: "Create",
+
+            description: `Hospital "${hospital.name}" created successfully.`
 
         });
 
@@ -194,7 +218,7 @@ exports.updateHospital = async (req, res) => {
 
         } = req.body;
 
-        await Hospital.findByIdAndUpdate(
+        const hospital = await Hospital.findByIdAndUpdate(
 
             req.params.id,
 
@@ -213,6 +237,22 @@ exports.updateHospital = async (req, res) => {
             }
 
         );
+
+        /* ===============================
+           AUDIT LOG
+        =============================== */
+
+        await createAuditLog({
+
+            req,
+
+            module: "Hospital",
+
+            action: "Update",
+
+            description: `Hospital "${hospital.name}" updated successfully.`
+
+        });
 
         res.redirect("/platform/view-hospital");
 
@@ -236,11 +276,41 @@ exports.deleteHospital = async (req, res) => {
 
     try {
 
+        const hospital = await Hospital.findById(
+
+            req.params.id
+
+        );
+
+        if (!hospital) {
+
+            return res.send("Hospital not found.");
+
+        }
+
+        const hospitalName = hospital.name;
+
         await Hospital.findByIdAndDelete(
 
             req.params.id
 
         );
+
+        /* ===============================
+           AUDIT LOG
+        =============================== */
+
+        await createAuditLog({
+
+            req,
+
+            module: "Hospital",
+
+            action: "Delete",
+
+            description: `Hospital "${hospitalName}" deleted successfully.`
+
+        });
 
         res.redirect("/platform/view-hospital");
 
