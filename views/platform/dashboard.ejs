@@ -18,14 +18,14 @@
             color:#2c3e50;
             margin-bottom:8px;
         ">
-            Platform Admin
+            Platform Admin Dashboard
         </h1>
 
         <p style="
             font-size:17px;
             color:#7f8c8d;
         ">
-            Welcome, Admin 
+            Welcome, Platform Administrator
         </p>
 
     </div>
@@ -39,8 +39,6 @@
         margin-bottom:35px;
     ">
 
-        <!-- Hospitals -->
-
         <div class="card"
              style="
                 text-align:center;
@@ -51,21 +49,16 @@
                 🏥
             </div>
 
-            <h3 style="margin-top:15px;">
-                Hospitals
-            </h3>
+            <h3>Hospitals</h3>
 
             <h1 style="
                 color:#3498db;
                 font-size:48px;
-                margin-top:10px;
             ">
                 <%= hospitalCount || 0 %>
             </h1>
 
         </div>
-
-        <!-- Admins -->
 
         <div class="card"
              style="
@@ -74,17 +67,14 @@
              ">
 
             <div style="font-size:55px;">
-                👤
+                👨‍⚕️
             </div>
 
-            <h3 style="margin-top:15px;">
-                Hospital Admins
-            </h3>
+            <h3>Hospital Admins</h3>
 
             <h1 style="
                 color:#27ae60;
                 font-size:48px;
-                margin-top:10px;
             ">
                 <%= adminCount || 0 %>
             </h1>
@@ -107,7 +97,7 @@
 
         <div style="
             display:grid;
-            grid-template-columns:repeat(2,1fr);
+            grid-template-columns:repeat(3,1fr);
             gap:25px;
         ">
 
@@ -116,56 +106,30 @@
             <a href="/platform/create-hospital"
                style="text-decoration:none;color:inherit;">
 
-                <div style="
-                    border:1px solid #e6e6e6;
-                    border-radius:12px;
-                    padding:35px;
-                    text-align:center;
-                    transition:.3s;
-                    cursor:pointer;
-                "
-                onmouseover="this.style.boxShadow='0 8px 25px rgba(0,0,0,.15)';this.style.transform='translateY(-5px)'"
-                onmouseout="this.style.boxShadow='none';this.style.transform='translateY(0)'">
+                <div class="action-card">
 
                     <div style="font-size:55px;">🏥</div>
 
-                    <h3 style="margin:18px 0;">
-                        Create Hospital
-                    </h3>
+                    <h3>Create Hospital</h3>
 
-                    <p style="color:#777;">
-                        Register a new hospital.
-                    </p>
+                    <p>Create a new hospital.</p>
 
                 </div>
 
             </a>
 
-            <!-- View Hospitals -->
+            <!-- View Hospital -->
 
             <a href="/platform/view-hospital"
                style="text-decoration:none;color:inherit;">
 
-                <div style="
-                    border:1px solid #e6e6e6;
-                    border-radius:12px;
-                    padding:35px;
-                    text-align:center;
-                    transition:.3s;
-                    cursor:pointer;
-                "
-                onmouseover="this.style.boxShadow='0 8px 25px rgba(0,0,0,.15)';this.style.transform='translateY(-5px)'"
-                onmouseout="this.style.boxShadow='none';this.style.transform='translateY(0)'">
+                <div class="action-card">
 
                     <div style="font-size:55px;">📋</div>
 
-                    <h3 style="margin:18px 0;">
-                        View Hospitals
-                    </h3>
+                    <h3>View Hospitals</h3>
 
-                    <p style="color:#777;">
-                        View, edit and delete hospitals.
-                    </p>
+                    <p>Manage all hospitals.</p>
 
                 </div>
 
@@ -176,26 +140,13 @@
             <a href="/platform/create-hospital-admin"
                style="text-decoration:none;color:inherit;">
 
-                <div style="
-                    border:1px solid #e6e6e6;
-                    border-radius:12px;
-                    padding:35px;
-                    text-align:center;
-                    transition:.3s;
-                    cursor:pointer;
-                "
-                onmouseover="this.style.boxShadow='0 8px 25px rgba(0,0,0,.15)';this.style.transform='translateY(-5px)'"
-                onmouseout="this.style.boxShadow='none';this.style.transform='translateY(0)'">
+                <div class="action-card">
 
                     <div style="font-size:55px;">👤</div>
 
-                    <h3 style="margin:18px 0;">
-                        Create Hospital Admin
-                    </h3>
+                    <h3>Create Hospital Admin</h3>
 
-                    <p style="color:#777;">
-                        Assign administrators with permissions.
-                    </p>
+                    <p>Create administrator accounts.</p>
 
                 </div>
 
@@ -206,26 +157,30 @@
             <a href="/platform/view-hospital-admin"
                style="text-decoration:none;color:inherit;">
 
-                <div style="
-                    border:1px solid #e6e6e6;
-                    border-radius:12px;
-                    padding:35px;
-                    text-align:center;
-                    transition:.3s;
-                    cursor:pointer;
-                "
-                onmouseover="this.style.boxShadow='0 8px 25px rgba(0,0,0,.15)';this.style.transform='translateY(-5px)'"
-                onmouseout="this.style.boxShadow='none';this.style.transform='translateY(0)'">
+                <div class="action-card">
 
                     <div style="font-size:55px;">🔐</div>
 
-                    <h3 style="margin:18px 0;">
-                        View Hospital Admins
-                    </h3>
+                    <h3>View Hospital Admins</h3>
 
-                    <p style="color:#777;">
-                        Manage hospital administrators.
-                    </p>
+                    <p>Edit or remove administrators.</p>
+
+                </div>
+
+            </a>
+
+            <!-- Audit Logs -->
+
+            <a href="/platform/audit-logs"
+               style="text-decoration:none;color:inherit;">
+
+                <div class="action-card">
+
+                    <div style="font-size:55px;">📜</div>
+
+                    <h3>Audit Logs</h3>
+
+                    <p>View complete activity history.</p>
 
                 </div>
 
@@ -237,5 +192,46 @@
 
 </div>
 
+<style>
+
+.action-card{
+
+    border:1px solid #e6e6e6;
+
+    border-radius:12px;
+
+    padding:35px;
+
+    text-align:center;
+
+    transition:.3s;
+
+    cursor:pointer;
+
+}
+
+.action-card:hover{
+
+    box-shadow:0 8px 25px rgba(0,0,0,.15);
+
+    transform:translateY(-5px);
+
+}
+
+.action-card h3{
+
+    margin:18px 0;
+
+}
+
+.action-card p{
+
+    color:#777;
+
+}
+
+</style>
+
 </body>
+
 </html>
