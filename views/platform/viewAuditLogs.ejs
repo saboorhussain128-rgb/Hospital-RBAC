@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Audit Logs</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>System Audit Logs</h2>
+
+    <br>
+
+    <a href="/platform/dashboard">
+        ← Back to Dashboard
+    </a>
+
+    <br><br>
+
+    <table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+        <thead>
+
+            <tr>
+
+                <th>S.No</th>
+
+                <th>Date & Time</th>
+
+                <th>Module</th>
+
+                <th>Action</th>
+
+                <th>User</th>
+
+                <th>IP Address</th>
+
+                <th>Description</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        <% if(logs.length===0){ %>
+
+            <tr>
+
+                <td colspan="7" align="center">
+
+                    No Audit Logs Found
+
+                </td>
+
+            </tr>
+
+        <% } %>
+
+        <% logs.forEach((log,index)=>{ %>
+
+            <tr>
+
+                <td><%= index+1 %></td>
+
+                <td>
+
+                    <%= new Date(log.createdAt).toLocaleString() %>
+
+                </td>
+
+                <td>
+
+                    <%= log.module %>
+
+                </td>
+
+                <td>
+
+                    <%= log.action %>
+
+                </td>
+
+                <td>
+
+                    <%= log.userName || "Platform Admin" %>
+
+                </td>
+
+                <td>
+
+                    <%= log.ipAddress %>
+
+                </td>
+
+                <td>
+
+                    <%= log.description %>
+
+                </td>
+
+            </tr>
+
+        <% }) %>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+</body>
+
+</html>
