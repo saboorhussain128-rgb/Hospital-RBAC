@@ -1,3 +1,10 @@
+/*
+=====================================================
+HOSPITAL ROUTES
+Hospital RBAC System
+=====================================================
+*/
+
 const express = require("express");
 const router = express.Router();
 
@@ -13,6 +20,16 @@ const {
     checkPermission
 } = require("../middleware/rbacMiddleware");
 
+/*
+=====================================================
+FORCE PASSWORD CHANGE MIDDLEWARE
+=====================================================
+*/
+
+const {
+    forcePasswordChange
+} = require("../middleware/forcePasswordChange");
+
 const {
     createDoctorValidation
 } = require("../validators/doctorValidator");
@@ -22,9 +39,15 @@ const {
 ===================================================== */
 
 router.get(
+
     "/dashboard",
+
     isAuthenticated,
+
     isHospitalAdmin,
+
+    forcePasswordChange,
+
     async (req, res) => {
 
         try {
@@ -58,6 +81,7 @@ router.get(
         }
 
     }
+
 );
 
 /* =====================================================
@@ -65,20 +89,37 @@ router.get(
 ===================================================== */
 
 router.get(
+
     "/create-doctor",
+
     isAuthenticated,
+
     isHospitalAdmin,
+
+    forcePasswordChange,
+
     checkPermission("create_doctor"),
+
     doctorController.createPage
+
 );
 
 router.post(
+
     "/create-doctor",
+
     isAuthenticated,
+
     isHospitalAdmin,
+
+    forcePasswordChange,
+
     checkPermission("create_doctor"),
+
     createDoctorValidation,
+
     doctorController.createDoctor
+
 );
 
 /* =====================================================
@@ -86,11 +127,19 @@ router.post(
 ===================================================== */
 
 router.get(
+
     "/view-doctor",
+
     isAuthenticated,
+
     isHospitalAdmin,
+
+    forcePasswordChange,
+
     checkPermission("view_doctor"),
+
     doctorController.viewDoctors
+
 );
 
 /* =====================================================
@@ -98,20 +147,37 @@ router.get(
 ===================================================== */
 
 router.get(
+
     "/edit-doctor/:id",
+
     isAuthenticated,
+
     isHospitalAdmin,
+
+    forcePasswordChange,
+
     checkPermission("view_doctor"),
+
     doctorController.editPage
+
 );
 
 router.post(
+
     "/edit-doctor/:id",
+
     isAuthenticated,
+
     isHospitalAdmin,
+
+    forcePasswordChange,
+
     checkPermission("create_doctor"),
+
     createDoctorValidation,
+
     doctorController.updateDoctor
+
 );
 
 /* =====================================================
@@ -119,11 +185,23 @@ router.post(
 ===================================================== */
 
 router.get(
+
     "/delete-doctor/:id",
+
     isAuthenticated,
+
     isHospitalAdmin,
+
+    forcePasswordChange,
+
     checkPermission("delete_doctor"),
+
     doctorController.deleteDoctor
+
 );
+
+/* =====================================================
+   EXPORT ROUTER
+===================================================== */
 
 module.exports = router;
