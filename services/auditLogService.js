@@ -28,6 +28,13 @@ const createAuditLog = async ({
 
     try {
 
+        console.log("====================================");
+        console.log("AUDIT SERVICE EXECUTED");
+        console.log("Module      :", module);
+        console.log("Action      :", action);
+        console.log("Description :", description);
+        console.log("====================================");
+
         const user = req.session.user || req.user || {};
 
         await AuditLog.create({
@@ -56,11 +63,7 @@ const createAuditLog = async ({
 
         });
 
-        /* ==========================================
-           WRITE INTO LOG FILE
-        ========================================== */
-
-        let fileName = "";
+        let fileName = "system.log";
 
         switch (module) {
 
@@ -79,10 +82,6 @@ const createAuditLog = async ({
                 fileName = "doctor.log";
                 break;
 
-            default:
-
-                fileName = "system.log";
-
         }
 
         logger.audit(
@@ -93,11 +92,24 @@ const createAuditLog = async ({
 
         );
 
+        console.log("Audit Log Saved Successfully");
+
     }
 
     catch (error) {
 
-        console.log("Audit Log Error:", error.message);
+        console.log("====================================");
+        console.log("AUDIT LOG ERROR");
+        console.log(error);
+        console.log("====================================");
+
+        logger.error(
+
+            "audit.log",
+
+            error.stack || error.message
+
+        );
 
     }
 
