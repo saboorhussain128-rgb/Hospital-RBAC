@@ -28,8 +28,10 @@ exports.login = (req, res) => {
     const { email, password } = req.body;
 
     if (
+
         email === "admin@gmail.com" &&
         password === "admin123"
+
     ) {
 
         req.session.user = {
@@ -64,13 +66,25 @@ exports.dashboard = async (req, res) => {
 
         const auditCount = await AuditLog.countDocuments();
 
+        const recentLogs = await AuditLog.find()
+
+            .sort({
+
+                createdAt: -1
+
+            })
+
+            .limit(5);
+
         res.render("platform/dashboard", {
 
             hospitalCount,
 
             adminCount,
 
-            auditCount
+            auditCount,
+
+            recentLogs
 
         });
 
