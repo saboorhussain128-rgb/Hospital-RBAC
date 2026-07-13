@@ -6,6 +6,7 @@ Hospital RBAC System
 */
 
 const AuditLog = require("../models/AuditLog");
+const logger = require("./loggerService");
 
 /* ==================================================
    CREATE AUDIT LOG
@@ -54,6 +55,43 @@ const createAuditLog = async ({
             status
 
         });
+
+        /* ==========================================
+           WRITE INTO LOG FILE
+        ========================================== */
+
+        let fileName = "";
+
+        switch (module) {
+
+            case "Hospital":
+
+                fileName = "hospital.log";
+                break;
+
+            case "Hospital Admin":
+
+                fileName = "hospitalAdmin.log";
+                break;
+
+            case "Doctor":
+
+                fileName = "doctor.log";
+                break;
+
+            default:
+
+                fileName = "system.log";
+
+        }
+
+        logger.audit(
+
+            fileName,
+
+            `[${action}] ${description} | User: ${user.name || "Guest"} | IP: ${req.ip}`
+
+        );
 
     }
 
