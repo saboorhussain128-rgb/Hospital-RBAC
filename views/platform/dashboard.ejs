@@ -36,26 +36,17 @@
          DASHBOARD STATISTICS
     =========================================== -->
 
-    <div style="
-        display:grid;
-        grid-template-columns:repeat(3,1fr);
-        gap:25px;
-        margin-bottom:35px;
-    ">
+    <div class="stats-grid">
 
         <!-- Hospitals -->
 
         <div class="card dashboard-card blue">
 
-            <div class="icon">
-                🏥
-            </div>
+            <div class="icon">🏥</div>
 
             <h3>Total Hospitals</h3>
 
-            <h1>
-                <%= hospitalCount || 0 %>
-            </h1>
+            <h1><%= hospitalCount || 0 %></h1>
 
         </div>
 
@@ -63,31 +54,35 @@
 
         <div class="card dashboard-card green">
 
-            <div class="icon">
-                👨‍⚕️
-            </div>
+            <div class="icon">👨‍⚕️</div>
 
             <h3>Hospital Admins</h3>
 
-            <h1>
-                <%= adminCount || 0 %>
-            </h1>
+            <h1><%= adminCount || 0 %></h1>
+
+        </div>
+
+        <!-- Doctors -->
+
+        <div class="card dashboard-card orange">
+
+            <div class="icon">🩺</div>
+
+            <h3>Total Doctors</h3>
+
+            <h1><%= doctorCount || 0 %></h1>
 
         </div>
 
         <!-- Audit Logs -->
 
-        <div class="card dashboard-card orange">
+        <div class="card dashboard-card purple">
 
-            <div class="icon">
-                📜
-            </div>
+            <div class="icon">📜</div>
 
             <h3>Audit Logs</h3>
 
-            <h1>
-                <%= auditCount || 0 %>
-            </h1>
+            <h1><%= auditCount || 0 %></h1>
 
         </div>
 
@@ -115,35 +110,27 @@
 
                 <div class="action-card">
 
-                    <div class="action-icon">
-                        🏥
-                    </div>
+                    <div class="action-icon">🏥</div>
 
                     <h3>Create Hospital</h3>
 
-                    <p>
-                        Register a new hospital.
-                    </p>
+                    <p>Register a new hospital.</p>
 
                 </div>
 
             </a>
 
-            <!-- View Hospitals -->
+            <!-- View Hospital -->
 
             <a href="/platform/view-hospital" class="action-link">
 
                 <div class="action-card">
 
-                    <div class="action-icon">
-                        📋
-                    </div>
+                    <div class="action-icon">📋</div>
 
                     <h3>View Hospitals</h3>
 
-                    <p>
-                        View, edit and delete hospitals.
-                    </p>
+                    <p>View, edit and delete hospitals.</p>
 
                 </div>
 
@@ -155,15 +142,11 @@
 
                 <div class="action-card">
 
-                    <div class="action-icon">
-                        👤
-                    </div>
+                    <div class="action-icon">👤</div>
 
                     <h3>Create Hospital Admin</h3>
 
-                    <p>
-                        Create administrator accounts.
-                    </p>
+                    <p>Create administrator accounts.</p>
 
                 </div>
 
@@ -175,15 +158,11 @@
 
                 <div class="action-card">
 
-                    <div class="action-icon">
-                        🔐
-                    </div>
+                    <div class="action-icon">🔐</div>
 
                     <h3>View Hospital Admins</h3>
 
-                    <p>
-                        Manage administrator accounts.
-                    </p>
+                    <p>Manage administrator accounts.</p>
 
                 </div>
 
@@ -195,15 +174,27 @@
 
                 <div class="action-card">
 
-                    <div class="action-icon">
-                        📜
-                    </div>
+                    <div class="action-icon">📜</div>
 
                     <h3>Audit Logs</h3>
 
-                    <p>
-                        View all system activities.
-                    </p>
+                    <p>View all system activities.</p>
+
+                </div>
+
+            </a>
+
+            <!-- Reports -->
+
+            <a href="/platform/reports" class="action-link">
+
+                <div class="action-card">
+
+                    <div class="action-icon">📊</div>
+
+                    <h3>Reports</h3>
+
+                    <p>Generate system reports.</p>
 
                 </div>
 
@@ -217,67 +208,15 @@
 
 <style>
 
-.actions-grid{
+.stats-grid{
 
     display:grid;
 
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(4,1fr);
 
     gap:25px;
 
-}
-
-.action-link{
-
-    text-decoration:none;
-
-    color:inherit;
-
-}
-
-.action-card{
-
-    border:1px solid #e5e5e5;
-
-    border-radius:12px;
-
-    padding:35px;
-
-    text-align:center;
-
-    transition:.30s;
-
-    background:white;
-
-    cursor:pointer;
-
-}
-
-.action-card:hover{
-
-    transform:translateY(-6px);
-
-    box-shadow:0 10px 25px rgba(0,0,0,.15);
-
-}
-
-.action-icon{
-
-    font-size:55px;
-
-}
-
-.action-card h3{
-
-    margin-top:20px;
-
-    color:#2c3e50;
-
-}
-
-.action-card p{
-
-    color:#777;
+    margin-bottom:35px;
 
 }
 
@@ -286,6 +225,16 @@
     text-align:center;
 
     border-top:5px solid;
+
+    transition:.3s;
+
+}
+
+.dashboard-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.12);
 
 }
 
@@ -298,6 +247,8 @@
 .dashboard-card h3{
 
     margin-top:15px;
+
+    color:#2c3e50;
 
 }
 
@@ -345,11 +296,97 @@
 
 }
 
+.purple{
+
+    border-color:#8e44ad;
+
+}
+
+.purple h1{
+
+    color:#8e44ad;
+
+}
+
+.actions-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:25px;
+
+}
+
+.action-link{
+
+    text-decoration:none;
+
+    color:inherit;
+
+}
+
+.action-card{
+
+    border:1px solid #e5e5e5;
+
+    border-radius:12px;
+
+    padding:35px;
+
+    text-align:center;
+
+    transition:.3s;
+
+    background:white;
+
+    cursor:pointer;
+
+}
+
+.action-card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+
+}
+
+.action-icon{
+
+    font-size:55px;
+
+}
+
+.action-card h3{
+
+    margin-top:20px;
+
+    color:#2c3e50;
+
+}
+
+.action-card p{
+
+    color:#777;
+
+}
+
+@media(max-width:1200px){
+
+.stats-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
 @media(max-width:1000px){
 
 .actions-grid{
 
-grid-template-columns:1fr 1fr;
+grid-template-columns:repeat(2,1fr);
 
 }
 
@@ -357,15 +394,15 @@ grid-template-columns:1fr 1fr;
 
 @media(max-width:700px){
 
-.actions-grid{
+.stats-grid{
 
 grid-template-columns:1fr;
 
 }
 
-.dashboard-card{
+.actions-grid{
 
-margin-bottom:20px;
+grid-template-columns:1fr;
 
 }
 
