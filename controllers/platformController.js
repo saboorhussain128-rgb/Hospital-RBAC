@@ -60,21 +60,18 @@ exports.dashboard = async (req, res) => {
 
     try {
 
+        const Hospital = require("../models/Hospital");
+        const HospitalAdmin = require("../models/HospitalAdmin");
+        const Doctor = require("../models/Doctor");
+        const AuditLog = require("../models/AuditLog");
+
         const hospitalCount = await Hospital.countDocuments();
 
         const adminCount = await HospitalAdmin.countDocuments();
 
+        const doctorCount = await Doctor.countDocuments();
+
         const auditCount = await AuditLog.countDocuments();
-
-        const recentLogs = await AuditLog.find()
-
-            .sort({
-
-                createdAt: -1
-
-            })
-
-            .limit(5);
 
         res.render("platform/dashboard", {
 
@@ -82,9 +79,9 @@ exports.dashboard = async (req, res) => {
 
             adminCount,
 
-            auditCount,
+            doctorCount,
 
-            recentLogs
+            auditCount
 
         });
 
