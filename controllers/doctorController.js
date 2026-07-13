@@ -1,5 +1,13 @@
+/*
+=====================================================
+DOCTOR CONTROLLER
+Hospital RBAC System
+=====================================================
+*/
+
 const Doctor = require("../models/Doctor");
 const { validationResult } = require("express-validator");
+const createAuditLog = require("../services/auditLogService");
 
 /* =====================================================
    CREATE DOCTOR PAGE
@@ -10,7 +18,6 @@ exports.createPage = (req, res) => {
     res.render("hospital/createDoctor", {
 
         errors: [],
-
         body: {}
 
     });
@@ -25,7 +32,7 @@ exports.createDoctor = async (req, res) => {
 
     try {
 
-        const hospitalAdmin = req.user;
+        const hospitalAdmin = req.user || req.session.user;
 
         if (!hospitalAdmin) {
 
@@ -40,7 +47,6 @@ exports.createDoctor = async (req, res) => {
             return res.render("hospital/createDoctor", {
 
                 errors: errors.array(),
-
                 body: req.body
 
             });
@@ -50,7 +56,6 @@ exports.createDoctor = async (req, res) => {
         const {
 
             name,
-
             email
 
         } = req.body;
@@ -58,7 +63,6 @@ exports.createDoctor = async (req, res) => {
         const doctorExists = await Doctor.findOne({
 
             email,
-
             hospital: hospitalAdmin.hospital
 
         });
@@ -83,7 +87,7 @@ exports.createDoctor = async (req, res) => {
 
         }
 
-        await Doctor.create({
+        const doctor = await Doctor.create({
 
             hospital: hospitalAdmin.hospital,
 
@@ -93,7 +97,19 @@ exports.createDoctor = async (req, res) => {
 
         });
 
-        res.redirect("/hospital/view-doctor");
+        await createAuditLog({
+
+            req,
+
+            module: "Doctor",
+
+            action: "Create",
+
+            description: `Doctor "${doctor.name}" created successfully.`
+
+        });
+
+        return res.redirect("/hospital/view-doctor");
 
     }
 
@@ -101,7 +117,7 @@ exports.createDoctor = async (req, res) => {
 
         console.log(error);
 
-        res.send("Error creating doctor");
+        return res.send("Error creating doctor");
 
     }
 
@@ -115,7 +131,7 @@ exports.viewDoctors = async (req, res) => {
 
     try {
 
-        const hospitalAdmin = req.user;
+        const hospitalAdmin = req.user || req.session.user;
 
         if (!hospitalAdmin) {
 
@@ -159,7 +175,7 @@ exports.editPage = async (req, res) => {
 
     try {
 
-        const hospitalAdmin = req.user;
+        const hospitalAdmin = req.user || req.session.user;
 
         if (!hospitalAdmin) {
 
@@ -184,9 +200,7 @@ exports.editPage = async (req, res) => {
         res.render("hospital/editDoctor", {
 
             doctor,
-
             errors: [],
-
             body: {}
 
         });
@@ -211,7 +225,7 @@ exports.updateDoctor = async (req, res) => {
 
     try {
 
-        const hospitalAdmin = req.user;
+        const hospitalAdmin = req.user || req.session.user;
 
         if (!hospitalAdmin) {
 
@@ -240,9 +254,7 @@ exports.updateDoctor = async (req, res) => {
             return res.render("hospital/editDoctor", {
 
                 doctor,
-
                 errors: errors.array(),
-
                 body: req.body
 
             });
@@ -250,12 +262,23 @@ exports.updateDoctor = async (req, res) => {
         }
 
         doctor.name = req.body.name;
-
         doctor.email = req.body.email;
 
         await doctor.save();
 
-        res.redirect("/hospital/view-doctor");
+        await createAuditLog({
+
+            req,
+
+            module: "Doctor",
+
+            action: "Update",
+
+            description: `Doctor "${doctor.name}" updated successfully.`
+
+        });
+
+        return res.redirect("/hospital/view-doctor");
 
     }
 
@@ -277,7 +300,7 @@ exports.deleteDoctor = async (req, res) => {
 
     try {
 
-        const hospitalAdmin = req.user;
+        const hospitalAdmin = req.user || req.session.user;
 
         if (!hospitalAdmin) {
 
@@ -285,7 +308,7 @@ exports.deleteDoctor = async (req, res) => {
 
         }
 
-        await Doctor.findOneAndDelete({
+        const doctor = await Doctor.findOne({
 
             _id: req.params.id,
 
@@ -293,7 +316,29 @@ exports.deleteDoctor = async (req, res) => {
 
         });
 
-        res.redirect("/hospital/view-doctor");
+        if (!doctor) {
+
+            return res.send("Doctor not found.");
+
+        }
+
+        const doctorName = doctor.name;
+
+        await doctor.deleteOne();
+
+        await createAuditLog({
+
+            req,
+
+            module: "Doctor",
+
+            action: "Delete",
+
+            description: `Doctor "${doctorName}" deleted successfully.`
+
+        });
+
+        return res.redirect("/hospital/view-doctor");
 
     }
 
