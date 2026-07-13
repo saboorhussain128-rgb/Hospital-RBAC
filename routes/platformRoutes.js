@@ -1,15 +1,35 @@
+/*
+==================================================
+PLATFORM ROUTES
+Hospital RBAC System
+==================================================
+*/
+
 const express = require("express");
 const router = express.Router();
 
 const { validationResult } = require("express-validator");
 
+/* ==================================================
+   IMPORT CONTROLLERS
+================================================== */
+
 const platformController = require("../controllers/platformController");
 const hospitalController = require("../controllers/hospitalController");
 const hospitalAdminController = require("../controllers/hospitalAdminController");
+const reportsController = require("../controllers/reportsController");
+
+/* ==================================================
+   IMPORT VALIDATORS
+================================================== */
 
 const {
     createHospitalValidation
 } = require("../validators/hospitalValidator");
+
+/* ==================================================
+   IMPORT MIDDLEWARE
+================================================== */
 
 const {
     isAuthenticated,
@@ -21,10 +41,16 @@ const {
 ===================================================== */
 
 // Login Page
-router.get("/login", platformController.loginPage);
+router.get(
+    "/login",
+    platformController.loginPage
+);
 
 // Login
-router.post("/login", platformController.login);
+router.post(
+    "/login",
+    platformController.login
+);
 
 // Dashboard
 router.get(
@@ -69,7 +95,9 @@ router.post(
 
             return res.render("platform/createHospital", {
 
-                errors: errors.array()
+                errors: errors.array(),
+
+                body: req.body
 
             });
 
@@ -88,6 +116,30 @@ router.get(
     isAuthenticated,
     isPlatformAdmin,
     hospitalController.viewHospitals
+);
+
+// Edit Hospital Page
+router.get(
+    "/edit-hospital/:id",
+    isAuthenticated,
+    isPlatformAdmin,
+    hospitalController.editPage
+);
+
+// Update Hospital
+router.post(
+    "/edit-hospital/:id",
+    isAuthenticated,
+    isPlatformAdmin,
+    hospitalController.updateHospital
+);
+
+// Delete Hospital
+router.get(
+    "/delete-hospital/:id",
+    isAuthenticated,
+    isPlatformAdmin,
+    hospitalController.deleteHospital
 );
 
 /* =====================================================
@@ -118,6 +170,22 @@ router.get(
     hospitalAdminController.viewAdmins
 );
 
+// Edit Hospital Admin Page
+router.get(
+    "/edit-hospital-admin/:id",
+    isAuthenticated,
+    isPlatformAdmin,
+    hospitalAdminController.editPage
+);
+
+// Update Hospital Admin
+router.post(
+    "/edit-hospital-admin/:id",
+    isAuthenticated,
+    isPlatformAdmin,
+    hospitalAdminController.updateAdmin
+);
+
 // Delete Hospital Admin
 router.get(
     "/delete-hospital-admin/:id",
@@ -125,5 +193,31 @@ router.get(
     isPlatformAdmin,
     hospitalAdminController.deleteAdmin
 );
+
+/* =====================================================
+   REPORTS
+===================================================== */
+
+router.get(
+    "/reports",
+    isAuthenticated,
+    isPlatformAdmin,
+    reportsController.dashboard
+);
+
+/* =====================================================
+   AUDIT LOGS
+===================================================== */
+
+router.get(
+    "/audit-logs",
+    isAuthenticated,
+    isPlatformAdmin,
+    platformController.viewAuditLogs
+);
+
+/* =====================================================
+   EXPORT ROUTER
+===================================================== */
 
 module.exports = router;
