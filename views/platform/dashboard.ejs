@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <%- include("../partials/header") %>
 
@@ -9,7 +9,9 @@
 
 <div class="page">
 
-    <!-- ================= HEADER ================= -->
+    <!-- ==========================================
+         PAGE HEADER
+    =========================================== -->
 
     <div class="card" style="text-align:center;margin-bottom:35px;">
 
@@ -22,148 +24,166 @@
         </h1>
 
         <p style="
-            font-size:17px;
             color:#7f8c8d;
+            font-size:17px;
         ">
             Welcome, Platform Administrator
         </p>
 
     </div>
 
-    <!-- ================= STATISTICS ================= -->
+    <!-- ==========================================
+         DASHBOARD STATISTICS
+    =========================================== -->
 
     <div style="
         display:grid;
-        grid-template-columns:repeat(2,1fr);
+        grid-template-columns:repeat(3,1fr);
         gap:25px;
         margin-bottom:35px;
     ">
 
-        <div class="card"
-             style="
-                text-align:center;
-                border-top:5px solid #3498db;
-             ">
+        <!-- Hospitals -->
 
-            <div style="font-size:55px;">
+        <div class="card dashboard-card blue">
+
+            <div class="icon">
                 🏥
             </div>
 
-            <h3>Hospitals</h3>
+            <h3>Total Hospitals</h3>
 
-            <h1 style="
-                color:#3498db;
-                font-size:48px;
-            ">
+            <h1>
                 <%= hospitalCount || 0 %>
             </h1>
 
         </div>
 
-        <div class="card"
-             style="
-                text-align:center;
-                border-top:5px solid #27ae60;
-             ">
+        <!-- Hospital Admins -->
 
-            <div style="font-size:55px;">
+        <div class="card dashboard-card green">
+
+            <div class="icon">
                 👨‍⚕️
             </div>
 
             <h3>Hospital Admins</h3>
 
-            <h1 style="
-                color:#27ae60;
-                font-size:48px;
-            ">
+            <h1>
                 <%= adminCount || 0 %>
+            </h1>
+
+        </div>
+
+        <!-- Audit Logs -->
+
+        <div class="card dashboard-card orange">
+
+            <div class="icon">
+                📜
+            </div>
+
+            <h3>Audit Logs</h3>
+
+            <h1>
+                <%= auditCount || 0 %>
             </h1>
 
         </div>
 
     </div>
 
-    <!-- ================= QUICK ACTIONS ================= -->
+    <!-- ==========================================
+         QUICK ACTIONS
+    =========================================== -->
 
     <div class="card">
 
         <h2 style="
             text-align:center;
-            margin-bottom:30px;
             color:#2c3e50;
+            margin-bottom:30px;
         ">
             Quick Actions
         </h2>
 
-        <div style="
-            display:grid;
-            grid-template-columns:repeat(3,1fr);
-            gap:25px;
-        ">
+        <div class="actions-grid">
 
             <!-- Create Hospital -->
 
-            <a href="/platform/create-hospital"
-               style="text-decoration:none;color:inherit;">
+            <a href="/platform/create-hospital" class="action-link">
 
                 <div class="action-card">
 
-                    <div style="font-size:55px;">🏥</div>
+                    <div class="action-icon">
+                        🏥
+                    </div>
 
                     <h3>Create Hospital</h3>
 
-                    <p>Create a new hospital.</p>
+                    <p>
+                        Register a new hospital.
+                    </p>
 
                 </div>
 
             </a>
 
-            <!-- View Hospital -->
+            <!-- View Hospitals -->
 
-            <a href="/platform/view-hospital"
-               style="text-decoration:none;color:inherit;">
+            <a href="/platform/view-hospital" class="action-link">
 
                 <div class="action-card">
 
-                    <div style="font-size:55px;">📋</div>
+                    <div class="action-icon">
+                        📋
+                    </div>
 
                     <h3>View Hospitals</h3>
 
-                    <p>Manage all hospitals.</p>
+                    <p>
+                        View, edit and delete hospitals.
+                    </p>
 
                 </div>
 
             </a>
 
-            <!-- Create Admin -->
+            <!-- Create Hospital Admin -->
 
-            <a href="/platform/create-hospital-admin"
-               style="text-decoration:none;color:inherit;">
+            <a href="/platform/create-hospital-admin" class="action-link">
 
                 <div class="action-card">
 
-                    <div style="font-size:55px;">👤</div>
+                    <div class="action-icon">
+                        👤
+                    </div>
 
                     <h3>Create Hospital Admin</h3>
 
-                    <p>Create administrator accounts.</p>
+                    <p>
+                        Create administrator accounts.
+                    </p>
 
                 </div>
 
             </a>
 
-            <!-- View Admin -->
+            <!-- View Hospital Admin -->
 
-            <a href="/platform/view-hospital-admin"
-               style="text-decoration:none;color:inherit;">
+            <a href="/platform/view-hospital-admin" class="action-link">
 
                 <div class="action-card">
 
-                    <div style="font-size:55px;">🔐</div>
+                    <div class="action-icon">
+                        🔐
+                    </div>
 
                     <h3>View Hospital Admins</h3>
 
-                    <p>Edit or remove administrators.</p>
+                    <p>
+                        Manage administrator accounts.
+                    </p>
 
                 </div>
 
@@ -171,16 +191,19 @@
 
             <!-- Audit Logs -->
 
-            <a href="/platform/audit-logs"
-               style="text-decoration:none;color:inherit;">
+            <a href="/platform/audit-logs" class="action-link">
 
                 <div class="action-card">
 
-                    <div style="font-size:55px;">📜</div>
+                    <div class="action-icon">
+                        📜
+                    </div>
 
                     <h3>Audit Logs</h3>
 
-                    <p>View complete activity history.</p>
+                    <p>
+                        View all system activities.
+                    </p>
 
                 </div>
 
@@ -194,9 +217,27 @@
 
 <style>
 
+.actions-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:25px;
+
+}
+
+.action-link{
+
+    text-decoration:none;
+
+    color:inherit;
+
+}
+
 .action-card{
 
-    border:1px solid #e6e6e6;
+    border:1px solid #e5e5e5;
 
     border-radius:12px;
 
@@ -204,7 +245,9 @@
 
     text-align:center;
 
-    transition:.3s;
+    transition:.30s;
+
+    background:white;
 
     cursor:pointer;
 
@@ -212,15 +255,23 @@
 
 .action-card:hover{
 
-    box-shadow:0 8px 25px rgba(0,0,0,.15);
+    transform:translateY(-6px);
 
-    transform:translateY(-5px);
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+
+}
+
+.action-icon{
+
+    font-size:55px;
 
 }
 
 .action-card h3{
 
-    margin:18px 0;
+    margin-top:20px;
+
+    color:#2c3e50;
 
 }
 
@@ -230,8 +281,97 @@
 
 }
 
+.dashboard-card{
+
+    text-align:center;
+
+    border-top:5px solid;
+
+}
+
+.dashboard-card .icon{
+
+    font-size:55px;
+
+}
+
+.dashboard-card h3{
+
+    margin-top:15px;
+
+}
+
+.dashboard-card h1{
+
+    font-size:48px;
+
+    margin-top:12px;
+
+}
+
+.blue{
+
+    border-color:#3498db;
+
+}
+
+.blue h1{
+
+    color:#3498db;
+
+}
+
+.green{
+
+    border-color:#27ae60;
+
+}
+
+.green h1{
+
+    color:#27ae60;
+
+}
+
+.orange{
+
+    border-color:#f39c12;
+
+}
+
+.orange h1{
+
+    color:#f39c12;
+
+}
+
+@media(max-width:1000px){
+
+.actions-grid{
+
+grid-template-columns:1fr 1fr;
+
+}
+
+}
+
+@media(max-width:700px){
+
+.actions-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.dashboard-card{
+
+margin-bottom:20px;
+
+}
+
+}
+
 </style>
 
 </body>
-
 </html>
