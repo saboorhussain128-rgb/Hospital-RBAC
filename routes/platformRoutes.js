@@ -17,7 +17,6 @@ const { validationResult } = require("express-validator");
 const platformController = require("../controllers/platformController");
 const hospitalController = require("../controllers/hospitalController");
 const hospitalAdminController = require("../controllers/hospitalAdminController");
-const reportsController = require("../controllers/reportsController");
 
 /* ==================================================
    IMPORT VALIDATORS
@@ -192,17 +191,6 @@ router.get(
     isAuthenticated,
     isPlatformAdmin,
     hospitalAdminController.deleteAdmin
-);
-
-/* =====================================================
-   REPORTS
-===================================================== */
-
-router.get(
-    "/reports",
-    isAuthenticated,
-    isPlatformAdmin,
-    reportsController.dashboard
 );
 
 /* =====================================================

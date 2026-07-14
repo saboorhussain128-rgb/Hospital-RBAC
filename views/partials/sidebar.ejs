@@ -1,99 +1,191 @@
-<div style="
-    position:fixed;
-    left:0;
-    top:0;
-    width:260px;
-    height:100vh;
-    background:#2c3e50;
-    color:white;
-    overflow:auto;
-">
+<!---------------------------------------------------
+SIDEBAR
+Platform Admin
+---------------------------------------------------->
+
+<div class="sidebar">
 
     <!-- Logo -->
 
-    <div style="
-        padding:25px;
-        text-align:center;
-        border-bottom:1px solid rgba(255,255,255,.15);
-    ">
+    <div class="logo">
 
-        <h2 style="margin:0;">
-            Hospital RBAC
-        </h2>
+        <h1>Hospital RBAC</h1>
 
-        <small>
-            Platform Admin
-        </small>
+        <p>Platform Admin</p>
 
     </div>
 
     <!-- Navigation -->
 
-    <a href="/platform/dashboard" class="sidebar-link">
-         Dashboard
-    </a>
+    <ul class="menu">
 
-    <a href="/platform/create-hospital" class="sidebar-link">
-         Create Hospital
-    </a>
+        <li>
 
-    <a href="/platform/view-hospital" class="sidebar-link">
-         View Hospitals
-    </a>
+            <a href="/platform/dashboard">
 
-    <a href="/platform/create-hospital-admin" class="sidebar-link">
-         Create Hospital Admin
-    </a>
+                 Dashboard
 
-    <a href="/platform/view-hospital-admin" class="sidebar-link">
-         View Hospital Admins
-    </a>
+            </a>
 
-    <a href="/platform/audit-logs" class="sidebar-link">
-         Audit Logs
-    </a>
+        </li>
 
-    <a href="/platform/logout"
-       class="sidebar-link"
-       style="margin-top:40px;background:#c0392b;">
-         Logout
-    </a>
+    </ul>
+
+    <!-- Logout -->
+
+    <div class="logout">
+
+        <a href="/platform/logout">
+
+             Logout
+
+        </a>
+
+    </div>
 
 </div>
 
 <style>
 
-.page{
+.sidebar{
 
-    margin-left:280px;
+    position:fixed;
 
-    padding:30px;
+    left:0;
+
+    top:0;
+
+    width:280px;
+
+    height:100vh;
+
+    background:#2c3e50;
+
+    display:flex;
+
+    flex-direction:column;
+
+    color:white;
 
 }
 
-.sidebar-link{
+.logo{
+
+    padding:35px 20px;
+
+    text-align:center;
+
+    border-bottom:1px solid rgba(255,255,255,.15);
+
+}
+
+.logo h1{
+
+    margin:0;
+
+    font-size:40px;
+
+    font-weight:bold;
+
+}
+
+.logo p{
+
+    margin-top:8px;
+
+    font-size:18px;
+
+    color:#ecf0f1;
+
+}
+
+.menu{
+
+    list-style:none;
+
+    margin:0;
+
+    padding:0;
+
+}
+
+.menu li{
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.menu a{
 
     display:block;
+
+    padding:22px 30px;
 
     color:white;
 
     text-decoration:none;
 
-    padding:16px 22px;
+    font-size:20px;
 
-    border-bottom:1px solid rgba(255,255,255,.08);
-
-    transition:.25s;
-
-    font-size:15px;
+    transition:.3s;
 
 }
 
-.sidebar-link:hover{
+.menu a:hover{
 
     background:#34495e;
 
-    padding-left:30px;
+}
+
+.logout{
+
+    margin-top:auto;
+
+}
+
+.logout a{
+
+    display:block;
+
+    background:#c0392b;
+
+    color:white;
+
+    text-decoration:none;
+
+    padding:22px 30px;
+
+    font-size:20px;
+
+}
+
+.logout a:hover{
+
+    background:#a93226;
+
+}
+
+.page{
+
+    margin-left:280px;
+
+    padding:40px;
+
+}
+
+@media(max-width:900px){
+
+.sidebar{
+
+    width:230px;
+
+}
+
+.page{
+
+    margin-left:230px;
+
+}
 
 }
 
