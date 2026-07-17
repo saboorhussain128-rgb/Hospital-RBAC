@@ -62,231 +62,221 @@ const app = express();
 
 /*
 =====================================================
-CONNECT DATABASE
+INITIALIZE SERVER
 =====================================================
 */
 
-connectDB();
+const startServer = async () => {
 
-/*
-=====================================================
-VERIFY EMAIL CONNECTION
-=====================================================
-*/
+    try {
 
-verifyEmailConnection();
+        console.time("Total Startup Time");
 
-/*
-=====================================================
-BODY PARSER
-=====================================================
-*/
+        /* ===============================
+           DATABASE
+        =============================== */
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+        await connectDB();
 
-/*
-=====================================================
-COOKIE PARSER
-=====================================================
-*/
+        /* ===============================
+           EMAIL
+        =============================== */
 
-app.use(cookieParser());
+        if (process.env.NODE_ENV !== "production") {
 
-/*
-=====================================================
-SESSION
-=====================================================
-*/
-
-app.use(
-
-    session({
-
-        secret: process.env.SESSION_SECRET,
-
-        resave: false,
-
-        saveUninitialized: false,
-
-        cookie: {
-
-            secure: false,
-
-            maxAge: 1000 * 60 * 60
+            await verifyEmailConnection();
 
         }
 
-    })
+        /* ===============================
+           BODY PARSER
+        =============================== */
 
-);
+        app.use(express.urlencoded({ extended: true }));
+        app.use(express.json());
 
-/*
-=====================================================
-JWT MIDDLEWARE
-=====================================================
-*/
+        /* ===============================
+           COOKIE PARSER
+        =============================== */
 
-app.use((req, res, next) => {
+        app.use(cookieParser());
 
-    let token = null;
+        /* ===============================
+           SESSION
+        =============================== */
 
-    const authHeader = req.headers.authorization;
+        app.use(
 
-    if (
-        authHeader &&
-        authHeader.startsWith("Bearer ")
-    ) {
+            session({
 
-        token = authHeader.split(" ")[1];
+                secret: process.env.SESSION_SECRET,
+
+                resave: false,
+
+                saveUninitialized: false,
+
+                cookie: {
+
+                    secure: false,
+
+                    maxAge: 1000 * 60 * 60
+
+                }
+
+            })
+
+        );
+
+        /* ===============================
+           JWT
+        =============================== */
+
+        app.use((req, res, next) => {
+
+            let token = null;
+
+            const authHeader = req.headers.authorization;
+
+            if (
+
+                authHeader &&
+
+                authHeader.startsWith("Bearer ")
+
+            ) {
+
+                token = authHeader.split(" ")[1];
+
+            }
+
+            if (!token && req.cookies) {
+
+                token = req.cookies.token;
+
+            }
+
+            if (token) {
+
+                try {
+
+                    req.user = jwt.verify(
+
+                        token,
+
+                        process.env.JWT_SECRET
+
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.log("JWT Verification Failed");
+
+                }
+
+            }
+
+            next();
+
+        });
+
+        /* ===============================
+           USER FOR EJS
+        =============================== */
+
+        app.use((req, res, next) => {
+
+            res.locals.user = req.session.user || req.user || null;
+
+            next();
+
+        });
+
+        /* ===============================
+           STATIC FILES
+        =============================== */
+
+        app.use(express.static(path.join(__dirname, "public")));
+
+        /* ===============================
+           VIEW ENGINE
+        =============================== */
+
+        app.set("view engine", "ejs");
+
+        app.set("views", path.join(__dirname, "views"));
+
+        /* ===============================
+           HOME
+        =============================== */
+
+        app.get("/", (req, res) => {
+
+            res.redirect("/platform/login");
+
+        });
+
+        /* ===============================
+           WEB ROUTES
+        =============================== */
+
+        app.use("/platform", platformRoutes);
+        app.use("/hospital", hospitalAuthRoutes);
+        app.use("/hospital", hospitalRoutes);
+        app.use("/platform", hospitalAdminRoutes);
+        app.use("/platform", auditLogRoutes);
+
+        /* ===============================
+           API ROUTES
+        =============================== */
+
+        app.use("/api/auth", authApiRoutes);
+        app.use("/api/hospitals", hospitalApiRoutes);
+        app.use("/api/hospital-admins", hospitalAdminApiRoutes);
+        app.use("/api/doctors", doctorApiRoutes);
+        app.use("/api/email", emailApiRoutes);
+
+        /* ===============================
+           404
+        =============================== */
+
+        app.use((req, res) => {
+
+            res.status(404).json({
+
+                success: false,
+
+                message: "Route Not Found"
+
+            });
+
+        });
+
+        /* ===============================
+           SERVER
+        =============================== */
+
+        const PORT = process.env.PORT || 3000;
+
+        app.listen(PORT, () => {
+
+            console.log("========================================");
+            console.log(`🚀 Server Running on Port ${PORT}`);
+            console.log("========================================");
+
+            console.timeEnd("Total Startup Time");
+
+        });
 
     }
 
-    if (!token && req.cookies) {
+    catch (error) {
 
-        token = req.cookies.token;
-
-    }
-
-    if (token) {
-
-        try {
-
-            req.user = jwt.verify(
-                token,
-                process.env.JWT_SECRET
-            );
-
-        }
-
-        catch (error) {
-
-            console.log(
-                "JWT Verification Failed:",
-                error.message
-            );
-
-        }
+        console.log(error);
 
     }
 
-    next();
+};
 
-});
-
-/*
-=====================================================
-MAKE USER AVAILABLE TO EJS
-=====================================================
-*/
-
-app.use((req, res, next) => {
-
-    res.locals.user = req.session.user || req.user || null;
-
-    next();
-
-});
-
-/*
-=====================================================
-STATIC FILES
-=====================================================
-*/
-
-app.use(
-    express.static(
-        path.join(__dirname, "public")
-    )
-);
-
-/*
-=====================================================
-VIEW ENGINE
-=====================================================
-*/
-
-app.set("view engine", "ejs");
-
-app.set(
-    "views",
-    path.join(__dirname, "views")
-);
-
-/*
-=====================================================
-HOME
-=====================================================
-*/
-
-app.get("/", (req, res) => {
-
-    res.redirect("/platform/login");
-
-});
-
-/*
-=====================================================
-WEB ROUTES
-=====================================================
-*/
-
-app.use("/platform", platformRoutes);
-
-app.use("/hospital", hospitalAuthRoutes);
-
-app.use("/hospital", hospitalRoutes);
-
-app.use("/platform", hospitalAdminRoutes);
-
-app.use("/platform", auditLogRoutes);
-
-/*
-=====================================================
-API ROUTES
-=====================================================
-*/
-
-app.use("/api/auth", authApiRoutes);
-
-app.use("/api/hospitals", hospitalApiRoutes);
-
-app.use("/api/hospital-admins", hospitalAdminApiRoutes);
-
-app.use("/api/doctors", doctorApiRoutes);
-
-app.use("/api/email", emailApiRoutes);
-
-/*
-=====================================================
-404 ROUTE
-=====================================================
-*/
-
-app.use((req, res) => {
-
-    return res.status(404).json({
-
-        success: false,
-
-        message: "Route Not Found"
-
-    });
-
-});
-
-/*
-=====================================================
-SERVER
-=====================================================
-*/
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-
-    console.log("========================================");
-    console.log(`🚀 Server Running on Port ${PORT}`);
-    console.log("========================================");
-
-});
+startServer();

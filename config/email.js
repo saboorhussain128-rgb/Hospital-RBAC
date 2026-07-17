@@ -8,7 +8,7 @@ Hospital RBAC System
 const nodemailer = require("nodemailer");
 
 /* ==================================================
-   CREATE EMAIL TRANSPORTER
+   EMAIL TRANSPORTER
 ================================================== */
 
 const transporter = nodemailer.createTransport({
@@ -30,14 +30,18 @@ const transporter = nodemailer.createTransport({
 });
 
 /* ==================================================
-   VERIFY SMTP CONNECTION
+   VERIFY EMAIL CONNECTION
 ================================================== */
 
 const verifyEmailConnection = async () => {
 
     try {
 
+        console.time("SMTP Verification");
+
         await transporter.verify();
+
+        console.timeEnd("SMTP Verification");
 
         console.log("====================================");
         console.log("Email Server Connected Successfully");

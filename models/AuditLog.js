@@ -12,14 +12,12 @@ const auditLogSchema = new mongoose.Schema(
     {
 
         /* ==========================================
-           USER
+           USER ID
         ========================================== */
 
         user: {
 
-            type: mongoose.Schema.Types.ObjectId,
-
-            ref: "HospitalAdmin",
+            type: String,
 
             default: null
 
